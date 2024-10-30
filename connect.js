@@ -1,0 +1,63 @@
+require('dotenv').config();
+const mongoose = require('mongoose');
+const Item = require('./model/Item');  // No need for '.js' extension
+const fs = require('fs');
+
+
+const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`
+const database_name = "NFTify_1"
+const collection1 = "Items"
+async function connectDB() {
+    try {
+        await mongoose.connect(connect_url, {
+            dbName: database_name // Explicitly specify database name
+        });
+        console.log('Connected to MongoDB - Database: ', database_name);
+        
+        // Verify the connection and collection
+        const collections = await mongoose.connection.db.listCollections().toArray();
+        console.log('Available collections:', collections.map(c => c.name));
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        throw err;
+    }
+}
+
+const data = JSON.parse(fs.readFileSync('stamps.json', 'utf8'));
+
+
+async function saveData(data) {
+    console.log(`Attempting to save ${data.length} items to ${database_name}.${collection1} collection`);
+    
+    for (const item of data) {
+        try {
+
+            // Check if document with this id already exists
+            const existingItem = await Item.findOne({ id: parseInt(item.id) });
+
+            if (existingItem) {
+                console.log(`Skipping item with id: ${item.id} - already exists`);
+                continue; // Skip to next item
+            }
+            // Convert the date format to match your manual entry
+            const modifiedItem = {
+                ...item,
+                id: parseInt(item.id), // Convert id to number
+                //date: item.date ? new Date(item.date).getFullYear().toString() : null // Convert date to year string
+            };
+            const newItem = new Item(modifiedItem);
+            await newItem.save();
+            console.log(`Saved item with id: ${item.id} to ${database_name}.${collection1}`);
+        } catch (error) {
+            console.error(`Failed to save item with id: ${item.id}`, error);
+        }
+    }
+}
+connectDB()
+saveData(data).then(() => console.log('Data save process completed.'))
+    .catch((err) => console.error('Error in data saving process:', err))
+    .finally(() => {
+        console.log('Closing connection to MongoDB');
+        mongoose.connection.close()}
+    );
+
