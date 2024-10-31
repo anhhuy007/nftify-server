@@ -32,7 +32,8 @@ const ItemSchema = new mongoose.Schema({
   },
   {
     versionKey: false, // This will prevent the __v field from being added
-    collection: 'Items'
+    // collection: 'Items'
+    collection: 'Test'
 });
 const Item = model('Item', ItemSchema);
 module.exports = Item;

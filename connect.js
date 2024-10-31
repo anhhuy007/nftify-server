@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const Item = require('./model/Item');  // No need for '.js' extension
+const ItemModel = require('./models/Items.model');  // No need for '.js' extension
 const fs = require('fs');
 
 
@@ -33,7 +33,7 @@ async function saveData(data) {
         try {
 
             // Check if document with this id already exists
-            const existingItem = await Item.findOne({ id: parseInt(item.id) });
+            const existingItem = await ItemModel.findOne({ id: parseInt(item.id) });
 
             if (existingItem) {
                 console.log(`Skipping item with id: ${item.id} - already exists`);
@@ -45,7 +45,7 @@ async function saveData(data) {
                 id: parseInt(item.id), // Convert id to number
                 //date: item.date ? new Date(item.date).getFullYear().toString() : null // Convert date to year string
             };
-            const newItem = new Item(modifiedItem);
+            const newItem = new ItemModel(modifiedItem);
             await newItem.save();
             console.log(`Saved item with id: ${item.id} to ${database_name}.${collection1}`);
         } catch (error) {
@@ -53,11 +53,22 @@ async function saveData(data) {
         }
     }
 }
-connectDB()
-saveData(data).then(() => console.log('Data save process completed.'))
-    .catch((err) => console.error('Error in data saving process:', err))
-    .finally(() => {
-        console.log('Closing connection to MongoDB');
-        mongoose.connection.close()}
-    );
 
+async function closeConnectDB() {
+    console.log('Closing connection to MongoDB');
+    await mongoose.connection.close();
+
+
+}
+// connectDB()
+// saveData(data).then(() => console.log('Data save process completed.'))
+//     .catch((err) => console.error('Error in data saving process:', err))
+//     .finally(() => {
+//         closeConnectDB()
+//     });
+
+module.exports = {
+    connectDB,
+    saveData,
+    closeConnectDB
+}
