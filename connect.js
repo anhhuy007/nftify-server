@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const ItemModel = require('./models/Items.model');  // No need for '.js' extension
+const itemModel = require('./models/items.model');  // No need for '.js' extension
 const fs = require('fs');
 
 
@@ -23,7 +23,7 @@ async function connectDB() {
     }
 }
 
-const data = JSON.parse(fs.readFileSync('stamps.json', 'utf8'));
+const data = JSON.parse(fs.readFileSync('testing_data/stamps2.json', 'utf8'));
 
 
 async function saveData(data) {
@@ -33,7 +33,7 @@ async function saveData(data) {
         try {
 
             // Check if document with this id already exists
-            const existingItem = await ItemModel.findOne({ id: parseInt(item.id) });
+            const existingItem = await itemModel.findOne({ id: parseInt(item.id) });
 
             if (existingItem) {
                 console.log(`Skipping item with id: ${item.id} - already exists`);
@@ -43,9 +43,9 @@ async function saveData(data) {
             const modifiedItem = {
                 ...item,
                 id: parseInt(item.id), // Convert id to number
-                //date: item.date ? new Date(item.date).getFullYear().toString() : null // Convert date to year string
+                denom : ((Math.round(Math.random() * 10000) + 1 )/100).toFixed(2)
             };
-            const newItem = new ItemModel(modifiedItem);
+            const newItem = new itemModel(modifiedItem);
             await newItem.save();
             console.log(`Saved item with id: ${item.id} to ${database_name}.${collection1}`);
         } catch (error) {

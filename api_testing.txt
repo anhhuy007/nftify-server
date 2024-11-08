@@ -1,8 +1,0 @@
-curl http://localhost:3000/items
-
-
-3373
-6838
-
-curl http://localhost:3000/items -d @testing_data/data2.json -H 'content-type: application/json'
-

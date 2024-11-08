@@ -2,7 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const connect = require("./connect");
 
-const itemRoute = require("./routes/Items.config");
+//routes
+const itemRoute = require("./routes/items.route");
+const userRoute = require("./routes/users.route");
+
 
 const app = express();
 
@@ -12,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //routes
 app.use("/items", itemRoute);
-
+app.use("/users", userRoute);
 
 app.get('/', function(req, res){
 	res.send("<h2>This is my first app</h2>");

@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 require('mongoose')
 const { Schema, model } = mongoose;
-const ItemSchema = new mongoose.Schema({
+const itemSchema = new mongoose.Schema({
     id: {
       type: String,
-      required: true
+      required: true,
+      unique: true // Ensure uniqueness of your custom ID
     },
     url: {
       type: String,
@@ -14,7 +15,7 @@ const ItemSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    issued_by: {
+    issuedBy: {
       type: String,
     },
     function: {
@@ -24,7 +25,7 @@ const ItemSchema = new mongoose.Schema({
       type: String,
     },
     denom: {
-      type: String,
+      type: mongoose.Types.Decimal128,
     },
     color: {
       type: String,
@@ -33,7 +34,7 @@ const ItemSchema = new mongoose.Schema({
   {
     versionKey: false, // This will prevent the __v field from being added
     // collection: 'Items'
-    collection: 'Test'
+    collection: 'Items'
 });
-const Item = model('Item', ItemSchema);
+const Item = model('Items', itemSchema);
 module.exports = Item;
