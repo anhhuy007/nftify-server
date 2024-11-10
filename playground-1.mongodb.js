@@ -12,3 +12,5 @@
 // Select the database to use.
 use('NFTify_1');
 db.Items.deleteMany({});
+
+db.Test.deleteMany({});

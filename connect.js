@@ -1,12 +1,15 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const itemModel = require('./models/items.model');  // No need for '.js' extension
+const itemModel = require('./models/items.model'); 
+const userModel = require('./models/users.model');
+
 const fs = require('fs');
+const helperFunc = require ('./helperFunc');
 
 
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`
 const database_name = "NFTify_1"
-const collection1 = "Items"
+let collection1 = "collectionName"
 async function connectDB() {
     try {
         await mongoose.connect(connect_url, {
@@ -22,16 +25,17 @@ async function connectDB() {
         throw err;
     }
 }
-
-const data = JSON.parse(fs.readFileSync('testing_data/stamps2.json', 'utf8'));
-
+// data from file
+const dataItems = JSON.parse(fs.readFileSync('testing_data/stamps.json', 'utf8'));
+const dataUsers = JSON.parse(fs.readFileSync('datajson/Users.json', 'utf8'));
 
 async function saveData(data) {
+    collection1 = itemModel.collection.name;
     console.log(`Attempting to save ${data.length} items to ${database_name}.${collection1} collection`);
-    
+    await itemModel.collection.dropIndexes();
+    await itemModel.syncIndexes();
     for (const item of data) {
         try {
-
             // Check if document with this id already exists
             const existingItem = await itemModel.findOne({ id: parseInt(item.id) });
 
@@ -42,14 +46,45 @@ async function saveData(data) {
             // Convert the date format to match your manual entry
             const modifiedItem = {
                 ...item,
-                id: parseInt(item.id), // Convert id to number
-                denom : ((Math.round(Math.random() * 10000) + 1 )/100).toFixed(2)
+                id: item.id, // Convert id to number
+                creatorId : Math.floor(Math.random() * 3)+1,
+                denom : ((Math.round(Math.random() * 10000) + 1 )/100).toFixed(2),
+                date: helperFunc.randomDates('01/01/1900', '01/01/2000'),
+                createdAt: helperFunc.randomDates('01/01/2022', '01/12/2024'),
             };
             const newItem = new itemModel(modifiedItem);
             await newItem.save();
-            console.log(`Saved item with id: ${item.id} to ${database_name}.${collection1}`);
+            console.log(`Saved with id: ${item.id} to ${database_name}.${collection1}`);
         } catch (error) {
-            console.error(`Failed to save item with id: ${item.id}`, error);
+            console.error(`Failed to save with id: ${item.id}`, error);
+        }
+    }
+}
+
+async function saveDataUsers(data) {
+    collection1 = userModel.collection.name;
+    console.log(`Attempting to save ${data.length} items to ${database_name}.${collection1} collection`);
+    await userModel.collection.dropIndexes();
+    await userModel.syncIndexes();
+    for (const user of data) {
+        try {
+            // Check if document with this id already exists
+            const existingUser = await userModel.findOne({ id: parseInt(user.id) });
+
+            if (existingUser) {
+                console.log(`Skipping user with id: ${user.id} - already exists`);
+                continue; // Skip to next item
+            }
+            // Convert the date format to match your manual entry
+            const modifiedUser = {
+                ...user,
+                // id: item.id,
+            };
+            const newUser = new userModel(modifiedUser);
+            await newUser.save();
+            console.log(`Saved with id: ${user.id} to ${database_name}.${collection1}`);
+        } catch (error) {
+            console.error(`Failed to save with id: ${user.id}`, error);
         }
     }
 }
@@ -60,11 +95,14 @@ async function closeConnectDB() {
 
 
 }
+
+// // comment this to run server
 // connectDB()
-// saveData(data).then(() => console.log('Data save process completed.'))
+// saveDataUsers(dataUsers)
+// .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {
-//         closeConnectDB()
+//         //
 //     });
 
 module.exports = {

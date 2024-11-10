@@ -1,0 +1,7 @@
+[
+    {"id": 1, "name": "Alice", "description": "Digital artist", "avaUrl": "https://images.pexels.com/photos/719396/pexels-photo-719396.jpeg"},
+    {"id": 2, "name": "Bob", "description": "Stamp collector", "avaUrl": "https://images.pexels.com/photos/60597/dahlia-red-blossom-bloom-60597.jpeg"},
+    {"id": 3, "name": "Charlie", "description": "Historian", "avaUrl": "https://images.pexels.com/photos/66896/tulips-flowers-fish-eye-red-66896.jpeg"},
+    {"id": 4, "name": "Daisy", "description": "Art enthusiast", "avaUrl": "https://images.pexels.com/photos/21787/pexels-photo.jpg"},
+    {"id": 5, "name": "Evan", "description": "NFT trader", "avaUrl": "https://images.pexels.com/photos/8259932/pexels-photo-8259932.jpeg"}
+]

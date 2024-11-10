@@ -1,3 +1,16 @@
+// Table Stamps {
+//   id integer [pk]
+//   creator VARCHAR(50)                  ------------------
+//   url TEXT [not null]
+//   title VARCHAR(50)
+//   issued_by VARCHAR(100) [not null]    
+//   function VARCHAR(50)
+//   date DATE           
+//   denom VARCHAR(20)
+//   color VARCHAR(50)
+//   created_time timestamp                 ---------------------------
+// }
+
 const mongoose = require('mongoose');
 require('mongoose')
 const { Schema, model } = mongoose;
@@ -5,7 +18,11 @@ const itemSchema = new mongoose.Schema({
     id: {
       type: String,
       required: true,
-      unique: true // Ensure uniqueness of your custom ID
+      unique: true 
+    },
+    creatorId:{
+      type: String,
+      required: true,
     },
     url: {
       type: String,
@@ -29,11 +46,13 @@ const itemSchema = new mongoose.Schema({
     },
     color: {
       type: String,
+    },
+    createdAt:{
+      type: String,
     }
   },
   {
-    versionKey: false, // This will prevent the __v field from being added
-    // collection: 'Items'
+    versionKey: false,
     collection: 'Items'
 });
 const Item = model('Items', itemSchema);
