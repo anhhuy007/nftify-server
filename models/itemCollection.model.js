@@ -7,13 +7,14 @@ const mongoose = require('mongoose');
 require('mongoose')
 const { Schema, model } = mongoose;
 const itemCollectionSchema = new mongoose.Schema({
-    collectionId: {
+    id: {
       type: String,
       required: true,
     },
     itemId: {
       type: String,
-      required: true
+      required: true,
+      unique : true
     },
   },
   {

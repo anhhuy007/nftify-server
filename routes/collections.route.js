@@ -9,6 +9,7 @@ collectionRouter.get('/',(req,res, next) => {
 
 
 collectionRouter.get('/list',collectionController.listCollection);
+collectionRouter.get('/all',collectionController.listAllCollection);
 collectionRouter.get('/favourite',collectionController.getFavouriteCollection);
 collectionRouter.get('/:collectionId',collectionController.getCollectionById);
 

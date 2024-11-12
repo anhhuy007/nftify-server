@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const itemModel = require('./models/items.model'); 
 const userModel = require('./models/users.model');
 const collectionModel = require('./models/collections.model');
+const itemCollectionModel = require('./models/itemCollection.model');
 
 const fs = require('fs');
 const helperFunc = require ('./helperFunc');
+
 
 
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`
@@ -30,6 +32,7 @@ async function connectDB() {
 const dataItems = JSON.parse(fs.readFileSync('testing_data/stamps.json', 'utf8'));
 const dataUsers = JSON.parse(fs.readFileSync('datajson/Users.json', 'utf8'));
 const dataCollections = JSON.parse(fs.readFileSync('datajson/Collections.json', 'utf8'));
+const dataItemCollections = JSON.parse(fs.readFileSync('datajson/ItemCollection.json', 'utf8'));
 
 async function saveData(data) {
     collection1 = itemModel.collection.name;
@@ -123,9 +126,40 @@ async function saveDataCollection(data) {
         }
     }
 }
+
+async function saveDataItemCollection(data) {
+    collection1 = itemCollectionModel.collection.name;
+    console.log(`Attempting to save ${data.length} items to ${database_name}.${collection1} collection`);
+    await itemCollectionModel.collection.dropIndexes();
+    await itemCollectionModel.syncIndexes();
+    for (const itemCollection of data) {
+        try {
+            // Check if document with this id already exists
+            const existingCollection = await itemCollectionModel.findOne({
+                id: itemCollection.id,
+                itemId : itemCollection.itemId
+             });
+
+            if (existingCollection) {
+                console.log(`Skipping itemCollection with id: ${itemCollection.id} - already exists`);
+                continue; // Skip to next item
+            }
+            // Convert the date format to match your manual entry
+            const modifiedItemCollection = {
+                ...itemCollection,
+                // id: item.id,
+            };
+            const newItemCollection = new itemCollectionModel(modifiedItemCollection);
+            await newItemCollection.save();
+            console.log(`Saved with id: ${itemCollection.id} to ${database_name}.${collection1}`);
+        } catch (error) {
+            console.error(`Failed to save with id: ${itemCollection.id}`, error);
+        }
+    }
+}
 // comment this to run server
 // connectDB()
-// saveDataCollection(dataCollections)
+// saveDataItemCollection(dataItemCollections)
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {
