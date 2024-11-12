@@ -7,11 +7,11 @@ GET  http://localhost:3000/items/list?page=1&limit=10
 ###
 GET  http://localhost:3000/items/223851
 ###
-GET http://localhost:3000/items/timeFilter?start=1989&end=1991&page=1&limit=3
+GET http://localhost:3000/items/timeFilter?start=1995&end=2000&page=1&limit=5
 ###
-GET http://localhost:3000/items/titleFilter?title=World
-
-
+GET http://localhost:3000/items/titleFilter?title=Garden
+###
+GET http://localhost:3000/items/denomFilter?start=40&end=50
 
 ###------------------ users routes
 GET http://localhost:3000/users
@@ -19,3 +19,15 @@ GET http://localhost:3000/users
 GET http://localhost:3000/users/2
 ###
 GET http://localhost:3000/users/3/lists
+
+
+###------------------ collection routes
+GET http://localhost:3000/users/1/collection
+### chỗ này hơi cấn ???
+GET http://localhost:3000/users/2/collection/5
+
+###
+GET http://localhost:3000/users/1/collection/list
+###
+GET http://localhost:3000/users/2/collection/favourite
+

@@ -80,36 +80,40 @@ exports.itemFilteredDate = asyncHandler(async (req, res, next) => {
     const startIndex = (page - 1) * limit;
   
     try {
-      // Helper function to extract day, month, and year from date string
-
-        const total = await itemModel.countDocuments({
+        // Create a regex pattern that matches any year between start and end years
+        const yearsRange = [];
+        for (let year = parseInt(startYear); year <= parseInt(endYear); year++) {
+            yearsRange.push(year.toString());
+        }
+        const dateFilter = {
             date: {
-            $gte: new Date(startYear, 0, 1), // January 1st of start year
-            $lte: new Date(endYear, 11, 31) // December 31st of end year
+                $regex: `.*/(${yearsRange.join('|')})$`
             }
-        });
-    
-        const items = await itemModel.find({
-            date: {
-            $gte: new Date(startYear, 0, 1),
-            $lte: new Date(endYear, 11, 31)
-            }
-        })
-        .skip(startIndex)
-        .limit(limit);
-    
+        };
+        // console.log('Date filter:', dateFilter);
+        // Get total count of documents matching the date filter
+        const total = await itemModel.countDocuments(dateFilter);
+        // Find items with pagination
+        // Find items with pagination and convert string dates to Date objects for sorting
+        const items = await itemModel.find(dateFilter)
+            .skip(startIndex)
+            .limit(limit)
         res.json({
             total,
-            page,
+            limit,
+            currentPage: page,
             totalPages: Math.ceil(total / limit),
             items
         });
-        } catch (error) {
+    } catch (error) {
         console.log('Error:', error.message);
-        res.status(500).json({ message: error.message });
-        }
-    });
-
+        res.status(500).json({ 
+            message: error.message,
+            query: req.query,
+            filter: dateFilter
+        });
+    }
+});
 exports.itemFilteredTitle = asyncHandler( async (req, res, next) =>
 {
 
@@ -140,4 +144,43 @@ exports.itemFilteredTitle = asyncHandler( async (req, res, next) =>
         res.status(500).json({ message: error.message });
     }
 
+});
+
+exports.itemFilteredDenom = asyncHandler(async (req, res, next) => {
+    console.log('Received query:', req.query);
+    console.log("collection name:", itemModel.collection.name);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const start = req.query.start || "1";
+    const end = req.query.end || "10";
+    const startIndex = (page - 1) * limit;
+    try {
+        
+        const denomFilter = {
+            denom: {
+                $gte: parseInt(start),
+                $lte: parseInt(end)
+            }
+        };
+        // Get total count of documents matching the date filter
+        const total = await itemModel.countDocuments(denomFilter);
+
+        const items = await itemModel.find(denomFilter)
+            .skip(startIndex)
+            .limit(limit)
+        res.json({
+            total,
+            limit,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            items
+        });
+    } catch (error) {
+        console.log('Error:', error.message);
+        res.status(500).json({ 
+            message: error.message,
+            query: req.query,
+            filter: denomFilter
+        });
+    }
 });

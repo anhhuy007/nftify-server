@@ -14,6 +14,7 @@ itemRouter.get('/', function(req, res){
 itemRouter.get('/list',itemController.getAllItems);
 itemRouter.get('/timeFilter',itemController.itemFilteredDate);
 itemRouter.get('/titleFilter',itemController.itemFilteredTitle);
+itemRouter.get('/denomFilter',itemController.itemFilteredDenom);
 itemRouter.get('/:id',itemController.getByID);
 
 

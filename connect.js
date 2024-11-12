@@ -2,6 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const itemModel = require('./models/items.model'); 
 const userModel = require('./models/users.model');
+const collectionModel = require('./models/collections.model');
 
 const fs = require('fs');
 const helperFunc = require ('./helperFunc');
@@ -28,6 +29,7 @@ async function connectDB() {
 // data from file
 const dataItems = JSON.parse(fs.readFileSync('testing_data/stamps.json', 'utf8'));
 const dataUsers = JSON.parse(fs.readFileSync('datajson/Users.json', 'utf8'));
+const dataCollections = JSON.parse(fs.readFileSync('datajson/Collections.json', 'utf8'));
 
 async function saveData(data) {
     collection1 = itemModel.collection.name;
@@ -92,13 +94,38 @@ async function saveDataUsers(data) {
 async function closeConnectDB() {
     console.log('Closing connection to MongoDB');
     await mongoose.connection.close();
-
-
 }
 
-// // comment this to run server
+async function saveDataCollection(data) {
+    collection1 = collectionModel.collection.name;
+    console.log(`Attempting to save ${data.length} items to ${database_name}.${collection1} collection`);
+    await collectionModel.collection.dropIndexes();
+    await collectionModel.syncIndexes();
+    for (const collection of data) {
+        try {
+            // Check if document with this id already exists
+            const existingCollection = await collectionModel.findOne({ id: parseInt(collection.id) });
+
+            if (existingCollection) {
+                console.log(`Skipping user with id: ${collection.id} - already exists`);
+                continue; // Skip to next item
+            }
+            // Convert the date format to match your manual entry
+            const modifiedCollection = {
+                ...collection,
+                // id: item.id,
+            };
+            const newCollection = new collectionModel(modifiedCollection);
+            await newCollection.save();
+            console.log(`Saved with id: ${collection.id} to ${database_name}.${collection1}`);
+        } catch (error) {
+            console.error(`Failed to save with id: ${collection.id}`, error);
+        }
+    }
+}
+// comment this to run server
 // connectDB()
-// saveDataUsers(dataUsers)
+// saveDataCollection(dataCollections)
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {
