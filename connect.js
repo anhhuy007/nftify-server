@@ -4,6 +4,7 @@ const itemModel = require('./models/items.model');
 const userModel = require('./models/users.model');
 const collectionModel = require('./models/collections.model');
 const itemCollectionModel = require('./models/itemCollection.model');
+const accountModel = require('./models/accounts.model');
 
 const fs = require('fs');
 const helperFunc = require ('./helperFunc');
@@ -33,6 +34,7 @@ const dataItems = JSON.parse(fs.readFileSync('testing_data/stamps.json', 'utf8')
 const dataUsers = JSON.parse(fs.readFileSync('datajson/Users.json', 'utf8'));
 const dataCollections = JSON.parse(fs.readFileSync('datajson/Collections.json', 'utf8'));
 const dataItemCollections = JSON.parse(fs.readFileSync('datajson/ItemCollection.json', 'utf8'));
+const dataAccounts = JSON.parse(fs.readFileSync('datajson/Account.json', 'utf8'));
 
 async function saveData(data) {
     collection1 = itemModel.collection.name;
@@ -157,9 +159,38 @@ async function saveDataItemCollection(data) {
         }
     }
 }
+async function saveDataAccount(data) {
+    collection1 = accountModel.collection.name;
+    console.log(`Attempting to save ${data.length} items to ${database_name}.${collection1} collection`);
+    await accountModel.collection.dropIndexes();
+    await accountModel.syncIndexes();
+    for (const account of data) {
+        try {
+            // Check if document with this id already exists
+            const existingAccount = await accountModel.findOne({
+                id: account.id,
+             });
+
+            if (existingAccount) {
+                console.log(`Skipping account with id: ${account.id} - already exists`);
+                continue; // Skip to next item
+            }
+            // Convert the date format to match your manual entry
+            const modifiedaccount = {
+                ...account,
+                createdAt: helperFunc.randomDates('01/10/2024', '01/12/2024'),
+            };
+            const newaccount = new accountModel(modifiedaccount);
+            await newaccount.save();
+            console.log(`Saved with id: ${account.id} to ${database_name}.${collection1}`);
+        } catch (error) {
+            console.error(`Failed to save with id: ${account.id}`, error);
+        }
+    }
+}
 // comment this to run server
 // connectDB()
-// saveDataItemCollection(dataItemCollections)
+// saveDataAccount(dataAccounts)
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {
