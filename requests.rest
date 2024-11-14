@@ -34,3 +34,40 @@ GET http://localhost:3000/users/1/collection/favourite
 GET http://localhost:3000/users/2/collection/all
 
 
+###------------------ authentication routes
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "userName": "user1",
+    "password": "password1"
+}
+###
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "userName": "user7",
+    "password": "password6",
+    "email":  "user6@gmail.com"
+}
+###
+GET http://localhost:3000/auth/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkpvaG4iLCJpYXQiOjE3MzE1ODM5NzUsImV4cCI6MTczMTU4Mzk5NX0.PssrQxw1r5dA4j_SUw7dAyw7iqcNThPHiQdL88QSLi8
+###
+POST http://localhost:3000/auth/token
+Content-Type: application/json
+
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkpvaG4iLCJwYXNzd29yZCI6MTIzLCJpYXQiOjE3MzE1ODM5Mzd9.47VqCAjD_J4VmATA3eZAOhfZ5KQKctqgsQEHsI361a4"
+}
+
+###
+DELETE http://localhost:3000/auth/logout
+Content-Type: application/json
+
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkpvaG4iLCJwYXNzd29yZCI6MTIzLCJpYXQiOjE3MzE1ODM5Mzd9.47VqCAjD_J4VmATA3eZAOhfZ5KQKctqgsQEHsI361a4"
+}
+
+

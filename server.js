@@ -5,7 +5,7 @@ const connect = require("./connect");
 //routes
 const itemRoute = require("./routes/items.route");
 const userRoute = require("./routes/users.route");
-
+const registerRoute = require("./routes/register.route");
 
 const app = express();
 
@@ -16,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 //routes
 app.use("/items", itemRoute);
 app.use("/users", userRoute);
+app.use("/auth", registerRoute);
+
 
 app.get('/', function(req, res){
 	res.send("<h2>This is my first app</h2>");

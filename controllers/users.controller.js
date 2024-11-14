@@ -34,15 +34,15 @@ exports.getByID = asyncHandler( async (req, res, next) =>
         console.log('Extracted USERS:', userId);
         if (!userId) {
             console.error('User ID not provided');
-            return helperFunc.respondPOSTItem(res, 400, null, 'User ID not provided');
+            return helperFunc.sendResponse(res, 400, null, 'User ID not provided');
         }
         // Check if document with this id already exists
         const existingItem = await userModel.findOne({ id: parseInt(userId) });
         if (!existingItem) {
             console.log(`item with id: ${ItemId} - does not exist`);
-            return helperFunc.respondPOSTItem(res, 404, null, `User with id: ${userId} does not exist`);
+            return helperFunc.sendResponse(res, 404, null, `User with id: ${userId} does not exist`);
         }
-        helperFunc.respondPOSTItem(res, 200, existingItem, null);
+        helperFunc.sendResponse(res, 200, existingItem, null);
     });
 
 exports.getAllItems = asyncHandler( async (req, res, next) =>

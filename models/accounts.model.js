@@ -16,7 +16,8 @@ const accountSchema = new mongoose.Schema({
     },
     username: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     password: {
       type: String,
@@ -24,7 +25,6 @@ const accountSchema = new mongoose.Schema({
     },
     email: {
       type: String,
-      unique: true
     },
     createdAt: {
       type: String,
@@ -34,5 +34,5 @@ const accountSchema = new mongoose.Schema({
     versionKey: false, 
     collection: 'Accounts'
 });
-const Account = model('Accounts', accountSchema);
+const Account = model('Accounts',accountSchema);
 module.exports = Account;

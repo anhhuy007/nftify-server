@@ -12,7 +12,7 @@ exports.createItem = asyncHandler( async (req, res, next) =>
     if (existingItem) {
         console.log(`item with id: ${item.id} - already exists`);
 
-        return helperFunc.respondPOSTItem(res, 409, `item with id: ${item.id} - already exists`, null);
+        return helperFunc.sendResponse(res, 409, `item with id: ${item.id} - already exists`, null);
     }
     // Convert the date format to match your manual entry
     try {
@@ -24,10 +24,10 @@ exports.createItem = asyncHandler( async (req, res, next) =>
         await newItem.save();
         
         console.log(`Saved item with id: ${item.id}`);
-        helperFunc.respondPOSTItem(res, 201, newItem, null);
+        helperFunc.sendResponse(res, 201, newItem, null);
     } catch (error) {
         console.error(`Failed to save item with id: ${item.id}`, error);
-        helperFunc.respondPOSTItem(res, 500, `Failed to save item with id: ${item.id}, ${error.message}`);
+        helperFunc.sendResponse(res, 500, `Failed to save item with id: ${item.id}, ${error.message}`);
     }
 });
 exports.getByID = asyncHandler( async (req, res, next) => 
@@ -39,15 +39,15 @@ exports.getByID = asyncHandler( async (req, res, next) =>
     const ItemId = req.params.id;
     if (!ItemId) {
         console.error('Item ID not provided');
-        return helperFunc.respondPOSTItem(res, 400, null, 'Item ID not provided');
+        return helperFunc.sendResponse(res, 400, null, 'Item ID not provided');
     }
     // Check if document with this id already exists
     const existingItem = await itemModel.findOne({ id: parseInt(ItemId) });
     if (!existingItem) {
         console.log(`item with id: ${ItemId} - does not exist`);
-        return helperFunc.respondPOSTItem(res, 404, null, `Item with id: ${ItemId} does not exist`);
+        return helperFunc.sendResponse(res, 404, null, `Item with id: ${ItemId} does not exist`);
     }
-    helperFunc.respondPOSTItem(res, 200, existingItem, null);
+    helperFunc.sendResponse(res, 200, existingItem, null);
 });
 
 exports.getAllItems = asyncHandler( async (req, res, next) =>

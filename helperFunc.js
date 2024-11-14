@@ -23,15 +23,26 @@ function randomDates(start, end) {
     return `${day}/${month}/${year}`;
 }
 // funtion that return respond based on error or success
-function respondPOSTItem(res, status, data, errorMessage) {
+function sendResponse(res, status, data, errorMessage) {
     res.send(jsend(status, data, errorMessage));
 } 
-
-
 // console.log(randomDates('01/01/1900', '01/01/2000'))
 // console.log(randomDates('01/01/1900', '01/01/2000'))
+
+function returnCurrentDate() {
+    date = new Date();
+    // Format the date as dd/mm/yyyy
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+
+}
+
+// console.log(returnDate());
 
 module.exports = {
     randomDates,
-    respondPOSTItem
+    sendResponse,
+    returnCurrentDate
 }

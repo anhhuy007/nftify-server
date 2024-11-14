@@ -7,7 +7,9 @@ const itemCollectionModel = require('./models/itemCollection.model');
 const accountModel = require('./models/accounts.model');
 
 const fs = require('fs');
+const bcrypt = require('bcrypt');
 const helperFunc = require ('./helperFunc');
+const { brotliCompress } = require('zlib');
 
 
 
@@ -35,6 +37,7 @@ const dataUsers = JSON.parse(fs.readFileSync('datajson/Users.json', 'utf8'));
 const dataCollections = JSON.parse(fs.readFileSync('datajson/Collections.json', 'utf8'));
 const dataItemCollections = JSON.parse(fs.readFileSync('datajson/ItemCollection.json', 'utf8'));
 const dataAccounts = JSON.parse(fs.readFileSync('datajson/Account.json', 'utf8'));
+
 
 async function saveData(data) {
     collection1 = itemModel.collection.name;
@@ -178,6 +181,7 @@ async function saveDataAccount(data) {
             // Convert the date format to match your manual entry
             const modifiedaccount = {
                 ...account,
+                password: await bcrypt.hash(account.password, 10),
                 createdAt: helperFunc.randomDates('01/10/2024', '01/12/2024'),
             };
             const newaccount = new accountModel(modifiedaccount);
@@ -188,7 +192,7 @@ async function saveDataAccount(data) {
         }
     }
 }
-// comment this to run server
+// // comment this to run server
 // connectDB()
 // saveDataAccount(dataAccounts)
 // .then(() => console.log('Data save process completed.'))
