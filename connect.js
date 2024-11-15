@@ -119,6 +119,7 @@ async function saveDataCollection(data) {
             const modifiedCollection = {
                 ...collection,
                 // id: item.id,
+                
             };
             const newCollection = new collectionModel(modifiedCollection);
             await newCollection.save();
@@ -190,7 +191,7 @@ async function saveDataAccount(data) {
 }
 // comment this to run server
 // connectDB()
-// saveDataAccount(dataAccounts)
+// saveDataCollection(dataCollections)
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {

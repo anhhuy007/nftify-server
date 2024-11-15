@@ -1,11 +1,11 @@
 [
     {
       "id": 1,
-      "name": "all",
+      "name": "selling",
       "description": "all items created or collected by the user",
       "ownerId": 1,
       "createdAt": "12/12/2024",
-      "type": "all"
+      "type": "selling"
     },
     {
       "id": 2,
@@ -21,15 +21,15 @@
       "description": "A collection of digital and traditional artworks by different artists.",
       "ownerId": 1,
       "createdAt": "12/12/2024",
-      "type": "customed"
+      "type": "displaying"
     },
     {
         "id": 4,    
-        "name": "all",
+        "name": "selling",
         "description": "all items created or collected by the user",
         "ownerId": 2,
         "createdAt": "12/12/2024",
-        "type": "all"
+        "type": "selling"
     },
     {
         "id": 5,
@@ -45,7 +45,7 @@
         "description": "A collection of films",
         "ownerId": 2,
         "createdAt": "12/12/2024",
-        "type": "customed"
+        "type": "displaying"
     }
   ]
   

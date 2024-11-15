@@ -50,6 +50,8 @@ exports.getFavouriteCollection = asyncHandler(async (req, res) => {
     const itemCollection = await getItemCollection([collectionId]);
     helperFunc.respondPOSTItem(res, 200, itemCollection, null);
 });
+
+
 exports.listCollection = asyncHandler(async (req, res) => {
     const allCollections = await collectionModel.find({
         ownerId: req.params.id

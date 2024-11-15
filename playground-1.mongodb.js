@@ -13,6 +13,8 @@
 use('NFTify_1');
 db.Collections.deleteMany({});
 
+
+
 db.Items.deleteMany({});
 
 db.Test.deleteMany({});

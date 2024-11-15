@@ -32,5 +32,6 @@ GET http://localhost:3000/users/1/collection/list
 GET http://localhost:3000/users/1/collection/favourite
 ###
 GET http://localhost:3000/users/2/collection/all
+###
 
-
+GET http://localhost:3000/sellers/
