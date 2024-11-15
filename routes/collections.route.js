@@ -2,6 +2,7 @@
 const express = require('express');
 const collectionRouter = express.Router({ mergeParams: true });
 const collectionController = require('../controllers/collections.controller');
+const registerController = require('../controllers/register.controller');
 
 collectionRouter.get('/',(req,res, next) => {
     res.send(`collections routes`); 
@@ -10,7 +11,10 @@ collectionRouter.get('/',(req,res, next) => {
 
 collectionRouter.get('/list',collectionController.listCollection);
 collectionRouter.get('/all',collectionController.listAllCollection);
-collectionRouter.get('/favourite',collectionController.getFavouriteCollection);
+collectionRouter.get('/favourite',
+    registerController.authenticateToken, 
+    collectionController.getFavouriteCollection,
+);
 collectionRouter.get('/:collectionId',collectionController.getCollectionById);
 
 

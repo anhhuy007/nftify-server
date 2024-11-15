@@ -53,7 +53,7 @@ const itemSchema = new mongoose.Schema({
   },
   {
     versionKey: false,
-    collection: 'Items'
+    collection: 'Stamps'
 });
-const Item = model('Items', itemSchema);
+const Item = model('Stamps', itemSchema);
 module.exports = Item;

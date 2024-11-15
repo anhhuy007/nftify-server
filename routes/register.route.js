@@ -6,7 +6,7 @@ registerRouter = express.Router();
 
 registerRouter.post("/login", registerController.login);
 registerRouter.post("/register", registerController.register);
-registerRouter.get("/posts", 
+registerRouter.get("/posts",
     registerController.authenticateToken, 
     registerController.posts
 );

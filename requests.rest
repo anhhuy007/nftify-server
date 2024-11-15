@@ -28,8 +28,10 @@ GET http://localhost:3000/users/2/collection/5
 
 ###
 GET http://localhost:3000/users/1/collection/list
-###
+###--------------------------------------------------------------
 GET http://localhost:3000/users/1/collection/favourite
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InVzZXIxIiwiaWF0IjoxNzMxNjY0NzcyLCJleHAiOjE3MzE2NjQ3OTJ9.0tweCBRRf-vA0o0SrTR7_TERvNbz8SZeYKKBDbIoEyA
+
 ###
 GET http://localhost:3000/users/2/collection/all
 
@@ -47,19 +49,19 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "userName": "user7",
-    "password": "password6",
+    "userName": "user10",
+    "password": "password10",
     "email":  "user6@gmail.com"
 }
 ###
 GET http://localhost:3000/auth/posts
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkpvaG4iLCJpYXQiOjE3MzE1ODM5NzUsImV4cCI6MTczMTU4Mzk5NX0.PssrQxw1r5dA4j_SUw7dAyw7iqcNThPHiQdL88QSLi8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InVzZXIxMCIsImlhdCI6MTczMTY2Mzc4NiwiZXhwIjoxNzMxNjYzODA2fQ.ydHl2ifOWjYjL8PQACsQ9jadTkSYyMZNYamAWcBLtYI
 ###
 POST http://localhost:3000/auth/token
 Content-Type: application/json
 
 {
-    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkpvaG4iLCJwYXNzd29yZCI6MTIzLCJpYXQiOjE3MzE1ODM5Mzd9.47VqCAjD_J4VmATA3eZAOhfZ5KQKctqgsQEHsI361a4"
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InVzZXIxIiwicGFzc3dvcmQiOiJwYXNzd29yZDEiLCJpYXQiOjE3MzE2NjQ3NTJ9.QPIAZysXU42LqHTw9XVZUujo-S7P3EqRwJ3ZPEbRdyQ"
 }
 
 ###

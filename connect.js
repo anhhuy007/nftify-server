@@ -194,7 +194,7 @@ async function saveDataAccount(data) {
 }
 // // comment this to run server
 // connectDB()
-// saveDataAccount(dataAccounts)
+// saveData(dataItems)
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {

@@ -11,11 +11,10 @@ exports.login = asyncHandler(async (req, res, next) => {
         userName: userName,
         password: password,
     };
-    // const accessToken = generateAccessToken(user);
-    // const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-    // refreshTokens.push(refreshToken);
+    const accessToken = generateAccessToken(user);
+    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+    refreshTokens.push(refreshToken);
 
-    // res.json({ accessToken: accessToken, refreshToken: refreshToken });
     const account = await AccountsModel.findOne({
         username: user.userName,
     });
@@ -24,7 +23,11 @@ exports.login = asyncHandler(async (req, res, next) => {
     }
     try {
         if (await bcrypt.compare(user.password, account.password)) {
-            return helperFunc.sendResponse(res, 200, "Login success");
+            return res.json({
+                message: "Login successful",
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+            });
         } else {
             return helperFunc.sendResponse(res, 401, "Not allow login");
         }
@@ -48,7 +51,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     }
     // choose new Id for new account that is next to the last account
     const lastAccount = await AccountsModel.findOne().sort({ id: -1 }).exec();
-        // Start from 1 if no accounts exist
+    // Start from 1 if no accounts exist
     const newId = lastAccount ? parseInt(lastAccount.id) + 1 : 1;
     console.log(newId);
 
@@ -91,7 +94,9 @@ exports.authenticateToken = asyncHandler(async (req, res, next) => {
     });
 });
 exports.posts = asyncHandler(async (req, res, next) => {
-    res.json(posts.filter((post) => post.userName === req.user.userName));
+    res.json({
+        messages : "this is posts"
+    })
 });
 
 function generateAccessToken(user) {
@@ -110,9 +115,7 @@ exports.token = asyncHandler(async (req, res, next) => {
         return res.sendStatus(403);
     }
 
-    jwt.verify(
-        newReFreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
+    jwt.verify(newReFreshToken,process.env.REFRESH_TOKEN_SECRET,
         (err, user) => {
             if (err) {
                 console.log(err);
