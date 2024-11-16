@@ -1,9 +1,9 @@
 GET  http://localhost:3000/
 
 ###------------------ items routes
-GET  http://localhost:3000/items
+GET  http://localhost:3000/item
 ###
-GET  http://localhost:3000/items/list?page=1&limit=10
+GET  http://localhost:3000/item/list?page=1&limit=10
 ###
 GET  http://localhost:3000/items/223851
 ###
