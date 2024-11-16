@@ -13,10 +13,7 @@ itemRouter.get("/list", itemController.getAllItems);
 itemRouter.get("/timeFilter", itemController.itemFilteredDate);
 itemRouter.get("/titleFilter", itemController.itemFilteredTitle);
 itemRouter.get("/denomFilter", itemController.itemFilteredDenom);
+itemRouter.get("/topItems", itemController.getTopItems);
 itemRouter.get("/:id", itemController.getByID);
-
-itemRouter.get("/123", function (req, res) {
-  res.send("this is items route 123");
-});
 
 module.exports = itemRouter;

@@ -1,10 +1,11 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const mongoose = require("mongoose");
 const itemModel = require("../models/item.schema");
 const userModel = require("../models/user.schema");
 const collectionModel = require("../models/collection.schema");
 const itemCollectionModel = require("../models/itemCollection.schema");
 const accountModel = require("../models/account.schema");
+const itemInsightModel = require("../models/itemInsight.schema");
 
 const fs = require("fs");
 const helperFunc = require("./helperFunc");
@@ -12,6 +13,7 @@ const helperFunc = require("./helperFunc");
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`;
 const database_name = "NFTify_1";
 let collection1 = "collectionName";
+
 async function connectDB() {
   try {
     await mongoose.connect(connect_url, {
@@ -19,66 +21,118 @@ async function connectDB() {
     });
     console.log("Connected to MongoDB - Database: ", database_name);
 
-    // Verify the connection and collection
-    const collections = await mongoose.connection.db
-      .listCollections()
-      .toArray();
-    console.log(
-      "Available collections:",
-      collections.map((c) => c.name)
-    );
+    mongoose.connection.once("open", async () => {
+      // Verify the connection and collection
+      const collections = await mongoose.connection.db
+        .listCollections()
+        .toArray();
+      console.log(
+        "Available collections:",
+        collections.map((c) => c.name)
+      );
+    });
   } catch (err) {
     console.error("MongoDB connection error:", err);
     throw err;
   }
 }
-// data from file
-const dataItems = JSON.parse(
-  fs.readFileSync("testing_data/stamps.json", "utf8")
-);
-const dataUsers = JSON.parse(fs.readFileSync("datajson/Users.json", "utf8"));
-const dataCollections = JSON.parse(
-  fs.readFileSync("datajson/Collections.json", "utf8")
-);
-const dataItemCollections = JSON.parse(
-  fs.readFileSync("datajson/ItemCollection.json", "utf8")
-);
-const dataAccounts = JSON.parse(
-  fs.readFileSync("datajson/Account.json", "utf8")
-);
 
-async function saveData(data) {
-  collection1 = itemModel.collection.name;
-  console.log(
-    `Attempting to save ${data.length} items to ${database_name}.${collection1} collection`
+// get documents id from database and save to file
+async function createTableDocumentsIdFile(tableName, outputFileName) {
+  const stamps = await tableName.find({});
+  const stampIds = stamps.map((stamp) => stamp.id);
+  fs.writeFileSync(
+    `../testing_data/${outputFileName}.json`,
+    JSON.stringify(stampIds)
   );
+}
+
+// get documents id from database and return array
+async function getDocumentsId(objectModel) {
+  const stamps = await objectModel.find({});
+  const stampIds = stamps.map((stamp) => stamp.id);
+
+  return stampIds;
+}
+
+// data from file
+// const dataItems = JSON.parse(
+//   fs.readFileSync("../testing_data/stamps.json", "utf8")
+// );
+// const dataUsers = JSON.parse(fs.readFileSync("datajson/Users.json", "utf8"));
+// const dataCollections = JSON.parse(
+//   fs.readFileSync("datajson/Collections.json", "utf8")
+// );
+// const dataItemCollections = JSON.parse(
+//   fs.readFileSync("datajson/ItemCollection.json", "utf8")
+// );
+// const dataAccounts = JSON.parse(
+//   fs.readFileSync("datajson/Account.json", "utf8")
+// );
+
+async function saveStampData(data) {
+  items = itemModel.collection.name;
+  console.log(
+    `Attempting to save ${data.length} items to ${database_name}.${items} collection`
+  );
+
   await itemModel.collection.dropIndexes();
   await itemModel.syncIndexes();
+
   for (const item of data) {
     try {
-      // Check if document with this id already exists
-      const existingItem = await itemModel.findOne({ id: parseInt(item.id) });
-
+      // check existing item by name
+      const existingItem = await itemModel.findOne({ title: item.title });
       if (existingItem) {
-        console.log(`Skipping item with id: ${item.id} - already exists`);
-        continue; // Skip to next item
+        console.log(`Skipping item with title: ${item.title} - already exists`);
+        continue;
       }
-      // Convert the date format to match your manual entry
+
+      const creatorId = await getDocumentsId(userModel);
+
       const modifiedItem = {
         ...item,
-        id: item.id, // Convert id to number
-        creatorId: Math.floor(Math.random() * 3) + 1,
+        creatorId: creatorId[Math.floor(Math.random() * creatorId.length)],
         denom: ((Math.round(Math.random() * 10000) + 1) / 100).toFixed(2),
         date: helperFunc.randomDates("01/01/1900", "01/01/2000"),
-        createdAt: helperFunc.randomDates("01/01/2022", "01/12/2024"),
       };
+
       const newItem = new itemModel(modifiedItem);
       await newItem.save();
       console.log(
-        `Saved with id: ${item.id} to ${database_name}.${collection1}`
+        `Saved with title: ${item.title} to ${database_name}.${items}`
       );
     } catch (error) {
-      console.error(`Failed to save with id: ${item.id}`, error);
+      console.error(`Failed to save with title: ${item.title}`, error);
+    }
+  }
+}
+
+async function saveItemInsightData() {
+  items = itemInsightModel.collection.name;
+  console.log(
+    `Attempting to save items to ${database_name}.${items} collection`
+  );
+
+  await itemInsightModel.collection.dropIndexes();
+  await itemInsightModel.syncIndexes();
+
+  const stampIds = await getDocumentsId(itemModel);
+  const status = ["verified", "pending", "rejected"];
+  for (const stampId of stampIds) {
+    try {
+      const modifiedItemInsight = {
+        itemId: stampId,
+        verifyStatus: status[Math.floor(Math.random() * status.length)],
+        favoriteCount: Math.floor(Math.random() * 1000) + 1,
+        viewCount: Math.floor(Math.random() * 1000) + 1,
+      };
+
+      const newItemInsight = new itemInsightModel(modifiedItemInsight);
+      await newItemInsight.save();
+      console.log(`Saved with itemId: ${stampId} to ${database_name}.${items}`);
+    } catch (error) {
+      console.error(`Failed to save with itemId: ${stampId}`, error);
     }
   }
 }
@@ -190,6 +244,7 @@ async function saveDataItemCollection(data) {
     }
   }
 }
+
 async function saveDataAccount(data) {
   collection1 = accountModel.collection.name;
   console.log(
@@ -224,8 +279,8 @@ async function saveDataAccount(data) {
   }
 }
 // comment this to run server
-// connectDB()
-// saveDataCollection(dataCollections)
+connectDB();
+// saveItemInsightData()
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {
@@ -234,6 +289,6 @@ async function saveDataAccount(data) {
 
 module.exports = {
   connectDB,
-  saveData,
+  // saveData,
   closeConnectDB,
 };

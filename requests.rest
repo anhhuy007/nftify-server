@@ -1,37 +1,40 @@
 GET  http://localhost:3000/
 
-###------------------ items routes
+###------------------ item routes
 GET  http://localhost:3000/item
 ###
 GET  http://localhost:3000/item/list?page=1&limit=10
 ###
-GET  http://localhost:3000/items/223851
+GET  http://localhost:3000/item/223851
 ###
-GET http://localhost:3000/items/timeFilter?start=1995&end=2000&page=1&limit=5
+GET http://localhost:3000/item/timeFilter?start=1995&end=2000&page=1&limit=5
 ###
-GET http://localhost:3000/items/titleFilter?title=Garden
+GET http://localhost:3000/item/titleFilter?title=Garden
 ###
-GET http://localhost:3000/items/denomFilter?start=40&end=50
+GET http://localhost:3000/item/denomFilter?start=40&end=50
 
-###------------------ users routes
-GET http://localhost:3000/users
+###------------------ user routes
+GET http://localhost:3000/user
 ###
-GET http://localhost:3000/users/2
+GET http://localhost:3000/user/2
 ###
-GET http://localhost:3000/users/3/lists
+GET http://localhost:3000/user/3/lists
 
 
 ###------------------ collection routes
-GET http://localhost:3000/users/1/collection
+GET http://localhost:3000/user/1/collection
 ### chỗ này hơi cấn ???
-GET http://localhost:3000/users/2/collection/5
+GET http://localhost:3000/user/2/collection/5
 
 ###
-GET http://localhost:3000/users/1/collection/list
+GET http://localhost:3000/user/1/collection/list
 ###
-GET http://localhost:3000/users/1/collection/favourite
+GET http://localhost:3000/user/1/collection/favourite
 ###
-GET http://localhost:3000/users/2/collection/all
+GET http://localhost:3000/user/2/collection/all
 ###
 
-GET http://localhost:3000/sellers/
+GET http://localhost:3000/seller/
+###
+
+GET http://localhost:3000/item/topItems

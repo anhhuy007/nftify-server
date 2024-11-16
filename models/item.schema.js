@@ -5,7 +5,7 @@
     // immutable
     Table Stamp {
       id string [pk]
-      creator string
+      creatorId string
       title varchar(50)
       issuedBy varchar(100)
       function varchar(50)
@@ -22,7 +22,7 @@ const { Schema, model } = mongoose;
 
 const StampSchema = new Schema(
   {
-    creator: {
+    creatorId: {
       type: String,
       required: true,
     },
@@ -39,7 +39,7 @@ const StampSchema = new Schema(
       required: true,
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
     denom: {

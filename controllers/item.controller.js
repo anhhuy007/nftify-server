@@ -1,4 +1,5 @@
 const itemModel = require("../models/item.schema");
+const itemInsightModel = require("../models/itemInsight.schema");
 const asyncHandler = require("express-async-handler");
 const helperFunc = require("../utils/helperFunc");
 
@@ -191,6 +192,80 @@ exports.itemFilteredDenom = asyncHandler(async (req, res, next) => {
       message: error.message,
       query: req.query,
       filter: denomFilter,
+    });
+  }
+});
+
+/*
+Stamp value
+{
+  "_id": {
+    "$oid": "6738b2fa4bdf92defcc61bc4"
+  },
+  "creatorId": "673876c24af03358be502d7b",
+  "title": "King Luis I Type of 1870",
+  "issuedBy": "Azores",
+  "function": "postage",
+  "date": "11/08/1941",
+  "denom": "61.26",
+  "color": "bister",
+  "imgUrl": "https://stampdata.com/files/thumbs/lu/300px-Colnect-2859-487-King-Luis-I---Type-of-1870.jpg",
+  "createdAt": {
+    "$date": "2024-11-16T14:58:02.510Z"
+  }
+}
+ */
+
+exports.getTopItems = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  console.log("Top items by view count - limit (max 10): ", limit);
+
+  try {
+    const items = await itemInsightModel.aggregate([
+      { $match: { verifyStatus: "verified" }},
+      { $sort: { viewCount: -1 }},
+      {
+        $addFields: {
+          itemIdObj: { $toObjectId: "$itemId" }
+        }
+      },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "Stamp",
+          localField: "itemIdObj",
+          foreignField: "_id",
+          as: "stampDetails",
+        },
+      },
+      { $unwind: "$stampDetails" },
+      {
+        $project: {
+          _id: 0,
+          itemId: 1, 
+          viewCount: 1,
+          title: "$stampDetails.title",
+          issuedBy: "$stampDetails.issuedBy",
+          function: "$stampDetails.function",
+          date: "$stampDetails.date",
+          denom: "$stampDetails.denom",
+          color: "$stampDetails.color",
+          imgUrl: "$stampDetails.imgUrl",
+        },
+      },
+    ]);
+
+    res.json({
+      page,
+      limit,
+      data: items,
+    });
+  } catch (error) {
+    console.log("Error:", error.message);
+    res.status(500).json({
+      message: error.message,
     });
   }
 });
