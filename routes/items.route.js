@@ -18,10 +18,6 @@ itemRouter.get('/denomFilter',itemController.itemFilteredDenom);
 itemRouter.get('/:id',itemController.getByID);
 
 
-
-
-
-
 itemRouter.get('/123', function(req, res){
     res.send("this is items route 123");
 })

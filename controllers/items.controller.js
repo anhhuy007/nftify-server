@@ -61,11 +61,11 @@ exports.getAllItems = asyncHandler( async (req, res, next) =>
     // const item = await ItemModel.find().skip(startIndex).limit(limit);
     const item = await itemModel.aggregate([{ $sample: { size: limit } }]);
     res.json({
-    page,
-    limit,
-    total,
-    total_pages: Math.ceil(total / limit),
-    data: item
+        page,
+        limit,
+        total,
+        total_pages: Math.ceil(total / limit),
+        data: item
     });
 });
 
