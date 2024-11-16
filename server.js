@@ -1,11 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const connect = require("./connect");
+const connect = require("./utils/connect");
 
 //routes
-const itemRoute = require("./routes/items.route");
-const userRoute = require("./routes/users.route");
-const sellerRoute = require("./routes/sellers.route");
+const itemRoute = require("./routes/item.route");
+const userRoute = require("./routes/user.route");
+const sellerRoute = require("./routes/seller.route");
 
 
 const app = express();
@@ -15,9 +15,9 @@ connect.connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //routes
-app.use("/items", itemRoute);
-app.use("/users", userRoute);
-app.use("/sellers", sellerRoute);
+app.use("/item", itemRoute);
+app.use("/user", userRoute);
+app.use("/seller", sellerRoute);
 
 
 app.get('/', function(req, res){

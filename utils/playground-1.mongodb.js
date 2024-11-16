@@ -10,10 +10,8 @@
 // https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
 
 // Select the database to use.
-use('NFTify_1');
+use("NFTify_1");
 db.Collections.deleteMany({});
-
-
 
 db.Items.deleteMany({});
 

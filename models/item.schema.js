@@ -61,5 +61,5 @@ const StampSchema = new Schema(
     collection: "Stamp",
   }
 );
-const Stamp = model("Stamp", StampSchema);
-module.exports = Stamp;
+const Item = model("Stamp", StampSchema);
+module.exports = Item;
