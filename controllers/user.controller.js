@@ -1,5 +1,5 @@
 const userModel = require("../models/user.schema");
-const itemModel = require("../models/item.schema");
+const itemModel = require("../models/stamp.schema");
 const asyncHandler = require("express-async-handler");
 const helperFunc = require("../utils/helperFunc");
 

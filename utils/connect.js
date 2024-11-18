@@ -1,6 +1,6 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const mongoose = require("mongoose");
-const itemModel = require("../models/item.schema");
+const itemModel = require("../models/stamp.schema");
 const userModel = require("../models/user.schema");
 const collectionModel = require("../models/collection.schema");
 const itemCollectionModel = require("../models/itemCollection.schema");
@@ -12,6 +12,8 @@ const helperFunc = require("./helperFunc");
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`;
 const database_name = "NFTify_1";
 let collection1 = "collectionName";
+
+
 async function connectDB() {
   try {
     await mongoose.connect(connect_url, {
@@ -33,19 +35,31 @@ async function connectDB() {
   }
 }
 // data from file
-const dataItems = JSON.parse(
-  fs.readFileSync("testing_data/stamps.json", "utf8")
-);
-const dataUsers = JSON.parse(fs.readFileSync("datajson/Users.json", "utf8"));
-const dataCollections = JSON.parse(
-  fs.readFileSync("datajson/Collections.json", "utf8")
-);
-const dataItemCollections = JSON.parse(
-  fs.readFileSync("datajson/ItemCollection.json", "utf8")
-);
-const dataAccounts = JSON.parse(
-  fs.readFileSync("datajson/Account.json", "utf8")
-);
+function readData() {
+  const dataItems = JSON.parse(
+    fs.readFileSync("../datajson/Stamp.json", "utf8")
+  );
+  const dataUsers = JSON.parse(
+    fs.readFileSync("../datajson/Users.json", "utf8")
+  );
+  const dataCollections = JSON.parse(
+    fs.readFileSync("../datajson/Collections.json", "utf8")
+  );
+  const dataItemCollections = JSON.parse(
+    fs.readFileSync("../datajson/ItemCollection.json", "utf8")
+  );
+  const dataAccounts = JSON.parse(
+    fs.readFileSync("../datajson/Account.json", "utf8")
+  );
+  return {
+    dataItems,
+    dataUsers,
+    dataCollections,
+    dataItemCollections,
+    dataAccounts,
+  };
+}
+
 
 async function saveData(data) {
   collection1 = itemModel.collection.name;
@@ -90,6 +104,7 @@ async function saveDataUsers(data) {
   );
   await userModel.collection.dropIndexes();
   await userModel.syncIndexes();
+  genderArr = ["M", "F"]
   for (const user of data) {
     try {
       // Check if document with this id already exists
@@ -102,6 +117,7 @@ async function saveDataUsers(data) {
       // Convert the date format to match your manual entry
       const modifiedUser = {
         ...user,
+        gender: genderArr[await Math.floor(Math.random() * 2)],
         // id: item.id,
       };
       const newUser = new userModel(modifiedUser);
@@ -225,12 +241,14 @@ async function saveDataAccount(data) {
 }
 // comment this to run server
 // connectDB()
-// saveDataCollection(dataCollections)
+// console.log(readData().dataUsers)
+// saveDataUsers()
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {
 //         //
 //     });
+
 
 module.exports = {
   connectDB,
