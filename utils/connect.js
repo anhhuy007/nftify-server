@@ -295,8 +295,7 @@ async function saveDataAccount(data) {
 }
 // comment this to run server
 // connectDB()
-// console.log(readData().dataUsers)
-// saveDataUsers()
+// saveDataUsers(readData().dataUsers)
 // .then(() => console.log('Data save process completed.'))
 //     .catch((err) => console.error('Error in data saving process:', err))
 //     .finally(() => {

@@ -1,17 +1,17 @@
 GET  http://localhost:3000/
 
 ###------------------ item routes
-GET  http://localhost:3000/item
+GET  http://localhost:3000/stamp
 ###
-GET  http://localhost:3000/item/list?page=1&limit=10
+GET  http://localhost:3000/stamp/list?page=1&limit=10
 ###
-GET  http://localhost:3000/item/223851
+GET  http://localhost:3000/stamp/223851
 ###
-GET http://localhost:3000/item/timeFilter?start=1995&end=2000&page=1&limit=5
+GET http://localhost:3000/stamp/timeFilter?start=1995&end=2000&page=1&limit=5
 ###
-GET http://localhost:3000/item/titleFilter?title=Garden
+GET http://localhost:3000/stamp/titleFilter?title=Garden
 ###
-GET http://localhost:3000/item/denomFilter?start=40&end=50
+GET http://localhost:3000/stamp/denomFilter?start=40&end=50
 
 ###------------------ user routes
 GET http://localhost:3000/user
@@ -37,4 +37,4 @@ GET http://localhost:3000/user/2/collection/all
 GET http://localhost:3000/seller/
 ###
 
-GET http://localhost:3000/item/topItems
+GET http://localhost:3000/stamp/topItems

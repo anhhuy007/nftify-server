@@ -26,6 +26,10 @@ const CollectionSchema = new Schema(
     },
     ownerId: {
       type: String,
+      required: true,
+    },
+    items: {
+      type: [String],
     },
   },
   {

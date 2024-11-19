@@ -1,5 +1,5 @@
 const userModel = require("../models/user.schema");
-const itemModel = require("../models/stamp.schema");
+const stampModel = require("../models/stamp.schema");
 const asyncHandler = require("express-async-handler");
 const helperFunc = require("../utils/helperFunc");
 
@@ -54,7 +54,7 @@ exports.getAllItems = asyncHandler(async (req, res, next) => {
   const startIndex = (page - 1) * limit;
   const total = await userModel.countDocuments();
 
-  const item = await itemModel
+  const item = await stampModel
     .find({ creatorId: creatorId })
     .skip(startIndex)
     .limit(limit);

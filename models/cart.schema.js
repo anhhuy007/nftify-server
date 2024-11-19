@@ -19,16 +19,20 @@ const CartSchema = new Schema(
       required: true,
     },
     totalItem: {
-      type: int,
+      type: Number,
       default: 0,
     },
     totalPrice: {
-      type: float,
+      type: mongoose.Types.Decimal128,
       default: 0,
     },
+    items:{
+      type: [String],
+    }
   },
   {
     versionKey: false,
+    timestamps: {createdAt: false, updatedAt: true},
     collection: "Cart",
   }
 );

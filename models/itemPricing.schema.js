@@ -14,12 +14,11 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const ItemSellPriceSchema = new Schema(
+const ItemPricingSchema = new Schema(
   {
     itemId: {
       type: String,
       required: true,
-      unique: true,
     },
     type: {
       type: String,
@@ -32,8 +31,8 @@ const ItemSellPriceSchema = new Schema(
   {
     versionKey: false,
     timestamps: { createdAt: true, updatedAt: false },
-    collection: "ItemSellPrice",
+    collection: "ItemPricing",
   }
 );
-const ItemSellPrice = model("ItemSellPrice", ItemSellPriceSchema);
+const ItemSellPrice = model("ItemPricing", ItemPricingSchema);
 module.exports = ItemSellPrice;

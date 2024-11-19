@@ -3,7 +3,7 @@ const express = require("express");
 const connect = require("./utils/connect");
 
 //routes
-const itemRoute = require("./routes/item.route");
+const stampRoute = require("./routes/stamp.route");
 const userRoute = require("./routes/user.route");
 const sellerRoute = require("./routes/seller.route");
 
@@ -15,7 +15,7 @@ connect.connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //routes
-app.use("/item", itemRoute);
+app.use("/stamp", stampRoute);
 app.use("/user", userRoute);
 app.use("/seller", sellerRoute);
 

@@ -37,8 +37,8 @@ const UserSchema = new Schema(
     },
   },
   {
-    versionKey: false, // This will prevent the __v field from being added
-    timestamps: true, // This will add the createdAt and updatedAt fields
+    versionKey: false, 
+    timestamps: true, 
     collection: "User",
   }
 );

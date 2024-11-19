@@ -1,4 +1,4 @@
-const itemModel = require("../models/stamp.schema");
+const stampModel = require("../models/stamp.schema");
 const asyncHandler = require("express-async-handler");
 const helperFunc = require("../utils/helperFunc");
 
@@ -6,7 +6,7 @@ exports.createItem = asyncHandler(async (req, res, next) => {
   const item = req.body;
   console.log("Received item:", item);
   // Check if document with this id already exists
-  const existingItem = await itemModel.findOne({ id: parseInt(item.id) });
+  const existingItem = await stampModel.findOne({ id: parseInt(item.id) });
   if (existingItem) {
     console.log(`item with id: ${item.id} - already exists`);
 
@@ -23,7 +23,7 @@ exports.createItem = asyncHandler(async (req, res, next) => {
       ...item,
       id: parseInt(item.id),
     };
-    const newItem = new itemModel(modifiedItem);
+    const newItem = new stampModel(modifiedItem);
     await newItem.save();
 
     console.log(`Saved item with id: ${item.id}`);
@@ -40,7 +40,7 @@ exports.createItem = asyncHandler(async (req, res, next) => {
 exports.getByID = asyncHandler(async (req, res, next) => {
   //show collection
   console.log("Received query get by ID:", req.params.id);
-  console.log("Collection name:", itemModel.collection.name);
+  console.log("Collection name:", stampModel.collection.name);
   // Explicitly extract the ID parameter
   const ItemId = req.params.id;
   if (!ItemId) {
@@ -48,7 +48,7 @@ exports.getByID = asyncHandler(async (req, res, next) => {
     return helperFunc.respondPOSTItem(res, 400, null, "Item ID not provided");
   }
   // Check if document with this id already exists
-  const existingItem = await itemModel.findOne({ id: parseInt(ItemId) });
+  const existingItem = await stampModel.findOne({ id: parseInt(ItemId) });
   if (!existingItem) {
     console.log(`item with id: ${ItemId} - does not exist`);
     return helperFunc.respondPOSTItem(
@@ -66,10 +66,10 @@ exports.getAllItems = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
 
   const startIndex = (page - 1) * limit;
-  const total = await itemModel.countDocuments();
+  const total = await stampModel.countDocuments();
 
-  // const item = await ItemModel.find().skip(startIndex).limit(limit);
-  const item = await itemModel.aggregate([{ $sample: { size: limit } }]);
+  // const item = await stampModel.find().skip(startIndex).limit(limit);
+  const item = await stampModel.aggregate([{ $sample: { size: limit } }]);
   res.json({
     page,
     limit,
@@ -81,7 +81,7 @@ exports.getAllItems = asyncHandler(async (req, res, next) => {
 
 exports.itemFilteredDate = asyncHandler(async (req, res, next) => {
   console.log("Received query:", req.query);
-  console.log("collection name:", itemModel.collection.name);
+  console.log("collection name:", stampModel.collection.name);
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const startYear = req.query.start || "1950";
@@ -102,10 +102,10 @@ exports.itemFilteredDate = asyncHandler(async (req, res, next) => {
     };
     // console.log('Date filter:', dateFilter);
     // Get total count of documents matching the date filter
-    const total = await itemModel.countDocuments(dateFilter);
+    const total = await stampModel.countDocuments(dateFilter);
     // Find items with pagination
     // Find items with pagination and convert string dates to Date objects for sorting
-    const items = await itemModel
+    const items = await stampModel
       .find(dateFilter)
       .skip(startIndex)
       .limit(limit);
@@ -134,11 +134,11 @@ exports.itemFilteredTitle = asyncHandler(async (req, res, next) => {
   // Create case-insensitive regex for partial matching
   const titleRegex = new RegExp(searchTitle, "i");
   try {
-    const total = await itemModel.countDocuments({
+    const total = await stampModel.countDocuments({
       title: { $regex: titleRegex },
     });
 
-    const items = await itemModel
+    const items = await stampModel
       .find({
         title: { $regex: titleRegex },
       })
@@ -158,7 +158,7 @@ exports.itemFilteredTitle = asyncHandler(async (req, res, next) => {
 
 exports.itemFilteredDenom = asyncHandler(async (req, res, next) => {
   console.log("Received query:", req.query);
-  console.log("collection name:", itemModel.collection.name);
+  console.log("collection name:", stampModel.collection.name);
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const start = req.query.start || "1";
@@ -172,9 +172,9 @@ exports.itemFilteredDenom = asyncHandler(async (req, res, next) => {
       },
     };
     // Get total count of documents matching the date filter
-    const total = await itemModel.countDocuments(denomFilter);
+    const total = await stampModel.countDocuments(denomFilter);
 
-    const items = await itemModel
+    const items = await stampModel
       .find(denomFilter)
       .skip(startIndex)
       .limit(limit);
