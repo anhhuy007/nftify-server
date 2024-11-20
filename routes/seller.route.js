@@ -4,7 +4,7 @@ const express = require("express");
 const sellerRouter = express.Router();
 
 //seller routes
-sellerRouter.get("/", sellerController.getAllSeller);
+sellerRouter.get("/", sellerController.getAllSellers);
 
 //jwt
 
