@@ -36,6 +36,10 @@ const TransactionSchema = new Schema(
       type: Number,
       required: true,
     },
+    verify_status: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     versionKey: false,
