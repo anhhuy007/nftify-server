@@ -5,13 +5,15 @@ GET  http://localhost:3000/stamp
 ###
 GET  http://localhost:3000/stamp/list?page=1&limit=10
 ###
-GET  http://localhost:3000/stamp/223851
+GET  http://localhost:3000/stamp/list?creatorId=673876c24af03358be502d7b
 ###
-GET http://localhost:3000/stamp/timeFilter?start=1995&end=2000&page=1&limit=5
+
 ###
-GET http://localhost:3000/stamp/titleFilter?title=Garden
+GET http://localhost:3000/stamp/list?maxDenom=10
 ###
-GET http://localhost:3000/stamp/denomFilter?start=40&end=50
+
+GET http://localhost:3000/stamp/list?title=king
+###
 
 ###------------------ user routes
 GET http://localhost:3000/user

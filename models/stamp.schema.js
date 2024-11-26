@@ -10,7 +10,7 @@
       issuedBy varchar(100)
       function varchar(50)
       date date
-      denom varchar(20)
+      denom float
       color varchar(50)
       imgUrl varchar(255)
       createdAt timestamp
@@ -43,7 +43,7 @@ const StampSchema = new Schema(
       required: true,
     },
     denom: {
-      type: String,
+      type: mongoose.Decimal128,
       required: true,
     },
     color: {

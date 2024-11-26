@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const itemModel = require("../models/stamp.schema");
 const userModel = require("../models/user.schema");
 const collectionModel = require("../models/collection.schema");
-const itemCollectionModel = require("../models/itemCollection.schema");
 const accountModel = require("../models/account.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
 
@@ -59,7 +58,7 @@ async function getDocumentsId(objectModel) {
 // data from file
 function readData() {
   const dataItems = JSON.parse(
-    fs.readFileSync("../datajson/Stamp.json", "utf8")
+    fs.readFileSync("../testing_data/stamps.json", "utf8")
   );
   const dataUsers = JSON.parse(
     fs.readFileSync("../datajson/Users.json", "utf8")
@@ -295,16 +294,12 @@ async function saveDataAccount(data) {
 }
 // comment this to run server
 // connectDB()
-// saveDataUsers(readData().dataUsers)
-// .then(() => console.log('Data save process completed.'))
-//     .catch((err) => console.error('Error in data saving process:', err))
-//     .finally(() => {
-//         //
-//     });
-
+// saveStampData(readData().dataItems).then(() => {
+//   closeConnectDB();
+// });
 
 module.exports = {
   connectDB,
-  // saveData,
+  saveStampData,
   closeConnectDB,
 };
