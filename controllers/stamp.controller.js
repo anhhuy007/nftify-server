@@ -1,28 +1,6 @@
 const StampService = require("../services/stamp.service");
 const asyncHandler = require("express-async-handler");
-
-// Custom error handler
-const handleServiceError = (res, error) => {
-  console.error('Service Error:', error);
-
-  const errorMap = {
-    'not provided': 400,   // Bad Request
-    'already exists': 409, // Conflict
-    'Invalid': 400,        // Bad Request
-    'Missing': 400,        // Bad Request
-    'Validation failed': 422, // Unprocessable Entity
-  };
-
-  const statusCode = Object.entries(errorMap)
-    .find(([key]) => error.message.includes(key))?.[1] || 500;
-
-  res.status(statusCode).json({
-    message: error.message,
-    ...(process.env.NODE_ENV === 'development' && { 
-      stack: error.stack 
-    })
-  });
-};
+const { handleServiceError } = require("../utils/helperFunc");
 
 exports.createStamp = asyncHandler(async (req, res) => {
   try {

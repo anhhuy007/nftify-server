@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const stampModel = require("../models/stamp.schema");
-const itemInsightModel = require("../models/itemInsight.schema");
 
 class StampService {
   // Validate input data
@@ -75,6 +74,10 @@ class StampService {
       }
       throw error;
     }
+  }
+
+  async getItemById(id) {
+    return stampModel.findById(id).select("-__v"); // Exclude version key
   }
 
   async filterStamps(options = {}) {

@@ -6,6 +6,7 @@ const connect = require("./utils/connect");
 const stampRoute = require("./routes/stamp.route");
 const userRoute = require("./routes/user.route");
 const sellerRoute = require("./routes/seller.route");
+const collectionRoute = require("./routes/collection.route");
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/stamp", stampRoute);
 app.use("/user", userRoute);
 app.use("/seller", sellerRoute);
+app.use("/collection", collectionRoute);
 
 
 app.get('/', function(req, res){

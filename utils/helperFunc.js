@@ -26,10 +26,40 @@ function respondPOSTItem(res, status, data, errorMessage) {
   res.send(jsend(status, data, errorMessage));
 }
 
-// console.log(randomDates('01/01/1900', '01/01/2000'))
-// console.log(randomDates('01/01/1900', '01/01/2000'))
+const handleServiceError = (res, error) => {
+  console.error('Service Error:', error);
+
+  const errorMap = {
+    'not provided': 400,   // Bad Request
+    'already exists': 409, // Conflict
+    'Invalid': 400,        // Bad Request
+    'Missing': 400,        // Bad Request
+    'Validation failed': 422, // Unprocessable Entity
+  };
+
+  const statusCode = Object.entries(errorMap)
+    .find(([key]) => error.message.includes(key))?.[1] || 500;
+
+  res.status(statusCode).json({
+    message: error.message,
+    ...(process.env.NODE_ENV === 'development' && { 
+      stack: error.stack 
+    })
+  });
+};
+
+function shuffleArray (array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 module.exports = {
   randomDates,
   respondPOSTItem,
+  handleServiceError,
+  shuffleArray,
 };

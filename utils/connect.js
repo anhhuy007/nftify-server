@@ -2,9 +2,9 @@ require("dotenv").config({ path: "../.env" });
 const mongoose = require("mongoose");
 const itemModel = require("../models/stamp.schema");
 const userModel = require("../models/user.schema");
-const collectionModel = require("../models/collection.schema");
 const accountModel = require("../models/account.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
+const collectionModel = require("../models/collection.schema");
 
 const fs = require("fs");
 const helperFunc = require("./helperFunc");
@@ -12,7 +12,6 @@ const helperFunc = require("./helperFunc");
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`;
 const database_name = "NFTify_1";
 let collection1 = "collectionName";
-
 
 async function connectDB() {
   try {
@@ -64,7 +63,7 @@ function readData() {
     fs.readFileSync("../datajson/Users.json", "utf8")
   );
   const dataCollections = JSON.parse(
-    fs.readFileSync("../datajson/Collections.json", "utf8")
+    fs.readFileSync("../testing_data/collection_data.json", "utf8")
   );
   const dataItemCollections = JSON.parse(
     fs.readFileSync("../datajson/ItemCollection.json", "utf8")
@@ -80,7 +79,6 @@ function readData() {
     dataAccounts,
   };
 }
-
 
 async function saveStampData(data) {
   items = itemModel.collection.name;
@@ -156,7 +154,7 @@ async function saveDataUsers(data) {
   );
   await userModel.collection.dropIndexes();
   await userModel.syncIndexes();
-  genderArr = ["M", "F"]
+  genderArr = ["M", "F"];
   for (const user of data) {
     try {
       // Check if document with this id already exists
@@ -189,28 +187,47 @@ async function closeConnectDB() {
 }
 
 async function saveDataCollection(data) {
+  const stampIds = await getDocumentsId(itemModel);
+  const userIds = await getDocumentsId(userModel);
+
+  // shuffle the stampIds
+  helperFunc.shuffleArray(stampIds);
+
   collection1 = collectionModel.collection.name;
   console.log(
     `Attempting to save ${data.length} items to ${database_name}.${collection1} collection`
   );
+
   await collectionModel.collection.dropIndexes();
   await collectionModel.syncIndexes();
+
+  let i = 0; let count = 0;
+  const len = stampIds.length / data.length;
   for (const collection of data) {
     try {
       // Check if document with this id already exists
-      const existingCollection = await collectionModel.findOne({
-        id: parseInt(collection.id),
-      });
+      // const existingCollection = await collectionModel.findOne({
+      //   id: collection.id,
+      // });
 
-      if (existingCollection) {
-        console.log(`Skipping user with id: ${collection.id} - already exists`);
-        continue; // Skip to next item
-      }
-      // Convert the date format to match your manual entry
+      // if (existingCollection) {
+      //   console.log(
+      //     `Skipping collection with id: ${collection.id} - already exists`
+      //   );
+      //   continue; // Skip to next item
+      // }
+
       const modifiedCollection = {
         ...collection,
-        // id: item.id,
+        ownerId: userIds[count % userIds.length],
+        items: stampIds.slice(i, i + len),
+        viewCount: Math.floor(Math.random() * 1000) + 1,
+        favouriteCount: Math.floor(Math.random() * 1000) + 1,
+        createdAt: helperFunc.randomDates("01/10/2024", "01/12/2024"),
       };
+      i += len;
+      count += 1;
+
       const newCollection = new collectionModel(modifiedCollection);
       await newCollection.save();
       console.log(
@@ -218,43 +235,6 @@ async function saveDataCollection(data) {
       );
     } catch (error) {
       console.error(`Failed to save with id: ${collection.id}`, error);
-    }
-  }
-}
-
-async function saveDataItemCollection(data) {
-  collection1 = itemCollectionModel.collection.name;
-  console.log(
-    `Attempting to save ${data.length} items to ${database_name}.${collection1} collection`
-  );
-  await itemCollectionModel.collection.dropIndexes();
-  await itemCollectionModel.syncIndexes();
-  for (const itemCollection of data) {
-    try {
-      // Check if document with this id already exists
-      const existingCollection = await itemCollectionModel.findOne({
-        id: itemCollection.id,
-        itemId: itemCollection.itemId,
-      });
-
-      if (existingCollection) {
-        console.log(
-          `Skipping itemCollection with id: ${itemCollection.id} - already exists`
-        );
-        continue; // Skip to next item
-      }
-      // Convert the date format to match your manual entry
-      const modifiedItemCollection = {
-        ...itemCollection,
-        // id: item.id,
-      };
-      const newItemCollection = new itemCollectionModel(modifiedItemCollection);
-      await newItemCollection.save();
-      console.log(
-        `Saved with id: ${itemCollection.id} to ${database_name}.${collection1}`
-      );
-    } catch (error) {
-      console.error(`Failed to save with id: ${itemCollection.id}`, error);
     }
   }
 }
@@ -293,8 +273,8 @@ async function saveDataAccount(data) {
   }
 }
 // comment this to run server
-// connectDB()
-// saveStampData(readData().dataItems).then(() => {
+// connectDB();
+// saveDataCollection(readData().dataCollections).then(() => {
 //   closeConnectDB();
 // });
 

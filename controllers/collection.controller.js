@@ -1,15 +1,71 @@
 const asyncHandler = require("express-async-handler");
-const helperFunc = require("../utils/helperFunc");
+const { handleServiceError } = require("../utils/helperFunc");
 const collectionService = require("../services/collection.service");
 
-exports.getCollectionById = asyncHandler(async (req, res) => {
-  console.log(req.params);
-  const collectionId = req.params.collectionId;
-  const userId = req.params.id;
+exports.createCollection = asyncHandler(async (req, res) => {
   try {
-    const itemCollection = await collectionService.getCollectionById(collectionId, userId);
-    helperFunc.respondPOSTItem(res, 200, itemCollection, null);
+    const newCollection = await collectionService.createCollection(req.body, req.user._id);
+    res.status(201).json(newCollection);
   } catch (error) {
-    helperFunc.respondPOSTItem(res, 400, null, error.message);
+    handleServiceError(res, error);
+  }
+});
+
+exports.getCollectionById = asyncHandler(async (req, res) => {
+  try {
+    const collection = await collectionService.getCollectionById(
+      req.params.collectionId
+    );
+
+    if (!collection) {
+      return res.status(404).json({ message: "Collection not found" });
+    }
+
+    res.json(collection);
+  }
+  catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.getCollections = asyncHandler(async (req, res) => {
+  // sample query url: /collections/list?name=collection1&description=desc1&ownerId=abcdefxxx&status=selling&minDate=01/01/2021&maxDate=31/12/2021&minViewCount=1&maxViewCount=10&minFavouriteCount=1&maxFavouriteCount=10
+  try {
+    const filters = {
+      name: req.query.name,
+      description: req.query.description,
+      ownerId: req.query.ownerId,
+      status: req.query.status,
+      minDate: req.query.minDate,
+      maxDate: req.query.maxDate,
+      minViewCount: req.query.minViewCount,
+      maxViewCount: req.query.maxViewCount,
+      minFavouriteCount: req.query.minFavouriteCount,
+      maxFavouriteCount: req.query.maxFavouriteCount,
+    };
+
+    const result = await collectionService.filterCollections({
+      page: req.query.page,
+      limit: req.query.limit,
+      filters: Object.fromEntries(
+        Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+      ),
+    });
+
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.updateCollection = asyncHandler(async (req, res) => {
+  try {
+    const updatedCollection = await collectionService.updateCollection(
+      req.params.collectionId,
+      req.body
+    );
+    res.json(updatedCollection);
+  } catch (error) {
+    handleServiceError(res, error);
   }
 });

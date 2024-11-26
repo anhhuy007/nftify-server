@@ -31,6 +31,18 @@ const CollectionSchema = new Schema(
     items: {
       type: [String],
     },
+    status: {
+      type: String, 
+      enum: ["selling", "sold", "displaying", "favourite"],
+    },
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
+    favouriteCount: {
+      type: Number,
+      default: 0,
+    }
   },
   {
     versionKey: false,
