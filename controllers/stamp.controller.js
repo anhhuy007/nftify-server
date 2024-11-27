@@ -27,7 +27,7 @@ exports.getStamps = asyncHandler(async (req, res) => {
       function: req.query.function
     };
 
-    const result = await StampService.filterStamps({
+    const result = await StampService.filterItems({
       page: req.query.page,
       limit: req.query.limit,
       filters: Object.fromEntries(
@@ -52,15 +52,9 @@ exports.getStampStatistics = asyncHandler(async (req, res) => {
 
 exports.getStampById = asyncHandler(async (req, res) => {
   try {
-    const stamp = await StampService.filterStamps({
-      filters: { _id: req.params.id }
-    });
+    const stamp = await StampService.getItemById(req.params.id);
 
-    if (stamp.items.length === 0) {
-      return res.status(404).json({ message: 'Stamp not found' });
-    }
-
-    res.json(stamp.items[0]);
+    res.json(stamp);
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -70,6 +64,15 @@ exports.getTredingStamp = asyncHandler(async (req, res) => {
   try {
     const trendingStamp = await StampService.getTredingStamp();
     res.json(trendingStamp);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.deleteStamp = asyncHandler(async (req, res) => {
+  try {
+    await StampService.deleteItemById(req.params.id);
+    res.status(204).end();
   } catch (error) {
     handleServiceError(res, error);
   }

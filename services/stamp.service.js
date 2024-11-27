@@ -16,6 +16,8 @@ class StampService {
       "date",
       "denom",
       "color",
+      "creatorId",
+      "imgUrl",
     ];
     for (const field of requiredFields) {
       if (!item[field]) {
@@ -48,13 +50,25 @@ class StampService {
     // Validate input
     this.validateItemInput(item);
 
+    /*
+    sample item data
+    {
+      title: "First Stamp",
+      issuedBy: "Issuer 1",
+      function: "Postage",
+      date: "01/01/2021",
+      denom: 1.5,
+      color: "Red",
+      imgUrl: "https://example.com/image.jpg",
+      creatorId: "abcdef123456", // Optional
+    }
+    */
+
     // Prepare item for saving
     const preparedItem = {
       ...item,
       // Ensure numeric denomination
       denom: parseFloat(item.denom),
-      // Add creator ID if not provided (optional)
-      creatorId: item.creatorId || mongoose.Types.ObjectId(),
       // Add creation timestamp if not exists
       createdAt: item.createdAt || new Date(),
     };
@@ -80,7 +94,7 @@ class StampService {
     return stampModel.findById(id).select("-__v"); // Exclude version key
   }
 
-  async filterStamps(options = {}) {
+  async filterItems(options = {}) {
     const { page = 1, limit = 10, filters = {} } = options;
 
     // Prepare dynamic filter
@@ -207,6 +221,14 @@ class StampService {
         $limit: 10,
       },
     ]);
+  }
+
+  async deleteItemById(id) {
+    // check if id is of type ObjectId, if not convert it
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      id = new mongoose.Types.ObjectId(id);
+    }
+    return stampModel.findByIdAndDelete(id);
   }
 }
 

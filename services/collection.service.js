@@ -167,7 +167,7 @@ class CollectionService {
       name: "collection name",
       description: "collection description",
       items: ["item1", "item2"],
-      status: "selling"
+      status: "selling",
     }
     */
 
@@ -184,11 +184,63 @@ class CollectionService {
 
     const updatedCollection = await collectionModel.findOneAndUpdate(
       { _id: collectionId },
-      { $set: update },
+      { $set: update }, 
       { new: true }
     );
 
     return updatedCollection;
+  }
+
+  async getTrendingCollections(options = {}) {
+    const { page, limit } = options;
+
+    const parsedPage = Math.max(1, parseInt(page));
+    const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    const collections = await collectionModel
+      .find({ status: "selling" })
+      .sort({ viewCount: -1 })
+      .skip(skip)
+      .limit(parsedLimit);
+
+    return collections;
+  }
+
+  async increaseViewCount(collectionId) {
+    if (!mongoose.Types.ObjectId.isValid(collectionId)) {
+      throw new Error("Invalid collectionId format");
+    }
+
+    const updatedCollection = await collectionModel.findOneAndUpdate(
+      { _id: collectionId },
+      { $inc: { viewCount: 1 } },
+      { new: true } // Return the updated document
+    );
+
+    return updatedCollection;
+  }
+
+  async increaseFavouriteCount(collectionId) {
+    if (!mongoose.Types.ObjectId.isValid(collectionId)) {
+      throw new Error("Invalid collectionId format");
+    }
+
+    const updatedCollection = await collectionModel.findOneAndUpdate(
+      { _id: collectionId },
+      { $inc: { favouriteCount: 1 } },
+      { new: true } // Return the updated document
+    );
+
+    return updatedCollection;
+  }
+
+  async deleteCollection(collectionId) {
+    if (!mongoose.Types.ObjectId.isValid(collectionId)) {
+      throw new Error("Invalid collectionId format");
+    }
+
+    await collectionModel.deleteOne({ _id: collectionId });
   }
 }
 

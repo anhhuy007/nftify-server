@@ -69,3 +69,42 @@ exports.updateCollection = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+exports.getTredingCollections = asyncHandler(async (req, res) => {
+  try {
+    const result = await collectionService.getTrendingCollections({
+      page: req.query.page,
+      limit: req.query.limit,
+    });
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.increaseViewCount = asyncHandler(async (req, res) => {
+  try {
+    await collectionService.increaseViewCount(req.params.collectionId);
+    res.status(204).end();
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.increaseFavouriteCount = asyncHandler(async (req, res) => {
+  try {
+    await collectionService.increaseFavouriteCount(req.params.collectionId);
+    res.status(204).end();
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.deleteCollection = asyncHandler(async (req, res) => {
+  try {
+    await collectionService.deleteCollection(req.params.collectionId);
+    res.status(204).end();
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

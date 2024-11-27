@@ -1,7 +1,11 @@
 GET  http://localhost:3000/
 
 ###------------------ item routes
-GET  http://localhost:3000/stamp
+GET  http://localhost:3000/stamp/6746a68f6e4e0266ac6716a1
+
+###------------------ delete
+DELETE http://localhost:3000/stamp/6746a68f6e4e0266ac6716a1
+
 ###
 GET  http://localhost:3000/stamp/list?page=1&limit=10
 ###

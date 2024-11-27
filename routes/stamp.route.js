@@ -12,5 +12,7 @@ itemRouter.get("/", function (req, res) {
 itemRouter.get("/list", stampController.getStamps);
 itemRouter.get("/topItems", stampController.getTredingStamp);
 itemRouter.get("/:id", stampController.getStampById);
+itemRouter.post("/", stampController.createStamp);
+itemRouter.delete("/:id", stampController.deleteStamp);
 
 module.exports = itemRouter;

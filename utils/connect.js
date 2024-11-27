@@ -201,6 +201,7 @@ async function saveDataCollection(data) {
   await collectionModel.collection.dropIndexes();
   await collectionModel.syncIndexes();
 
+  const status = ["selling", "sold", "displaying"];
   let i = 0; let count = 0;
   const len = stampIds.length / data.length;
   for (const collection of data) {
@@ -221,6 +222,7 @@ async function saveDataCollection(data) {
         ...collection,
         ownerId: userIds[count % userIds.length],
         items: stampIds.slice(i, i + len),
+        status: status[Math.floor(Math.random() * status.length)],
         viewCount: Math.floor(Math.random() * 1000) + 1,
         favouriteCount: Math.floor(Math.random() * 1000) + 1,
         createdAt: helperFunc.randomDates("01/10/2024", "01/12/2024"),
