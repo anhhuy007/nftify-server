@@ -4,7 +4,10 @@ const collectionService = require("../services/collection.service");
 
 exports.createCollection = asyncHandler(async (req, res) => {
   try {
-    const newCollection = await collectionService.createCollection(req.body, req.user._id);
+    const newCollection = await collectionService.createCollection(
+      req.body,
+      req.user._id
+    );
     res.status(201).json(newCollection);
   } catch (error) {
     handleServiceError(res, error);
@@ -22,8 +25,7 @@ exports.getCollectionById = asyncHandler(async (req, res) => {
     }
 
     res.json(collection);
-  }
-  catch (error) {
+  } catch (error) {
     handleServiceError(res, error);
   }
 });
@@ -85,7 +87,9 @@ exports.getTredingCollections = asyncHandler(async (req, res) => {
 exports.increaseViewCount = asyncHandler(async (req, res) => {
   try {
     await collectionService.increaseViewCount(req.params.collectionId);
-    res.status(204).end();
+    res.json({
+      message: "View count increased",
+    });
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -94,7 +98,9 @@ exports.increaseViewCount = asyncHandler(async (req, res) => {
 exports.increaseFavouriteCount = asyncHandler(async (req, res) => {
   try {
     await collectionService.increaseFavouriteCount(req.params.collectionId);
-    res.status(204).end();
+    res.json({
+      message: "Favourite count increased",
+    });
   } catch (error) {
     handleServiceError(res, error);
   }

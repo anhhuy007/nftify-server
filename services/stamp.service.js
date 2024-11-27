@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const stampModel = require("../models/stamp.schema");
+const itemInsightModel = require("../models/itemInsight.schema");
 
 class StampService {
   // Validate input data
@@ -129,10 +130,14 @@ class StampService {
     if (filters.minDenom || filters.maxDenom) {
       mongoFilter.denom = {};
       if (filters.minDenom) {
-        mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(filters.minDenom.toString());
+        mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(
+          filters.minDenom.toString()
+        );
       }
       if (filters.maxDenom) {
-        mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(filters.maxDenom.toString());
+        mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(
+          filters.maxDenom.toString()
+        );
       }
     }
 
@@ -204,23 +209,57 @@ class StampService {
     };
   }
 
-  async getTrendingStamp() {
-    return stampModel.aggregate([
-      {
-        $lookup: {
-          from: "ItemInsight",
-          localField: "_id",
-          foreignField: "stampId",
-          as: "insights",
+  async getTrendingStamps(options = {}) {
+    const { page = 1, limit = 10 } = options;
+
+    const parsedPage = Math.max(1, parseInt(page));
+    const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    const [total, stamps] = await Promise.all([
+      stampModel.countDocuments(),
+      itemInsightModel.aggregate([
+        { $sort: { viewCount: -1 }},
+        {
+          $addFields: {
+            itemIdObj: { $toObjectId: "$itemId" }
+          }
         },
-      },
-      {
-        $sort: { "insights.views": -1 },
-      },
-      {
-        $limit: 10,
-      },
+        { $skip: skip },
+        { $limit: parsedLimit },
+        {
+          $lookup: {
+            from: "Stamp",
+            localField: "itemIdObj",
+            foreignField: "_id",
+            as: "stampDetails",
+          },
+        },
+        { $unwind: "$stampDetails" },
+        {
+          $project: {
+            _id: 0,
+            itemId: 1, 
+            viewCount: 1,
+            title: "$stampDetails.title",
+            issuedBy: "$stampDetails.issuedBy",
+            function: "$stampDetails.function",
+            date: "$stampDetails.date",
+            denom: "$stampDetails.denom",
+            color: "$stampDetails.color",
+            imgUrl: "$stampDetails.imgUrl",
+          },
+        },
+      ])
     ]);
+
+    return {
+      total,
+      page: parsedPage,
+      limit: parsedLimit,
+      totalPages: Math.ceil(total / parsedLimit),
+      items: stamps,
+    };
   }
 
   async deleteItemById(id) {

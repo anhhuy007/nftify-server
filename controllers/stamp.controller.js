@@ -62,7 +62,12 @@ exports.getStampById = asyncHandler(async (req, res) => {
 
 exports.getTredingStamp = asyncHandler(async (req, res) => {
   try {
-    const trendingStamp = await StampService.getTredingStamp();
+    const trendingStamp = await StampService.getTrendingStamps(
+      {
+        page: req.query.page,
+        limit: req.query.limit
+      }
+    );
     res.json(trendingStamp);
   } catch (error) {
     handleServiceError(res, error);

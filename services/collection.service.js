@@ -23,7 +23,12 @@ class CollectionService {
     }
 
     // Validate required fields
-    const requiredFields = ['name', 'description', 'ownerId', 'items', 'status'];
+    const requiredFields = [
+      "name",
+      "description",
+      "ownerId",
+      "status",
+    ];
     for (const field of requiredFields) {
       if (!collection[field]) {
         throw new Error(`Missing required field: ${field}`);
@@ -41,7 +46,7 @@ class CollectionService {
     }
 
     // Validate status
-    const validStatus = ['selling', 'sold', 'displaying', 'favourite'];
+    const validStatus = ["selling", "sold", "displaying", "favourite"];
     if (!validStatus.includes(collection.status)) {
       throw new Error("Invalid status value");
     }
@@ -58,7 +63,7 @@ class CollectionService {
       viewCount: 0,
       favouriteCount: 0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     const newCollection = await collectionModel.create(preparedCollection);
@@ -80,12 +85,14 @@ class CollectionService {
 
     // Filter by name
     if (filters.name) {
-      mongoFilter.name = { $regex: new RegExp(filters.name, 'i') };
+      mongoFilter.name = { $regex: new RegExp(filters.name, "i") };
     }
 
     // Filter by description
     if (filters.description) {
-      mongoFilter.description = { $regex: new RegExp(filters.description, 'i') };
+      mongoFilter.description = {
+        $regex: new RegExp(filters.description, "i"),
+      };
     }
 
     // Filter by ownerId
@@ -141,7 +148,7 @@ class CollectionService {
         .find(mongoFilter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(parsedLimit)
+        .limit(parsedLimit),
     ]);
 
     return {
@@ -149,7 +156,7 @@ class CollectionService {
       page: parsedPage,
       limit: parsedLimit,
       totalPages: Math.ceil(total / parsedLimit),
-      items: collections
+      items: collections,
     };
   }
 
@@ -172,7 +179,7 @@ class CollectionService {
     */
 
     // Validate update fields
-    const allowedFields = ['name', 'description', 'items', 'status'];
+    const allowedFields = ["name", "description", "items", "status"];
     for (const field in update) {
       if (!allowedFields.includes(field)) {
         throw new Error(`Field not allowed: ${field}`);
@@ -184,7 +191,7 @@ class CollectionService {
 
     const updatedCollection = await collectionModel.findOneAndUpdate(
       { _id: collectionId },
-      { $set: update }, 
+      { $set: update },
       { new: true }
     );
 
@@ -192,19 +199,28 @@ class CollectionService {
   }
 
   async getTrendingCollections(options = {}) {
-    const { page, limit } = options;
+    const { page = 1, limit = 10 } = options;
 
     const parsedPage = Math.max(1, parseInt(page));
     const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
     const skip = (parsedPage - 1) * parsedLimit;
 
-    const collections = await collectionModel
-      .find({ status: "selling" })
-      .sort({ viewCount: -1 })
-      .skip(skip)
-      .limit(parsedLimit);
+    const [total, collections] = await Promise.all([
+      collectionModel.countDocuments(),
+      collectionModel
+        .find()
+        .sort({ viewCount: -1 })
+        .skip(skip)
+        .limit(parsedLimit),
+    ]);
 
-    return collections;
+    return {
+      total,
+      page: parsedPage,
+      limit: parsedLimit,
+      totalPages: Math.ceil(total / parsedLimit),
+      items: collections,
+    };
   }
 
   async increaseViewCount(collectionId) {
