@@ -163,16 +163,7 @@ class CollectionService {
     if (!update) {
       throw new Error("Update data is required");
     }
-
-    /*
-    update: {
-      name: "collection name",
-      description: "collection description",
-      items: ["item1", "item2"],
-      status: "selling",
-    }
-    */
-
+    
     // Validate update fields
     const allowedFields = ["name", "description", "items", "status"];
     for (const field in update) {

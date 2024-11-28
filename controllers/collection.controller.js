@@ -115,7 +115,7 @@ exports.increaseFavouriteCount = asyncHandler(async (req, res) => {
 exports.deleteCollection = asyncHandler(async (req, res) => {
   try {
     await collectionService.deleteCollection(req.params.collectionId);
-    res.status(204).end();
+    res.status(204).json({ message: "Collection deleted" });
   } catch (error) {
     handleServiceError(res, error);
   }

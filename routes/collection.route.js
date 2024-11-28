@@ -8,11 +8,12 @@ collectionRouter.get("/list", collectionController.getCollections);
 collectionRouter.get("/list/trending", collectionController.getTredingCollections);
 collectionRouter.get("/:collectionId", collectionController.getCollectionById);
 
-// user actions
-collectionRouter.get("/increment-view/:collectionId", authenticateToken, collectionController.increaseViewCount);
-collectionRouter.get("/increment-favourite/:collectionId", authenticateToken, collectionController.increaseFavouriteCount);
-collectionRouter.post("/", authenticateToken, collectionController.createCollection);
-// collectionRouter.put("/:collectionId", collectionController.updateCollection);
-// collectionRouter.delete("/:collectionId", collectionController.deleteCollection);
+// authenticated-required routes
+collectionRouter.use(authenticateToken);
+collectionRouter.get("/increment-view/:collectionId", collectionController.increaseViewCount);
+collectionRouter.get("/increment-favourite/:collectionId", collectionController.increaseFavouriteCount);
+collectionRouter.post("/", collectionController.createCollection);
+collectionRouter.patch("/:collectionId", collectionController.updateCollection);
+collectionRouter.delete("/:collectionId", collectionController.deleteCollection);
 
 module.exports = collectionRouter;
