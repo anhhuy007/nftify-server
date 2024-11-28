@@ -1,68 +1,62 @@
-const userModel = require("../models/user.schema");
-const stampModel = require("../models/stamp.schema");
 const asyncHandler = require("express-async-handler");
-const helperFunc = require("../utils/helperFunc");
+const { handleServiceError } = require("../utils/helperFunc");
+const userService = require("../services/user.service");
 
-exports.getAllUser = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-
-  const startIndex = (page - 1) * limit;
-  const total = await userModel.countDocuments();
-
-  const item = await userModel.find().skip(startIndex).limit(limit);
-  // const item = await userModel.aggregate([{ $sample: { size: limit } }]);
-  res.json({
-    page,
-    limit,
-    total,
-    total_pages: Math.ceil(total / limit),
-    data: item,
-  });
-});
-exports.getByID = asyncHandler(async (req, res, next) => {
-  console.log("Collection name:", userModel.collection.name);
-  console.log("Request params:", req.params);
-  // Explicitly extract the ID parameter
-  const userId = req.params.id;
-  console.log("Extracted USERS:", userId);
-  if (!userId) {
-    console.error("User ID not provided");
-    return helperFunc.respondPOSTItem(res, 400, null, "User ID not provided");
-  }
-  // Check if document with this id already exists
-  const existingItem = await userModel.findOne({ id: parseInt(userId) });
-  if (!existingItem) {
-    console.log(`item with id: ${ItemId} - does not exist`);
-    return helperFunc.respondPOSTItem(
-      res,
-      404,
-      null,
-      `User with id: ${userId} does not exist`
+exports.createUser = asyncHandler(async (req, res) => {
+  try {
+    const newUser = await userService.createUser(
+      req.body,
     );
+    res.status(201).json(newUser);
+  } catch (error) {
+    handleServiceError(res, error);
   }
-  helperFunc.respondPOSTItem(res, 200, existingItem, null);
+});
+exports.getUserByID = asyncHandler(async (req, res) => {
+    try {
+        const user = await userService.getUsesById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});
+exports.getUsers = asyncHandler(async (req, res) => {
+    try {
+        const filters = {
+            name: req.query.name,
+        };
+        const result = await userService.filterUser({
+            page: req.query.page,
+            limit: req.query.limit,
+            filters: Object.fromEntries(
+                Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+            ),
+        });
+        res.json(result);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
 });
 
-exports.getAllItems = asyncHandler(async (req, res, next) => {
-  console.log("Collection name:", userModel.collection.name);
-  console.log("Request params:", req.params);
-  const creatorId = req.params.id;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-
-  const startIndex = (page - 1) * limit;
-  const total = await userModel.countDocuments();
-
-  const item = await stampModel
-    .find({ creatorId: creatorId })
-    .skip(startIndex)
-    .limit(limit);
-  res.json({
-    page,
-    limit,
-    total,
-    total_pages: Math.ceil(total / limit),
-    data: item,
-  });
+exports.updateUser = asyncHandler(async (req, res) => {
+  try {
+    const updatedUser = await userService.updateUser(
+      req.params.userId,
+      req.body
+    );
+    res.json(updatedUser);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+exports.deleteUser = asyncHandler(async (req, res) => {
+  try {
+    await userService.deleteUser(req.params.userId);
+    res.status(204).end();
+  } catch (error) {
+    handleServiceError(res, error);
+  }
 });
