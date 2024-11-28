@@ -20,13 +20,14 @@ const ItemPricingSchema = new Schema(
       type: String,
       required: true,
     },
-    type: {
+    
+    price: {
+      type: mongoose.Types.Decimal128,
+    },
+    currency: {
       type: String,
       required: true,
     },
-    price: {
-      type: mongoose.Types.Decimal128,
-    }
   },
   {
     versionKey: false,

@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const itemModel = require("../models/stamp.schema");
 const userModel = require("../models/user.schema");
 const collectionModel = require("../models/collection.schema");
-const itemCollectionModel = require("../models/itemCollection.schema");
 const accountModel = require("../models/account.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
-
+const ownershipModel = require("../models/ownership.schema");
+const itemPricingModel = require("../models/itemPricing.schema");
 const fs = require("fs");
 const helperFunc = require("./helperFunc");
 
@@ -302,9 +302,77 @@ async function saveDataAccount(data) {
 //         //
 //     });
 
+async function saveGeneratedOwnership() {
+  try {
+    const ownership = ownershipModel.collection.name;
+    console.log(`Attempting to save ownership to ${database_name}.${ownership} collection`);
+
+    await ownershipModel.collection.dropIndexes();
+    await ownershipModel.syncIndexes();
+
+    const stampIds = await getDocumentsId(itemModel);
+    const ownerIds = await getDocumentsId(userModel);
+
+    for (const item of stampIds) {
+      try {
+        const modifiedOwnership = {
+          itemId: item,
+          ownerId: ownerIds[Math.floor(Math.random() * ownerIds.length)],
+        };
+
+        const newOwnership = new ownershipModel(modifiedOwnership);
+        await newOwnership.save();
+        console.log(`Saved with itemId: ${item} to ${database_name}.${ownership}`);
+      } catch (error) {
+        console.error(`Failed to save with itemId: ${item}`, error);
+      }
+    }
+  } catch (error) {
+    console.error('An error occurred during the saveGeneratedOwnership process:', error);
+  }
+}
+
+async function saveGeneratedItemPrice() {
+  try {
+    const itemPricing = itemPricingModel.collection.name;
+    console.log(`Attempting to save itemPricing to ${database_name}.${itemPricing} collection`);
+
+    await itemPricingModel.collection.dropIndexes();
+    await itemPricingModel.syncIndexes();
+
+    const stampIds = await getDocumentsId(itemModel);
+
+    for (const item of stampIds) {
+      try {
+        const modifiedItemPricing = {
+          itemId: item,
+          price: ((Math.round(Math.random() * 10000) + 1) / 100).toFixed(2),
+          currency: 'ETH',
+        };
+
+        const newItemPricing = new itemPricingModel(modifiedItemPricing);
+        await newItemPricing.save();
+        console.log(`Saved with itemId: ${item} to ${database_name}.${itemPricing}`);
+      } catch (error) {
+        console.error(`Failed to save with itemId: ${item}`, error);
+      }
+    }
+  } catch (error) {
+    console.error('An error occurred during the saveGeneratedItemPrice process:', error);
+  }
+}
+
+
+// connectDB()
+// saveGeneratedItemPrice()
+//   .then(() => console.log('Data save process completed.'))
+//   .catch((err) => console.error('Error in data saving process:', err))
+//   .finally(() => {
+//     closeConnectDB();
+//   });
 
 module.exports = {
   connectDB,
-  // saveData,
+  //saveData,
   closeConnectDB,
 };
