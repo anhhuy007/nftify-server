@@ -40,11 +40,6 @@ class CollectionService {
       throw new Error("Invalid ownerId format");
     }
 
-    // Validate items format
-    if (!Array.isArray(collection.items)) {
-      throw new Error("Items must be an array");
-    }
-
     // Validate status
     const validStatus = ["selling", "sold", "displaying", "favourite"];
     if (!validStatus.includes(collection.status)) {

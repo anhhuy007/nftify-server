@@ -10,7 +10,6 @@ router.post('/token', authController.token);
 router.delete('/logout', authController.logout);
 
 router.use(authenticateToken);
-
 // Protected route example
 router.get('/posts', authController.posts);
 
