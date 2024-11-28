@@ -14,7 +14,7 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const ItemPricingSchema = new Schema(
+const ItemPriceSchema = new Schema(
   {
     itemId: {
       type: String,
@@ -34,5 +34,5 @@ const ItemPricingSchema = new Schema(
     collection: "ItemPricing",
   }
 );
-const ItemSellPrice = model("ItemPricing", ItemPricingSchema);
+const ItemSellPrice = model("ItemPricing", ItemPriceSchema);
 module.exports = ItemSellPrice;

@@ -6,6 +6,7 @@ const connect = require("./utils/connect");
 const stampRoute = require("./routes/stamp.route");
 const collectionRoute = require("./routes/collection.route");
 const authRoute = require("./routes/auth.route");
+const marketplaceRoute = require("./routes/marketplace.route");
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoute);
 app.use("/stamp", stampRoute);
 app.use("/collection", collectionRoute);
-
+app.use("/marketplace", marketplaceRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is on http://localhost:${process.env.PORT}`);

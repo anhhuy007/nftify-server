@@ -128,7 +128,7 @@ async function saveItemInsightData() {
   await itemInsightModel.syncIndexes();
 
   const stampIds = await getDocumentsId(itemModel);
-  const status = ["verified", "pending", "rejected"];
+  const status = ["verified"];
   for (const stampId of stampIds) {
     try {
       const modifiedItemInsight = {
@@ -276,7 +276,7 @@ async function saveDataAccount(data) {
 }
 // comment this to run server
 // connectDB();
-// saveDataCollection(readData().dataCollections).then(() => {
+// saveItemInsightData().then(() => {
 //   closeConnectDB();
 // });
 
