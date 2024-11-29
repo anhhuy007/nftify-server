@@ -256,7 +256,7 @@ class StampService {
     return {
       total,
       page: parsedPage,
-      limit: parsedLimit,
+      limit: parsedLimit > total ? total : parsedLimit,
       totalPages: Math.ceil(total / parsedLimit),
       items: stamps,
     };

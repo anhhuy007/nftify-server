@@ -7,6 +7,10 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 // router.get("/list", marketplaceController.getItems);
 router.get("/list/trending/stamps", marketplaceController.getTrendingStamps);
 router.get("/list/topCategories", marketplaceController.getTopCategories);
+router.get("/list/topCreators", marketplaceController.getTopCreators);
+router.get("/list/topCollections", marketplaceController.getTopCollections);
 router.get("/stamp/:id", marketplaceController.getStampById);
+router.get("/history/stampOwner/:id", marketplaceController.getStampOwnerHistory);
+router.get("/history/stampPrice/:id", marketplaceController.getStampPriceHistory);
 
 module.exports = router;
