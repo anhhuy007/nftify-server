@@ -32,6 +32,11 @@ class UserService {
         if (!validGender.includes(user.gender)) {
             throw new Error("Invalid gender value");
         }
+        // check if username already exists
+        const existingUser = userModel.find({
+            name: user.name
+        })
+        if (existingUser) throw new Error("Username already exists");
     }
     async createUser(user) {
         // Validate input
