@@ -267,7 +267,41 @@ class StampService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       id = new mongoose.Types.ObjectId(id);
     }
-    return stampModel.findByIdAndDelete(id);
+    await stampModel.findByIdAndDelete(id);
+
+    return { id };
+  }
+
+  async increaseViewCount(itemId) {
+    const itemInsight = await itemInsightModel.findOne({ itemId });
+    if (itemInsight) {
+      itemInsight.viewCount += 1;
+      await itemInsight.save();
+    } else {
+      await itemInsightModel.create({ itemId, viewCount: 1 });
+    }
+
+    // Return updated view count
+    return {
+      id: itemId,
+      viewCount: itemInsight ? itemInsight.viewCount + 1 : 1,
+    }
+  }
+
+  async increaseFavouriteCount(itemId) {
+    const itemInsight = await itemInsightModel.findOne({ itemId });
+    if (itemInsight) {
+      itemInsight.favouriteCount += 1;
+      await itemInsight.save();
+    } else {
+      await itemInsightModel.create({ itemId, favouriteCount: 1 });
+    }
+
+    // Return updated favourite count
+    return {
+      id: itemId,
+      favouriteCount: itemInsight ? itemInsight.favouriteCount + 1 : 1,
+    }
   }
 }
 
