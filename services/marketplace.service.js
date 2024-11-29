@@ -5,6 +5,7 @@ const ItemSellPrice = require('../models/itemPricing.schema');
 const OwnerShip = require('../models/ownership.schema');
 const Collection = require('../models/collection.schema');
 const StampService = require('./stamp.service');
+const collectionService = require('./collection.service');
 class MarketplaceService {
     async getTrendingStamps(options = {}) {
         const { page = 1, limit = 10 } = options;
@@ -343,6 +344,10 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         return await StampService.filterItems(options);
+    }
+
+    async getCollectionsWithFilter(options = {}) {
+        return await collectionService.filterCollections(options);
     }
 }
 

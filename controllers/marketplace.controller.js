@@ -110,3 +110,34 @@ exports.getStamps = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getCollections = asyncHandler(async (req, res) => {
+    try {
+        const filters = {
+            name: req.query.name,
+            description: req.query.description,
+            ownerId: req.query.ownerId,
+            status: req.query.status,
+            minDate: req.query.minDate,
+            maxDate: req.query.maxDate,
+            minViewCount: req.query.minViewCount,
+            maxViewCount: req.query.maxViewCount,
+            minFavouriteCount: req.query.minFavouriteCount,
+            maxFavouriteCount: req.query.maxFavouriteCount,
+            sortBy: req.query.sortBy,
+            sortOrder: req.query.sortOrder
+        };
+
+        const result = await MarketplaceService.getCollectionsWithFilter({
+            page: req.query.page,
+            limit: req.query.limit,
+            filters: Object.fromEntries(
+                Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+            ),
+        });
+
+        res.json(result);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});
+

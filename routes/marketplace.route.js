@@ -11,6 +11,8 @@ router.get("/list/trending/creators", marketplaceController.getTopCreators);
 router.get("/list/trending/collections", marketplaceController.getTopCollections);
 
 router.get("/list/stamps", marketplaceController.getStamps);
+router.get("/list/collections", marketplaceController.getCollections);
+// router.get("/list/creators", marketplaceController.getCreators);
 
 router.get("/stamp/:id", marketplaceController.getStampById);
 
