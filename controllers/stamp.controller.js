@@ -1,6 +1,7 @@
 const StampService = require("../services/stamp.service");
 const asyncHandler = require("express-async-handler");
 const { handleServiceError } = require("../utils/helperFunc");
+const { success } = require("jsend");
 
 exports.createStamp = asyncHandler(async (req, res) => {
   try {
@@ -24,7 +25,9 @@ exports.getStamps = asyncHandler(async (req, res) => {
       minDenom: req.query.minDenom,
       maxDenom: req.query.maxDenom,
       color: req.query.color,
-      function: req.query.function
+      function: req.query.function,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
     };
 
     const result = await StampService.filterItems({
@@ -76,8 +79,40 @@ exports.getTredingStamp = asyncHandler(async (req, res) => {
 
 exports.deleteStamp = asyncHandler(async (req, res) => {
   try {
-    await StampService.deleteItemById(req.params.id);
-    res.status(204).end();
+    const result = await StampService.deleteItemById(req.params.id);
+    res.json({
+      success: true,
+      message: "Stamp deleted",
+      data: result
+    })
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.increaseStampView = asyncHandler(async (req, res) => {
+  try {
+    const result = await StampService.increaseViewCount(req.params.id);
+    res.json({
+      success: true,
+      message: "View count increased",
+      data: result
+    })
+
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.increaseStampFavourite = asyncHandler(async (req, res) => {
+  try {
+    const result = await StampService.increaseFavouriteCount(req.params.id);
+    res.json({
+      success: true,
+      message: "Favourite count increased",
+      data: result
+    })
+
   } catch (error) {
     handleServiceError(res, error);
   }

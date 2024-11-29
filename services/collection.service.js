@@ -133,6 +133,16 @@ class CollectionService {
       }
     }
 
+    // Sorting
+    let sortField = "createdAt";
+    let sortOrder = -1; // Descending
+    if (filters.sortBy) {
+      sortField = filters.sortBy;
+    }
+    if (filters.sortOrder === "asc") {
+      sortOrder = 1; // Ascending
+    }
+
     const parsedPage = Math.max(1, parseInt(page));
     const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
     const skip = (parsedPage - 1) * parsedLimit;
@@ -141,7 +151,7 @@ class CollectionService {
       collectionModel.countDocuments(mongoFilter),
       collectionModel
         .find(mongoFilter)
-        .sort({ createdAt: -1 })
+        .sort({ [sortField]: sortOrder })
         .skip(skip)
         .limit(parsedLimit),
     ]);

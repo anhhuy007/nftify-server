@@ -151,6 +151,18 @@ class StampService {
       mongoFilter.function = filters.function;
     }
 
+    // Sorting
+    let sortField = "createdAt";
+    let sortOrder = -1; // Descending
+    if (filters.sortBy) {
+      sortField = filters.sortBy;
+    }
+    if (filters.sortOrder && filters.sortOrder.toLowerCase() === "asc") {
+      sortOrder = 1; // Ascending
+    }
+
+    console.log(`Sorting by ${sortField} in ${sortOrder === 1 ? "ascending" : "descending"} order`);
+
     // Pagination
     const parsedPage = Math.max(1, parseInt(page));
     const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
@@ -161,7 +173,7 @@ class StampService {
       stampModel.countDocuments(mongoFilter),
       stampModel
         .find(mongoFilter)
-        .sort({ createdAt: -1 }) // Most recent first
+        .sort({[sortField]: sortOrder})
         .skip(skip)
         .limit(parsedLimit)
         .select("-__v"), // Exclude version key
@@ -256,7 +268,7 @@ class StampService {
     return {
       total,
       page: parsedPage,
-      limit: parsedLimit,
+      limit: parsedLimit > total ? total : parsedLimit,
       totalPages: Math.ceil(total / parsedLimit),
       items: stamps,
     };
@@ -267,7 +279,41 @@ class StampService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       id = new mongoose.Types.ObjectId(id);
     }
-    return stampModel.findByIdAndDelete(id);
+    await stampModel.findByIdAndDelete(id);
+
+    return { id };
+  }
+
+  async increaseViewCount(itemId) {
+    const itemInsight = await itemInsightModel.findOne({ itemId });
+    if (itemInsight) {
+      itemInsight.viewCount += 1;
+      await itemInsight.save();
+    } else {
+      await itemInsightModel.create({ itemId, viewCount: 1 });
+    }
+
+    // Return updated view count
+    return {
+      id: itemId,
+      viewCount: itemInsight ? itemInsight.viewCount + 1 : 1,
+    }
+  }
+
+  async increaseFavouriteCount(itemId) {
+    const itemInsight = await itemInsightModel.findOne({ itemId });
+    if (itemInsight) {
+      itemInsight.favouriteCount += 1;
+      await itemInsight.save();
+    } else {
+      await itemInsightModel.create({ itemId, favouriteCount: 1 });
+    }
+
+    // Return updated favourite count
+    return {
+      id: itemId,
+      favouriteCount: itemInsight ? itemInsight.favouriteCount + 1 : 1,
+    }
   }
 }
 

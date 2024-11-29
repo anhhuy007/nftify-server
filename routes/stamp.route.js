@@ -12,5 +12,7 @@ itemRouter.get("/:id", stampController.getStampById);
 itemRouter.use(authenticateToken);
 itemRouter.post("/", stampController.createStamp);
 itemRouter.delete("/:id", stampController.deleteStamp);
+itemRouter.get("/increment-view/:id", stampController.increaseStampView);
+itemRouter.get("/increment-favourite/:id", stampController.increaseStampFavourite);
 
 module.exports = itemRouter;

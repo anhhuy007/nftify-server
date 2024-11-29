@@ -50,6 +50,8 @@ exports.getCollections = asyncHandler(async (req, res) => {
       maxViewCount: req.query.maxViewCount,
       minFavouriteCount: req.query.minFavouriteCount,
       maxFavouriteCount: req.query.maxFavouriteCount,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
     };
 
     const result = await collectionService.filterCollections({
