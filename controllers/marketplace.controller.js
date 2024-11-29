@@ -141,3 +141,17 @@ exports.getCollections = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getCreators = asyncHandler(async (req, res) => {
+    try {
+        const result = await MarketplaceService.getCreatorsWithFilter({
+            page: req.query.page,
+            limit: req.query.limit,
+            name: req.query.name
+        });
+
+        res.json(result);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});
+
