@@ -151,6 +151,18 @@ class StampService {
       mongoFilter.function = filters.function;
     }
 
+    // Sorting
+    let sortField = "createdAt";
+    let sortOrder = -1; // Descending
+    if (filters.sortBy) {
+      sortField = filters.sortBy;
+    }
+    if (filters.sortOrder && filters.sortOrder.toLowerCase() === "asc") {
+      sortOrder = 1; // Ascending
+    }
+
+    console.log(`Sorting by ${sortField} in ${sortOrder === 1 ? "ascending" : "descending"} order`);
+
     // Pagination
     const parsedPage = Math.max(1, parseInt(page));
     const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
@@ -161,7 +173,7 @@ class StampService {
       stampModel.countDocuments(mongoFilter),
       stampModel
         .find(mongoFilter)
-        .sort({ createdAt: -1 }) // Most recent first
+        .sort({[sortField]: sortOrder})
         .skip(skip)
         .limit(parsedLimit)
         .select("-__v"), // Exclude version key

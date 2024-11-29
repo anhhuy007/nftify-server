@@ -77,3 +77,36 @@ exports.getStampPriceHistory = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getStamps = asyncHandler(async (req, res) => {
+    try {
+        const filters = {
+            title: req.query.title,
+            creatorId: req.query.creatorId,
+            issuedBy: req.query.issuedBy,
+            startDate: req.query.startDate,
+            endDate: req.query.endDate,
+            minDenom: req.query.minDenom,
+            maxDenom: req.query.maxDenom,
+            color: req.query.color,
+            function: req.query.function,
+            sortBy: req.query.sortBy,
+            sortOrder: req.query.sortOrder
+        };
+
+        // example api 
+        // /list/stamps?page=1&limit=10&title=abc&creatorId=123&issuedBy=xyz&startDate=2021-01-01&endDate=2021-12-31&minDenom=1&maxDenom=100&color=red&function=abc&sortBy=createdAt&sortOrder=asc
+
+        const result = await MarketplaceService.getStampsWithFilter({
+            page: req.query.page,
+            limit: req.query.limit,
+            filters: Object.fromEntries(
+                Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+            )
+        });
+
+        res.json(result);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});
+

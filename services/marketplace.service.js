@@ -4,6 +4,7 @@ const itemInsightModel = require('../models/itemInsight.schema');
 const ItemSellPrice = require('../models/itemPricing.schema');
 const OwnerShip = require('../models/ownership.schema');
 const Collection = require('../models/collection.schema');
+const StampService = require('./stamp.service');
 class MarketplaceService {
     async getTrendingStamps(options = {}) {
         const { page = 1, limit = 10 } = options;
@@ -293,7 +294,7 @@ class MarketplaceService {
             }
         ]);
 
-        const total = await await Ownership.distinct('ownerId').then((owners) => owners.length);
+        const total = await await OwnerShip.distinct('ownerId').then((owners) => owners.length);
 
         return {
             total,
@@ -338,6 +339,10 @@ class MarketplaceService {
             totalPages: Math.ceil(total / parsedLimit),
             items: collections,
           };
+    }
+
+    async getStampsWithFilter(options = {}) {
+        return await StampService.filterItems(options);
     }
 }
 

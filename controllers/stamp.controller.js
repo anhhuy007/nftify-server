@@ -25,7 +25,9 @@ exports.getStamps = asyncHandler(async (req, res) => {
       minDenom: req.query.minDenom,
       maxDenom: req.query.maxDenom,
       color: req.query.color,
-      function: req.query.function
+      function: req.query.function,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
     };
 
     const result = await StampService.filterItems({
