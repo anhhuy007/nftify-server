@@ -1,12 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const connect = require("./utils/connect");
-
-//routes
-const stampRoute = require("./routes/stamp.route");
-const collectionRoute = require("./routes/collection.route");
-const authRoute = require("./routes/auth.route");
-const marketplaceRoute = require("./routes/marketplace.route");
+const routes = require( "./routes/index.route.js");
 
 const app = express();
 
@@ -16,10 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //routes
-app.use("/auth", authRoute);
-app.use("/stamp", stampRoute);
-app.use("/collection", collectionRoute);
-app.use("/marketplace", marketplaceRoute);
+app.use("/api/v1", routes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is on http://localhost:${process.env.PORT}`);

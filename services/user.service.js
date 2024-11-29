@@ -29,13 +29,13 @@ class UserService {
         }
         // Validate gender
         const validGender = ["male", "female"];
-        if (!validGender.includes(user.status)) {
+        if (!validGender.includes(user.gender)) {
             throw new Error("Invalid gender value");
         }
     }
     async createUser(user) {
         // Validate input
-        this.validateUserInput(collection);
+        this.validateUserInput(user);
         // Prepare user for saving
         const preparedUser = {
             ...user,
@@ -131,7 +131,7 @@ class UserService {
             throw new Error("Invalid userId format");
         }
 
-        await collectionModel.deleteOne({ _id: userId });
+        await userModel.deleteOne({ _id: userId });
     }
 }
 

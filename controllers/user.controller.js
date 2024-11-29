@@ -7,7 +7,11 @@ exports.createUser = asyncHandler(async (req, res) => {
     const newUser = await userService.createUser(
       req.body,
     );
-    res.status(201).json(newUser);
+    res.json({
+      success: true,
+      message: "Created user successfully",
+      data: newUser
+    })
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -47,7 +51,10 @@ exports.updateUser = asyncHandler(async (req, res) => {
       req.params.userId,
       req.body
     );
-    res.json(updatedUser);
+    res.json({
+      success: true,
+      message: "Updated user successfully",
+    })
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -55,7 +62,10 @@ exports.updateUser = asyncHandler(async (req, res) => {
 exports.deleteUser = asyncHandler(async (req, res) => {
   try {
     await userService.deleteUser(req.params.userId);
-    res.status(204).end();
+    res.json({
+      success: true,
+      message: "Deleted user successfully",
+    })
   } catch (error) {
     handleServiceError(res, error);
   }
