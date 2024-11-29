@@ -1,14 +1,12 @@
 const express = require("express");
-const marketplaceRouter = express.Router({ mergeParams: true });
+const router = express.Router();
 const marketplaceController = require("../controllers/marketplace.controller");
+const { authenticateToken } = require("../middlewares/auth.middleware");
 
-const sellerRouter = require("./seller.route");
+// guest routes
+// router.get("/list", marketplaceController.getItems);
+router.get("/list/trending/stamps", marketplaceController.getTrendingStamps);
+router.get("/list/topCategories", marketplaceController.getTopCategories);
+router.get("/stamp/:id", marketplaceController.getStampById);
 
-marketplaceRouter.use("/users", sellerRouter);
-
-// marketplaceRouter.get('/list',marketplaceController.listmarketplace);
-
-module.exports = marketplaceRouter;
-
-// marketplaceRouter.get('/:id/timeFilter',marketplaceController.getAllItems);
-// marketplaceRouter.get('/:id/price',marketplaceController.getAllItems);
+module.exports = router;

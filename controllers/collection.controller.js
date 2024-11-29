@@ -4,6 +4,12 @@ const collectionService = require("../services/collection.service");
 
 exports.createCollection = asyncHandler(async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+    
+    console.log("Create new collection for user: ", req.user._id);
+
     const newCollection = await collectionService.createCollection(
       req.body,
       req.user._id
@@ -109,7 +115,7 @@ exports.increaseFavouriteCount = asyncHandler(async (req, res) => {
 exports.deleteCollection = asyncHandler(async (req, res) => {
   try {
     await collectionService.deleteCollection(req.params.collectionId);
-    res.status(204).end();
+    res.status(204).json({ message: "Collection deleted" });
   } catch (error) {
     handleServiceError(res, error);
   }
