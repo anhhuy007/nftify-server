@@ -54,6 +54,7 @@ class StampService {
     /*
     sample item data
     {
+      creatorId: "abcdef123456",
       title: "First Stamp",
       issuedBy: "Issuer 1",
       function: "Postage",
@@ -61,7 +62,6 @@ class StampService {
       denom: 1.5,
       color: "Red",
       imgUrl: "https://example.com/image.jpg",
-      creatorId: "abcdef123456", // Optional
     }
     */
 
@@ -78,6 +78,10 @@ class StampService {
 
     try {
       await newItem.save();
+
+      // add iteminsight for the item
+      await itemInsightModel.create({ itemId: newItem._id, verifyStatus: "verified" });
+
       return newItem;
     } catch (error) {
       // Detailed error handling

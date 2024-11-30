@@ -70,3 +70,19 @@ exports.deleteUser = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+exports.createNewStamp = asyncHandler(async (req, res) => {
+  try {
+    const newStamp = await userService.createNewStamp(
+      req.user._id,
+      req.body
+    );
+    res.json({
+      success: true,
+      message: "Created stamp successfully",
+      data: newStamp
+    })
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

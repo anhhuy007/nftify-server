@@ -1,14 +1,8 @@
 const mongoose = require("mongoose");
 const userModel = require("../models/user.schema");
-
-// Table User {
-//     _id string [pk]
-//     name varchar [not null]
-//     description string
-//     avatarUrl string [default: "default.image"]
-//     gender varchar [note: "field: 'male', 'female'"]
-//     status string [note: "field: pending, verified, rejected"]
-//   }
+const stampModel = require("../models/stamp.schema");
+const stampService = require("./stamp.service");
+const ipfsService = require("./ipfs.service");
 
 class UserService {
     validateUserInput(user) {
@@ -38,6 +32,7 @@ class UserService {
         })
         if (existingUser) throw new Error("Username already exists");
     }
+
     async createUser(user) {
         // Validate input
         this.validateUserInput(user);
@@ -51,6 +46,7 @@ class UserService {
         const newUser = await userModel.create(preparedUser);
         return newUser;
     }
+
     async getUsesById(userId) {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             throw new Error("Invalid userId format");
@@ -58,6 +54,7 @@ class UserService {
         const user = await userModel.findOne({ _id: userId });
         return user;
     }
+
     async filterUser(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
         const mongoFilter = {};
@@ -88,6 +85,7 @@ class UserService {
             items: users,
         };
     }
+
     async updateUser(userId, update) {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             throw new Error("Invalid userId format");
@@ -97,18 +95,6 @@ class UserService {
             throw new Error("Update data is required");
         }
 
-        /*
-    update: {
-
-// Table User {
-//     name varchar [not null]
-//     description string
-//     avatarUrl string [default: "default.image"]
-//     gender varchar [note: "field: 'male', 'female'"]
-//     status string [note: "field: pending, verified, rejected"]
-//   }
-    }
-    */
         // Validate update fields
         const allowedFields = [
             "name",
@@ -131,12 +117,49 @@ class UserService {
         );
         return updatedUser;
     }
+
     async deleteUser(userId) {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             throw new Error("Invalid userId format");
         }
 
         await userModel.deleteOne({ _id: userId });
+    }
+
+    async createNewStamp(stamp) {
+       try {
+        // const result = await stampService.createItem(stamp);
+        /*
+            {
+                "creatorId": "abcdef123456",
+                "title": "First Stamp",
+                "issuedBy": "Issuer 1",
+                "function": "Postage",
+                "date": "01/01/2021",
+                "denom": {
+                    "$numberDecimal": "1.5"
+                },
+                "color": "Red",
+                "imgUrl": "https://example.com/image.jpg",
+                "_id": "6749c47b222a32cc9e2e9bf8",
+                "createdAt": "2024-11-29T13:41:15.071Z"
+            }
+        */
+
+        await ipfsService.uploadFile();
+
+        // if (result) {
+        //     // upload JSON to IPFS
+
+
+        //     return result;
+        // }
+
+        throw new Error("Error creating stamp");
+       }
+       catch (error) {
+        throw new Error("Error creating stamp");
+       }
     }
 }
 
