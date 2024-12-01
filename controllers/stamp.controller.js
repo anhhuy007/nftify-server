@@ -1,7 +1,6 @@
 const StampService = require("../services/stamp.service");
 const asyncHandler = require("express-async-handler");
 const { handleServiceError } = require("../utils/helperFunc");
-const { success } = require("jsend");
 
 exports.createStamp = asyncHandler(async (req, res) => {
   try {

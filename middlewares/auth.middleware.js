@@ -15,6 +15,7 @@ const authenticateToken = asyncHandler(async (req, res, next) => {
 
     if (!account) return res.status(401).json({ message: 'Account not found' });
 
+    // pass the account to the next middleware
     req.user = account;
     next();
 });
