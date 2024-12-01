@@ -97,10 +97,8 @@ class StampService {
 
   async filterItems(options = {}) {
     const { page = 1, limit = 10, filters = {} } = options;
-
     // Prepare dynamic filter
     const mongoFilter = {};
-
     if (filters.creatorId) {
       mongoFilter.creatorId = new mongoose.Types.ObjectId(filters.creatorId);
     }
@@ -157,7 +155,7 @@ class StampService {
     if (filters.sortBy) {
       sortField = filters.sortBy;
     }
-    if (filters.sortOrder && filters.sortOrder.toLowerCase() === "asc") {
+    if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
       sortOrder = 1; // Ascending
     }
 
