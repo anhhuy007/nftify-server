@@ -2,6 +2,7 @@ const { ethers } = require("ethers");
 const { model } = require("mongoose");
 const helperFunc = require("../utils/helperFunc");
 const ipfsService = require("./ipfs.service");
+const axios = require("axios")
 
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
@@ -79,6 +80,29 @@ class NFTService {
         catch (error) {
             console.error("Error listing NFT:", error);
             throw new Error("Failed to list NFT: " + error.message);
+        }
+    }
+
+    async getAllNFTs() {
+        try {
+            let transaction = await this.contract.getAllNFTs();
+            const items = await Promise.all(transaction.map(async i => {
+                var tokenURI = await this.contract.tokenURI(i.tokenId);
+                tokenURI = helperFunc.GetIpfsUrlFromPinata(tokenURI);
+                console.log("Getting this token uri: ", tokenURI);
+                
+                let metadata = await axios.get(tokenURI);
+                metadata = metadata.data;
+
+                console.log("Name:", metadata.name);
+
+                return metadata; 
+            }));
+
+            return items;
+        } catch (error) {
+            console.log("Error: ", error);
+            throw new Error("Failed to get all NFTs: ", error);
         }
     }
 }

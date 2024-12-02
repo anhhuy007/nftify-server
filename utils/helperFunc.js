@@ -92,6 +92,10 @@ function getIPFSUrl(ipfsHash) {
   return `${process.env.GATEWAY_URL}/ipfs/${ipfsHash}`;
 }
 
+function GetIpfsUrlFromPinata(pinataUrl) {
+  return "https://" + pinataUrl;
+};
+
 module.exports = {
   randomDates,
   respondPOSTItem,
@@ -99,4 +103,5 @@ module.exports = {
   shuffleArray,
   convertStampToNFTMeta,  
   getIPFSUrl,
+  GetIpfsUrlFromPinata
 };

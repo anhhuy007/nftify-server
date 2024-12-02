@@ -155,3 +155,13 @@ exports.getCreators = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getAllNFTs = asyncHandler(async (req, res) => {
+    try {
+        const result = await MarketplaceService.getAllNFTs();
+
+        res.json(result);
+    }
+    catch (error) {
+        handleServiceError(res, error);
+    }
+});

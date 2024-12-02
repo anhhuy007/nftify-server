@@ -6,6 +6,7 @@ const OwnerShip = require('../models/ownership.schema');
 const Collection = require('../models/collection.schema');
 const StampService = require('./stamp.service');
 const collectionService = require('./collection.service');
+const nftService = require("./nft.service");
 class MarketplaceService {
     async getTrendingStamps(options = {}) {
         const { page = 1, limit = 10 } = options;
@@ -421,6 +422,14 @@ class MarketplaceService {
             limit: parsedLimit > total ? total : parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
             creators,
+        };
+    }
+
+    async getAllNFTs() {
+        const nfts = await nftService.getAllNFTs();
+
+        return {
+            data: nfts
         };
     }
 }

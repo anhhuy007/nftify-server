@@ -14,6 +14,7 @@ router.get("/list/stamps", marketplaceController.getStamps);
 router.get("/list/collections", marketplaceController.getCollections);
 router.get("/list/creators", marketplaceController.getCreators);
 
+router.get("/nfts", marketplaceController.getAllNFTs);
 router.get("/stamp/:id", marketplaceController.getStampById);
 
 router.get("/history/stampOwner/:id", marketplaceController.getStampOwnerHistory);
