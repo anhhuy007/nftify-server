@@ -5,6 +5,8 @@ const stampService = require("./stamp.service");
 const ipfsService = require("./ipfs.service");
 const nftService = require("./nft.service");
 const helperFunc = require("../utils/helperFunc");
+const ownershipModel = require("../models/ownership.schema");
+const favouriteModel = require("../models/favouriteItem.schema");
 
 class UserService {
   validateUserInput(user) {
@@ -125,56 +127,147 @@ class UserService {
       throw new Error("Invalid userId format");
     }
 
-    await userModel.deleteOne({ _id: userId });
-  }
-
-  async createNewStamp(userId, stampData) {
-    try {
-      // 1. Validate and create stamp in database
-      const newStamp = await stampService.createItem({
-        ...stampData,
-        creatorId: userId,
-      });
-
-      console.log("Creating NFT, this might take a few seconds...");
-      await nftService.listNFT(newStamp, 1.2);
-
-      // // 2. Prepare metadata for IPFS
-      // const metadata = helperFunc.convertStampToNFTMeta(newStamp);
-
-      // // 3. Upload metadata to IPFS
-      // const metadataFile = new File(
-      //   [JSON.stringify(metadata)],
-      //   "metadata.json",
-      //   { type: "application/json" }
-      // );
-      // const ipfsResult = await ipfsService.uploadFile(metadataFile, newStamp._id);
-      // console.log("IPFS Result:", ipfsResult);
-
-      // // 4. Mint NFT
-      // const receiver = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"; 
-      // const tokenURI = `${process.env.GATEWAY_URL}/ipfs/${ipfsResult.IpfsHash}`;
-      // const mintResult = await nftService.mintNFT(receiver, tokenURI);
-      // console.log("Mint Result:", mintResult);
-
-      // // 5. Return combined result
-      // return {
-      //   stamp: newStamp,
-      //   nft: {
-      //     tokenId: mintResult.tokenId,
-      //     tokenURI: tokenURI,
-      //     transaction: mintResult.transactionHash,
-      //   },
-      //   ipfs: {
-      //     hash: ipfsResult.IpfsHash,
-      //     url: tokenURI,
-      //   },
-      // };
-    } catch (error) {
-      console.error("Error creating new stamp:", error);
-      throw new Error("Failed to create new stamp: " + error.message);
+        await userModel.deleteOne({ _id: userId });
     }
-  }
+
+    //filterStamps based on stamp id array that are returned from user query
+    async filterStamps(stampIds, options = {}) {
+        const { page = 1, limit = 10, filters = {} } = options;
+        // Prepare dynamic filter
+        const mongoFilter = {
+            _id: { $in: stampIds },
+        };
+        if (filters.creatorId) {
+            mongoFilter.creatorId = new mongoose.Types.ObjectId(
+                filters.creatorId
+            );
+        }
+        // Title filter (case-insensitive partial match)
+        if (filters.title) {
+            mongoFilter.title = { $regex: filters.title, $options: "i" };
+        }
+
+        // Issued By filter (exact match)
+        if (filters.issuedBy) {
+            mongoFilter.issuedBy = filters.issuedBy;
+        }
+
+        // Date range filter
+        if (filters.startDate || filters.endDate) {
+            mongoFilter.date = {};
+            if (filters.startDate) {
+                mongoFilter.date.$gte = filters.startDate;
+            }
+            if (filters.endDate) {
+                mongoFilter.date.$lte = filters.endDate;
+            }
+        }
+
+        // Denomination range filter
+        if (filters.minDenom || filters.maxDenom) {
+            mongoFilter.denom = {};
+            if (filters.minDenom) {
+                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(
+                    filters.minDenom.toString()
+                );
+            }
+            if (filters.maxDenom) {
+                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(
+                    filters.maxDenom.toString()
+                );
+            }
+        }
+
+        // Color filter
+        if (filters.color) {
+            mongoFilter.color = filters.color;
+        }
+
+        // Function filter
+        if (filters.function) {
+            mongoFilter.function = filters.function;
+        }
+
+        // Sorting
+        let sortField = "createdAt";
+        let sortOrder = -1; // Descending
+        if (filters.sortBy) {
+            sortField = filters.sortBy;
+        }
+        if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
+            sortOrder = 1; // Ascending
+        }
+
+        console.log(
+            `Sorting by ${sortField} in ${
+                sortOrder === 1 ? "ascending" : "descending"
+            } order`
+        );
+
+        // Pagination
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        // Execute query
+        const [total, items] = await Promise.all([
+            stampModel.countDocuments(mongoFilter),
+            stampModel
+                .find(mongoFilter)
+                .sort({ [sortField]: sortOrder })
+                .skip(skip)
+                .limit(parsedLimit)
+                .select("-__v"), // Exclude version key
+        ]);
+
+        return {
+            total,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(total / parsedLimit),
+            items,
+        };
+    }
+    async getCreatedStamps(userId, options = {}) {
+        const createdStamp = await stampModel.find({
+            creatorId: userId,
+        });
+        const stampIds = createdStamp.map((stamp) => stamp._id);
+        const result = await this.filterStamps(stampIds, options);
+        return result;
+    }
+
+    async getOwnedStamps(userId, options = {}) {
+        // Fetch all stamps that were ever owned by the user
+        const onceOwnedStamps = await ownershipModel.find({ ownerId: userId });
+
+        // Extract the itemIds of stamps once owned by the user
+        const itemIds = onceOwnedStamps.map((ownership) => ownership.itemId);
+
+        // Fetch the latest ownership record for each of these stamps
+        const subTable = await ownershipModel.aggregate([
+            { $match: { itemId: { $in: itemIds } } }, // Filter to relevant stamps
+            { $sort: { createdAt: -1 } }, // Sort by createdAt in descending order
+            {
+                $group: {
+                    // Group by itemId
+                    _id: "$itemId",
+                    latestOwnerId: { $first: "$ownerId" }, // Keep only the latest ownerId
+                },
+            },
+            { $match: { latestOwnerId: userId } }, // Filter to stamps where the latest owner is the user
+        ]);
+        // Return the list of currently owned stamps (extracting itemId)
+        const ownedStampsId = subTable.map((record) => record._id);
+        const result = await this.filterStamps(ownedStampsId, options);
+        return result;
+    }
+    async getFavoriteStamps(userId, options = {}) {
+        const favouriteStamps = await favouriteModel.findOne({ userId: userId });
+        const stampIds = favouriteStamps?.itemId || [];
+        const result = await this.filterStamps(stampIds, options);
+        return result;
+    }
 }
 
 module.exports = new UserService();
