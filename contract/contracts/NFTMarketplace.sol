@@ -58,6 +58,22 @@ contract NFTMarketplace is ERC721URIStorage {
         return _tokenIds - 1;
     }
 
+    function createToken(
+        string memory tokenURI, 
+        uint256 price
+    ) public payable returns (uint) {
+        uint256 newTokenId = _tokenIds;
+        _tokenIds += 1;
+        
+        _safeMint(msg.sender, newTokenId);
+
+        _setTokenURI(newTokenId, tokenURI);
+
+        createListedToken(newTokenId, price);
+
+        return newTokenId;
+    }
+
     // the first time a token is created, it is minted and listed
     function createListedToken(uint256 tokenId, uint256 price) private {
         // make sure the sender sent enough ETH to pay for listing

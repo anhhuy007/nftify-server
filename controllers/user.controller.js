@@ -73,15 +73,20 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 
 exports.createNewStamp = asyncHandler(async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
     const newStamp = await userService.createNewStamp(
       req.user._id,
       req.body
     );
-    res.json({
+
+    res.status(201).json({
       success: true,
-      message: "Created stamp successfully",
+      message: "Created stamp and minted NFT successfully",
       data: newStamp
-    })
+    });
   } catch (error) {
     handleServiceError(res, error);
   }

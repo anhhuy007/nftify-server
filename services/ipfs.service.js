@@ -8,15 +8,29 @@ const pinata = new PinataSDK({
 })
 
 class IpfsService {
-  async uploadFile() {
+  async uploadFile(fileData, filename) {
     try {
-        const blob = new Blob([fs.readFileSync("./hello-world.txt")]);
-        const file = new File([blob], "hello-world.txt", { type: "text/plain"})
+        const blob = new Blob([fileData]);
+        const file = new File([blob], filename, { type: "text/plain"})
         const upload = await pinata.upload.file(file);
-        console.log(upload)
+
+        return upload;
       } catch (error) {
-        console.log(error)
+        console.log(error);
+        throw new Error("Failed to upload file to IPFS: " + error.message);
       }
+  }
+
+  async fetchFile(cid) {
+    try {
+      const file = await pinata.gateways.get(cid);
+      console.log(file.data)
+
+      return file.data
+    }
+    catch (error) {
+      console.log(error)
+    }
   }
 }
 

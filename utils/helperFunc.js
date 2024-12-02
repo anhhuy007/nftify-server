@@ -1,4 +1,5 @@
 const jsend = require("jsend");
+const ipfsService = require("../services/ipfs.service");
 
 function randomDates(start, end) {
   // Convert to timestamps
@@ -57,9 +58,45 @@ function shuffleArray (array) {
   return shuffled;
 };
 
+function convertStampToNFTMeta(stampData) {
+  return {
+    name: stampData.title,
+    description: `Stamp issued by ${stampData.issuedBy}`,
+    image: stampData.imgUrl,
+    attributes: [
+      {
+        trait_type: "Issuer",
+        value: stampData.issuedBy,
+      },
+      {
+        trait_type: "Function",
+        value: stampData.function,
+      },
+      {
+        trait_type: "Date",
+        value: stampData.date,
+      },
+      {
+        trait_type: "Denomination",
+        value: stampData.denom.toString(),
+      },
+      {
+        trait_type: "Color",
+        value: stampData.color,
+      },
+    ],
+  };
+}
+
+function getIPFSUrl(ipfsHash) {
+  return `${process.env.GATEWAY_URL}/ipfs/${ipfsHash}`;
+}
+
 module.exports = {
   randomDates,
   respondPOSTItem,
   handleServiceError,
   shuffleArray,
+  convertStampToNFTMeta,  
+  getIPFSUrl,
 };
