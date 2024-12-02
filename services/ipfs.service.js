@@ -21,6 +21,12 @@ class IpfsService {
       }
   }
 
+
+  // upload stamp medata to Stamp group on pinata
+  async uploadStampMetadata(stamp) {
+    return;
+  }
+
   async fetchFile(cid) {
     try {
       const file = await pinata.gateways.get(cid);

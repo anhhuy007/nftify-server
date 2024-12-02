@@ -268,6 +268,24 @@ class UserService {
         const result = await this.filterStamps(stampIds, options);
         return result;
     }
+
+    async createNewStamp(userId, stamp) {
+        // Validate input
+        if (!stamp) {
+            throw new Error("Stamp data is required");
+        }
+        // Prepare stamp for saving
+        const preparedStamp = {
+            ...stamp,
+            creatorId: userId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+        // Create stamp
+        const result = await nftService.listNFT(preparedStamp, 1.2);
+
+        return result;
+    }
 }
 
 module.exports = new UserService();
