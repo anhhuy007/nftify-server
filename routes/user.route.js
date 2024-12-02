@@ -40,6 +40,7 @@ userRouter.delete("/delete/:userId", userController.deleteUser);
 
 // NFTs routes
 userRouter.post("/create/nft", userController.createNewStamp);
+userRouter.get("/myNfts", userController.getMyNFTs);
 
 module.exports = userRouter;
 

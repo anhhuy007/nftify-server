@@ -59,33 +59,8 @@ function shuffleArray (array) {
 };
 
 function convertStampToNFTMeta(stampData) {
-  return {
-    name: stampData.title,
-    description: `Stamp issued by ${stampData.issuedBy}`,
-    image: stampData.imgUrl,
-    attributes: [
-      {
-        trait_type: "Issuer",
-        value: stampData.issuedBy,
-      },
-      {
-        trait_type: "Function",
-        value: stampData.function,
-      },
-      {
-        trait_type: "Date",
-        value: stampData.date,
-      },
-      {
-        trait_type: "Denomination",
-        value: stampData.denom.toString(),
-      },
-      {
-        trait_type: "Color",
-        value: stampData.color,
-      },
-    ],
-  };
+  // convert stamp data to json
+  return JSON.parse(JSON.stringify(stampData));
 }
 
 function getIPFSUrl(ipfsHash) {

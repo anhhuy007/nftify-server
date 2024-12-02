@@ -11,6 +11,13 @@ contract NFTMarketplace is ERC721URIStorage {
     address payable owner;
     uint256 listPrice = 0.01 ether;
 
+    // the structure to store the price history of a token
+    struct PriceHistory {
+        uint256 price;
+        uint256 timestamp;
+        address setter;
+    }
+
     // the structure to store the listed token (NFT)
     struct ListedToken {
         uint256 tokenId;
@@ -18,7 +25,8 @@ contract NFTMarketplace is ERC721URIStorage {
         address payable seller;
         uint256 price;
         bool currentlyListed;
-    }
+        PriceHistory[] priceHistory;
+    } 
 
     // the event to emit when a token is successfully listed
     event TokenListedSuccess(
@@ -26,10 +34,17 @@ contract NFTMarketplace is ERC721URIStorage {
         address owner,
         address seller,
         uint256 price,
-        bool currentlyListed
+        bool currentlyListed,
     );
 
-    // maps token id to the listed token
+    event TokenPriceUpdated(
+        uint256 indexed tokenId,
+        uint256 oldPrice, 
+        uint256 newPrice,
+        address updatedBy, 
+        uint256 timestamp
+    );
+
     mapping(uint256 => ListedToken) private idToListedToken;
 
     constructor() ERC721("NFTMarketplace", "NFTify") {
@@ -40,6 +55,7 @@ contract NFTMarketplace is ERC721URIStorage {
         return listPrice;
     }
 
+    // only the owner can update the list price (royalty - marketplace fee)
     function updateListPrice(uint256 newPrice) public {
         require(msg.sender == owner, "Only owner can update the list price");
         listPrice = newPrice;
@@ -70,6 +86,12 @@ contract NFTMarketplace is ERC721URIStorage {
         _setTokenURI(newTokenId, tokenURI);
 
         createListedToken(newTokenId, price);
+
+        idToListedToken[newTokenId].priceHistory.push(PriceHistory(
+            price: price, 
+            timestamp: block.timestamp, 
+            setter: msg.sender
+        ));
 
         return newTokenId;
     }
@@ -145,25 +167,62 @@ contract NFTMarketplace is ERC721URIStorage {
     }
 
     function excuteSale(uint256 tokenId) public payable {
-        uint price = idToListedToken[tokenId].price;
+        ListedToken storage token = idToListedToken[tokenId];
+        uint price = token.price;
         address seller = idToListedToken[tokenId].seller;
         
-        // make sure the sender sent enough ETH to pay for the NFT
+        require(token.currentlyListed, "Token is not currently listed for sale");
         require(msg.value == price, "Please submit the asking price in order to complete the sale");
 
         // update the details of token
-        idToListedToken[tokenId].currentlyListed = true;
-        idToListedToken[tokenId].seller = payable(msg.sender);
+        token.currentlyListed = false; // no longer listed
+        token.price = 0; // no longer has a price
+        token.seller = payable(msg.sender);
         _itemSolds += 1;
 
         // actually transfer the NFT to new owner
         _transfer(address(this), msg.sender, tokenId);
         approve(address(this), tokenId);
 
-        // transfer the listing fee to the marketplace creator (royalty)
+        // transfer the funds
         payable(owner).transfer(listPrice);
-
-        // transfer the proceeds of the sale to the seller of the NFT
         payable(seller).transfer(msg.value);
+
+        // emit the event
+        emit TokenListedSuccess(
+            tokenId, 
+            address(this), 
+            msg.sender, 
+            price, 
+            false
+        );
+    }
+
+    function updateTokenPrice(uint256 tokenId, uint256 newPrice) public {
+        require(idToListedToken[tokenId].seller == msg.sender, "Only the seller can update the price");
+        require(newPrice > 0, "Price must be greater than 0");
+
+        ListedToken storage token = idToListedToken[tokenId];
+        uint256 oldPrice = token.price;
+
+        token.priceHistory.push(PriceHistory(
+            price: newPrice, 
+            timestamp: block.timestamp, 
+            setter: msg.sender
+        ));
+
+        token.price = newPrice;
+
+        emit TokenPriceUpdated(
+            tokenId, 
+            oldPrice, 
+            newPrice, 
+            msg.sender, 
+            block.timestamp
+        );
+    }
+
+    function getTokenPriceHistory(uint256 tokenId) public view returns (PriceHistory[] memory) {
+        return idToListedToken[tokenId].priceHistory;
     }
 }

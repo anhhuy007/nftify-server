@@ -44,6 +44,8 @@ class NFTService {
         tokenURI = `${process.env.GATEWAY_URL}/ipfs/${ipfsHash}`;
         let meta = await fetch(tokenURI);
         console.log("Listed token: ", listedToken);
+
+        return meta;
     }
 
     async listNFT(nft, price) {
@@ -103,6 +105,18 @@ class NFTService {
         } catch (error) {
             console.log("Error: ", error);
             throw new Error("Failed to get all NFTs: ", error);
+        }
+    }
+
+    async getMyNFTs(account) {
+        try {
+            const myNFTs = await this.contract.getMyNFTs( { from: account });
+            console.log("My NFTs: ", myNFTs);
+
+            return myNFTs;
+        } catch(error) {
+            console.log("Error: ", error);
+            throw new Error("Failed to get my NFTs: ", error);
         }
     }
 }

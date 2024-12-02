@@ -427,8 +427,10 @@ class MarketplaceService {
 
     async getAllNFTs() {
         const nfts = await nftService.getAllNFTs();
+        const total = nfts.length;
 
         return {
+            total,
             data: nfts
         };
     }
