@@ -35,6 +35,10 @@ userRouter.get("/display/:userId/created", userController.getCreatedStamps);
 // http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/owned?minDenom=70&maxDenom=&color=multicolored&function=&page=1&limit=10&sortBy=denom&sortOrder=
 userRouter.get("/display/:userId/owned", userController.getOwnedStamps);
 
+// @route   GET /api/v1/user/display/:userId/created
+// @desc    get favourite stamps by user
+// http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/favourite?
+userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
 
 // authenticated-required routes
 userRouter.use(authenticateToken);

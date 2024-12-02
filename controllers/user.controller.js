@@ -126,3 +126,31 @@ exports.getOwnedStamps = asyncHandler(async (req, res) => {
         handleServiceError(res, error);
     }
 });
+exports.getFavouriteStamps = asyncHandler(async (req, res) => {
+    try {
+        // Flexible filtering based on query parameters
+        const filters = {
+            title: req.query.title,
+            issuedBy: req.query.issuedBy,
+            startDate: req.query.startDate,
+            endDate: req.query.endDate,
+            minDenom: req.query.minDenom,
+            maxDenom: req.query.maxDenom,
+            color: req.query.color,
+            function: req.query.function,
+            sortBy: req.query.sortBy,
+            sortOrder: req.query.sortOrder,
+        };
+
+        const result = await userService.getFavoriteStamps(req.params.userId, {
+            page: req.query.page,
+            limit: req.query.limit,
+            filters: Object.fromEntries(
+                Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+            ),
+        });
+        res.json(result);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});

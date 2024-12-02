@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 const userModel = require("../models/user.schema");
 const stampModel = require("../models/stamp.schema");
 const ownershipModel = require("../models/ownership.schema");
+const favouriteModel = require("../models/favouriteItem.schema");
 // Table User {
 //     _id string [pk]
 //     name varchar [not null]
-//     description string
+//     description stringm
 //     avatarUrl string [default: "default.image"]
 //     gender varchar [note: "field: 'male', 'female'"]
 //     status string [note: "field: pending, verified, rejected"]
@@ -270,6 +271,12 @@ class UserService {
         // Return the list of currently owned stamps (extracting itemId)
         const ownedStampsId = subTable.map((record) => record._id);
         const result = await this.filterStamps(ownedStampsId, options);
+        return result;
+    }
+    async getFavoriteStamps(userId, options = {}) {
+        const favouriteStamps = await favouriteModel.findOne({ userId: userId });
+        const stampIds = favouriteStamps?.itemId || [];
+        const result = await this.filterStamps(stampIds, options);
         return result;
     }
 }
