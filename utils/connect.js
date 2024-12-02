@@ -362,9 +362,76 @@ async function saveGeneratedItemPrice() {
   }
 }
 
+async function updateStampSchema() {
+  try {
+    console.log('Starting schema update for items collection');
+    
+    // Get all existing items
+    const items = await itemModel.find({});
+    console.log(`Found ${items.length} items to update`);
+      try {
+        // Update all documents to remove the `thumbUrl` field
+      const result = await itemModel.updateMany({}, { $unset: { thumbUrl: "" } });
+      console.log(`Documents updated: ${result.modifiedCount}`);
+  }   catch (error) {
+      console.error("Error updating schema:", error);
+  }   finally {
+      // Close the database connection
+      await mongoose.disconnect();
+      console.log("Database connection closed");
+  }
+  } catch (error) {
+    console.error('An error occurred during the updateStampSchema process:', error);
+  }
+}
+//connectDB()
+// Run the update script
+//updateStampSchema();
+
+async function updateCollectionSchema(){
+  const collections = await collectionModel.find({});
+  console.log(`Found ${collections.length} collections to update`);
+
+  for (const collection of collections) {
+    try {
+      await collectionModel.updateOne(
+        { _id: collection._id },
+        {
+          $set: {
+            thumbUrl: "default url",
+          },
+        }
+      );
+      console.log(`Updated schema for collection ${collection._id}`);
+    } catch (err) {
+      console.error(`Failed to update collection ${collection._id}:`, err);
+    }
+  }
+
+
+}
+
+async function exportItemsData() {
+  try {
+    const items = await itemModel.find({});
+    const itemsData = JSON.stringify(items, null, 2);
+    fs.writeFileSync("../datajson/Items.json", itemsData);
+    console.log("Items data exported successfully");
+  } catch (error) {
+    console.error("An error occurred during the exportItemsData process:", error);
+  }
+}
+connectDB()
+exportItemsData()
+  .then(() => console.log("Data export process completed."))
+  .catch((err) => console.error("Error in data export process:", err))
+  .finally(() => {
+    closeConnectDB();
+  });
+
 
 // connectDB()
-// saveGeneratedItemPrice()
+// updateCollectionSchema()
 //   .then(() => console.log('Data save process completed.'))
 //   .catch((err) => console.error('Error in data saving process:', err))
 //   .finally(() => {

@@ -21,6 +21,13 @@ function randomDates(start, end) {
 
   return `${day}/${month}/${year}`;
 }
+function getOriginFromOrigin(stampdataURL) {
+  thumbnail = stampdataURL
+  .replace("thumb", "stash")
+  .replace("300px-","")
+
+}
+
 // funtion that return respond based on error or success
 function respondPOSTItem(res, status, data, errorMessage) {
   res.send(jsend(status, data, errorMessage));

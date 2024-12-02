@@ -31,6 +31,10 @@ const CollectionSchema = new Schema(
     items: {
       type: [String],
     },
+    thumbUrl: {
+      type: String,
+      required: true,
+    },
   },
   {
     versionKey: false,
