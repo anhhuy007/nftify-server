@@ -158,11 +158,11 @@ exports.getFavouriteStamps = asyncHandler(async (req, res) => {
 
 exports.createNewStamp = asyncHandler(async (req, res) => {
   try {
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: "User not authenticated" });
-    }
-
-    const newStamp = await userService.createNewStamp(req.user._id, req.body);
+    // if (!req.user || !req.user._id) {
+    //   return res.status(401).json({ message: "User not authenticated" });
+    // }
+    // const newStamp = await userService.createNewStamp(req.user._id, req.body);
+    const newStamp = await userService.createNewStamp("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body);
 
     res.status(201).json({
       success: true,
@@ -176,14 +176,18 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
 
 exports.getMyNFTs = asyncHandler(async (req, res) => {
   try {
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: "User not authenticated" });
-    }
+    // if (!req.user || !req.user._id) {
+    //   return res.status(401).json({ message: "User not authenticated" });
+    // }
 
     const userAddress = process.env.USER_ADDRESS;
-    const myNFTs = await nftService.getMyNFTs(userAddress);
+    const myNFTs = await nftService.getNFTsByOwner(userAddress);
+    const total = myNFTs.length;
 
-    res.json(myNFTs);
+    return res.json({
+      total,
+      data: myNFTs,
+    });
   } catch (error) {
     handleServiceError(res, error);
   }

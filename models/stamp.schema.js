@@ -54,7 +54,7 @@ const StampSchema = new Schema(
       type: String,
       required: true,
     },
-    thumbUrl: {
+    tokenUrl: {
       type: String,
       required: true,
     },

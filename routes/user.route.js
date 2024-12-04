@@ -33,7 +33,7 @@ userRouter.get("/display/:userId/owned", userController.getOwnedStamps);
 userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
 
 // authenticated-required routes
-userRouter.use(authenticateToken);
+// userRouter.use(authenticateToken);
 userRouter.put("/profile/:userId", userController.updateUser);
 userRouter.post("/create", userController.createUser);
 userRouter.delete("/delete/:userId", userController.deleteUser);

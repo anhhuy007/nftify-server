@@ -4,119 +4,211 @@ const helperFunc = require("../utils/helperFunc");
 const ipfsService = require("./ipfs.service");
 const axios = require("axios")
 
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
-const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-const contractAddress = process.env.CONTRACT_ADDRESS;
-const contractABI = require("../contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json").abi;
-
 class NFTService {
     constructor() {
-        this.contract = new ethers.Contract(contractAddress, contractABI, signer);
+        this.provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+        this.signer = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
+        this.contractABI = require("../contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json").abi;
+        this.contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, this.contractABI, this.signer);
     }
-    
-    async mintNFT(receiver, tokenURI) {
+
+    async mintNFT(nft, price, forSale) {
         try {
-            const tx = await this.contract.safeMint(receiver, tokenURI);
-            const receipt = await tx.wait();
-
-            const transferEvent = receipt.logs.find(
-                (log) => log.eventName === "Transfer"
-            );
-
-            if (!transferEvent) {
-                throw new Error("No Transfer event found in the receipt");
-            }
-
-            return {
-                tokenId: transferEvent.args[2].toString(),
-                transactionHash: receipt.hash
-            }
-        }
-        catch (error) {
-            console.error("Error minting NFT:", error);
-            throw new Error("Failed to mint NFT: " + error.message);
-        }
-    }
-
-    async getNFTData(tokenId) {
-        var tokenURI = await this.contract.tokenURI(tokenId);
-        const listedToken = await this.contract.getListedTokenForId(tokenId);
-        tokenURI = `${process.env.GATEWAY_URL}/ipfs/${ipfsHash}`;
-        let meta = await fetch(tokenURI);
-        console.log("Listed token: ", listedToken);
-
-        return meta;
-    }
-
-    async listNFT(nft, price) {
-        try {
-            // create metadata file and upload to IPFS
             const metadata = helperFunc.convertStampToNFTMeta(nft);
             const file = new File(
                 [JSON.stringify(metadata)],
                 "metadata.json",
                 { type: "application/json" }
-            )
+            );
 
             console.log("Uploading metadata to IPFS...");
             const ipfsResult = await ipfsService.uploadFile(file, nft._id);
-            const metaDataUrl = helperFunc.getIPFSUrl(ipfsResult.IpfsHash);
-            console.log("IPFS Result:", ipfsResult);
+            const ipfsHash = ipfsResult.IpfsHash;
+            console.log("IPFS Result: ", ipfsResult);
 
-            // get price
+            // get listing price
+            const listingPrice = await this.contract.getListPrice();
             const priceInWei = ethers.parseEther(price.toString());
-            let listingPrice = await this.contract.getListPrice();
-            listingPrice = listingPrice.toString();
 
-            // create NFT
+            // create tracsaction
             console.log("Creating new transaction...");
-            let transaction = await this.contract.createToken(metaDataUrl, priceInWei, { value: listingPrice, gasLimit: 500000 });   
-            const receipt = await transaction.wait();
+            const tx = await this.contract.createToken(
+                ipfsHash, 
+                priceInWei, 
+                forSale,
+                { gasLimit: 500000 }
+            );
+            const receipt = await tx.wait();
 
             if (!receipt.status) {
                 throw new Error("Transaction failed");
             }
 
-            console.log("NFT created successfully", receipt.hash); 
+            const tokenListedEvent = receipt.logs.find(log => {
+                try {
+                    const parsedLog = this.contract.interface.parseLog(log);
+                    return parsedLog.name === 'TokenListedSuccess';
+                } catch (e) {
+                    return false;
+                }
+            });
+    
+            if (!tokenListedEvent) {
+                throw new Error("TokenListedSuccess event not found");
+            }
+
+            const parsedEvent = this.contract.interface.parseLog(tokenListedEvent);
+
+            return {
+                tokenId: parsedEvent.args.tokenId.toString(),
+                tokenURI: ipfsHash,
+                transactionHash: receipt.hash,
+                creator: parsedEvent.args.creator,
+                owner: parsedEvent.args.owner,
+                price: ethers.formatEther(parsedEvent.args.price)
+            };
+        } catch(error) {
+            console.log("Error: ", error);
+            throw new Error("Failed to mint NFT: ", error);
         }
-        catch (error) {
-            console.error("Error listing NFT:", error);
-            throw new Error("Failed to list NFT: " + error.message);
+    }
+
+    async buyNFT(tokenId, price) {
+        try {
+            const priceInWei = ethers.parseEther(price.toString());
+            const tx = await this.contract.excuteSale(
+                tokenId, 
+                { value: priceInWei, gasLimit: 500000 }
+        );
+            const receipt = await tx.wait();
+
+            if (!receipt.status) {
+                throw new Error("Transaction failed");
+            }
+
+            const tokenPurchasedEvent = receipt.logs.find(log => {
+                try {
+                    const parsedLog = this.contract.interface.parseLog(log);
+                    return parsedLog.name === 'TokenPurchasedSuccess';
+                } catch (e) {
+                    return false;
+                }
+            });
+
+            if (!tokenPurchasedEvent) {
+                throw new Error("TokenPurchasedSuccess event not found");
+            }
+
+            const parsedEvent = this.contract.interface.parseLog(tokenPurchasedEvent);
+            console.log("NFT created successfully");
+
+            return {
+                tokenId: parsedEvent.args.tokenId.toString(),
+                transactionHash: receipt.hash,
+                buyer: parsedEvent.args.buyer,
+                seller: parsedEvent.args.seller,
+                price: ethers.formatEther(parsedEvent.args.price)
+            };
+        } catch(error) {
+            console.log("Error: ", error);
+            throw new Error("Failed to buy NFT: ", error);
         }
     }
 
     async getAllNFTs() {
         try {
-            let transaction = await this.contract.getAllNFTs();
-            const items = await Promise.all(transaction.map(async i => {
-                var tokenURI = await this.contract.tokenURI(i.tokenId);
-                tokenURI = helperFunc.GetIpfsUrlFromPinata(tokenURI);
-                console.log("Getting this token uri: ", tokenURI);
-                
-                let metadata = await axios.get(tokenURI);
-                metadata = metadata.data;
-
-                console.log("Name:", metadata.name);
-
-                return metadata; 
-            }));
-
-            return items;
+            // Get raw data from contract
+            const [tokenIds, creators, owners, prices, currentlyListeds] = await this.contract.getAllNFTs();
+            
+            // Map the tuple data to objects
+            const nfts = await Promise.all(
+                tokenIds.map(async (tokenId, index) => {
+                    try {
+                        const tokenIdStr = tokenId.toString();
+                        // Get token URI and metadata
+                        const tokenURI = await this.contract.tokenURI(tokenIdStr);
+                        const ipfsUrl = helperFunc.getIPFSUrl(tokenURI);
+                        const pinataUrl = helperFunc.getPinataUrl(ipfsUrl);
+                        console.log("Pinata URL: ", pinataUrl);
+                        const metadata = await axios.get(pinataUrl);
+    
+                        return {
+                            tokenId: tokenIdStr,
+                            creator: creators[index],
+                            owner: owners[index],
+                            price: ethers.formatEther(prices[index]),
+                            isListed: currentlyListeds[index],
+                            metadata: metadata.data
+                        };
+                    } catch (error) {
+                        console.error(`Error processing NFT ${tokenId}:`, error);
+                        return null;
+                    }
+                })
+            );
+    
+            // Filter out any failed NFT processing
+            return nfts.filter(nft => nft !== null);
+    
         } catch (error) {
-            console.log("Error: ", error);
-            throw new Error("Failed to get all NFTs: ", error);
+            console.error("Error getting all NFTs:", error);
+            throw new Error(`Failed to get all NFTs: ${error.message}`);
         }
     }
 
-    async getMyNFTs(account) {
+    async getNFTsByOwner(owner) {
         try {
-            const myNFTs = await this.contract.getMyNFTs( { from: account });
-            console.log("My NFTs: ", myNFTs);
+            const [tokenIds, creators, owners, prices, currentlyListeds] = await this.contract.getMyNFTs({ from: owner });
 
-            return myNFTs;
-        } catch(error) {
-            console.log("Error: ", error);
-            throw new Error("Failed to get my NFTs: ", error);
+            const nfts = await Promise.all(
+                tokenIds.map(async (tokenId, index) => {
+                    try {
+                        const tokenIdStr = tokenId.toString();
+                        // Get token URI and metadata
+                        const tokenURI = await this.contract.tokenURI(tokenIdStr);
+                        const ipfsUrl = helperFunc.getIPFSUrl(tokenURI);
+                        const pinataUrl = helperFunc.getPinataUrl(ipfsUrl);
+                        const metadata = await axios.get(pinataUrl);
+    
+                        return {
+                            tokenId: tokenIdStr,
+                            creator: creators[index],
+                            owner: owners[index],
+                            price: ethers.formatEther(prices[index]),
+                            isListed: currentlyListeds[index],
+                            metadata: metadata.data
+                        };
+                    } catch (error) {
+                        console.error(`Error processing NFT ${tokenId}:`, error);
+                        return null;
+                    }
+                })
+            );
+
+            return nfts.filter(nft => nft !== null);
+        } catch (error) {
+            console.error("Error getting NFTs by owner:", error);
+            throw new Error(`Failed to get NFTs by owner: ${error.message}`);
+        }
+    }
+
+    async getNFTById(tokenId) {
+        try {
+            const tokenIdStr = tokenId.toString();
+            // Get token URI and metadata
+            const tokenURI = await this.contract.tokenURI(tokenIdStr);
+            const ipfsUrl = helperFunc.getIPFSUrl(tokenURI);
+            const pinataUrl = helperFunc.getPinataUrl(ipfsUrl);
+            console.log("Pinata URL: ", pinataUrl);
+            const metadata = await axios.get(pinataUrl);
+
+            return {
+                tokenId: tokenIdStr,
+                metadata: metadata.data
+            };
+        } catch (error) {
+            console.error(`Error getting NFT ${tokenId}:`, error);
+            throw new Error(`Failed to get NFT ${tokenId}: ${error.message}`);
         }
     }
 }
