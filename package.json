@@ -12,6 +12,9 @@
     "mongoose": "^8.7.3",
     "pinata": "^1.8.1",
     "pinata-web3": "^0.5.2"
+    "mongoose": "^8.7.3",
+    "pinata": "^1.8.1",
+    "pinata-web3": "^0.5.2"
   },
   "name": "nftify-server",
   "version": "1.0.0",

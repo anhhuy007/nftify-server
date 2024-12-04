@@ -54,6 +54,10 @@ const StampSchema = new Schema(
       type: String,
       required: true,
     },
+    thumbUrl: {
+      type: String,
+      required: true,
+    },
   },
   {
     versionKey: false,
