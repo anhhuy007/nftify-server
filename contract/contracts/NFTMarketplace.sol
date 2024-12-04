@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract NFTMarketplace is ERC721URIStorage {
     uint256 private _tokenIds = 0;
-    uint256 private _itemSolds = 0;
     address payable marketplaceOwner;
     uint256 listPrice = 0.01 ether;
 
@@ -19,18 +18,18 @@ contract NFTMarketplace is ERC721URIStorage {
 
     struct ListedToken {
         uint256 tokenId;
-        address payable owner;
-        address payable seller;
-        uint256 price;
-        bool currentlyListed;
+        address payable creator;    // The creator of the NFT
+        address payable owner;      // The current owner of the NFT
+        uint256 price;              // The price of the NFT on the marketplace
+        bool currentlyListed;       // Is the NFT currently listed for sale
         uint256 priceHistoryLength;
         mapping(uint256 => PriceHistory) priceHistory;
     } 
 
     event TokenListedSuccess(
         uint256 indexed tokenId, 
+        address creator,
         address owner,
-        address seller,
         uint256 price,
         bool currentlyListed
     );
@@ -70,8 +69,8 @@ contract NFTMarketplace is ERC721URIStorage {
 
         return (
             token.tokenId,
+            token.creator,
             token.owner,
-            token.seller,
             token.price,
             token.currentlyListed
         );
@@ -80,16 +79,16 @@ contract NFTMarketplace is ERC721URIStorage {
      // Other functions remain mostly the same, but be cautious with structs containing mappings
     function getListedTokenForId(uint256 tokenId) public view returns (
         uint256 tokenId_, 
+        address creator_, 
         address owner_, 
-        address seller_, 
         uint256 price_, 
         bool currentlyListed_
     ) {
         ListedToken storage token = idToListedToken[tokenId];
         return (
             token.tokenId,
+            token.creator,
             token.owner,
-            token.seller,
             token.price,
             token.currentlyListed
         );
@@ -101,7 +100,8 @@ contract NFTMarketplace is ERC721URIStorage {
 
     function createToken(
         string memory tokenURI, 
-        uint256 price
+        uint256 price, 
+        bool currentlyListed
     ) public payable returns (uint) {
         uint256 newTokenId = _tokenIds;
         _tokenIds += 1;
@@ -110,21 +110,25 @@ contract NFTMarketplace is ERC721URIStorage {
 
         _setTokenURI(newTokenId, tokenURI);
 
-        createListedToken(newTokenId, price);
+        createListedToken(newTokenId, price, currentlyListed);
 
         return newTokenId;
     }
 
-    function createListedToken(uint256 tokenId, uint256 price) private {
+    function createListedToken(
+        uint256 tokenId, 
+        uint256 price,
+        bool currentlyListed
+    ) private {
         require(msg.value == listPrice, "Hopefully sending the correct price");
         require(price > 0, "Price must be greater than 0");
 
         ListedToken storage token = idToListedToken[tokenId];
         token.tokenId = tokenId;
-        token.owner = payable(address(this));
-        token.seller = payable(msg.sender);
+        token.creator = payable(msg.sender);
+        token.owner = payable(msg.sender);
         token.price = price;
-        token.currentlyListed = true;
+        token.currentlyListed = currentlyListed;
         
         // Add first price history entry
         token.priceHistory[token.priceHistoryLength] = PriceHistory({
@@ -138,42 +142,42 @@ contract NFTMarketplace is ERC721URIStorage {
 
         emit TokenListedSuccess(
             tokenId, 
-            address(this), 
+            msg.sender, 
             msg.sender, 
             price, 
-            true
+            currentlyListed
         );
     }
 
     function getAllNFTs() public view returns (
         uint256[] memory tokenIds, 
+        address[] memory creators, 
         address[] memory owners, 
-        address[] memory sellers, 
         uint256[] memory prices, 
         bool[] memory currentlyListeds
     ) {
         tokenIds = new uint256[](_tokenIds);
+        creators = new address[](_tokenIds);
         owners = new address[](_tokenIds);
-        sellers = new address[](_tokenIds);
         prices = new uint256[](_tokenIds);
         currentlyListeds = new bool[](_tokenIds);
 
         for (uint i = 0; i < _tokenIds; i++) {
             ListedToken storage token = idToListedToken[i];
             tokenIds[i] = token.tokenId;
+            creators[i] = token.owner;
             owners[i] = token.owner;
-            sellers[i] = token.seller;
             prices[i] = token.price;
             currentlyListeds[i] = token.currentlyListed;
         }
 
-        return (tokenIds, owners, sellers, prices, currentlyListeds);
+        return (tokenIds, creators, owners, prices, currentlyListeds);
     }
 
     function getMyNFTs() public view returns (
         uint256[] memory tokenIds, 
+        address[] memory creators, 
         address[] memory owners, 
-        address[] memory sellers, 
         uint256[] memory prices, 
         bool[] memory currentlyListeds
     ) {
@@ -182,15 +186,15 @@ contract NFTMarketplace is ERC721URIStorage {
         
         // First pass: count matching items
         for (uint i = 0; i < totalItemCount; i++) {
-            if (idToListedToken[i].owner == msg.sender || idToListedToken[i].seller == msg.sender) {
+            if (idToListedToken[i].owner == msg.sender) {
                 itemCount++;
             }
         }
 
         // Prepare arrays
         tokenIds = new uint256[](itemCount);
+        creators = new address[](itemCount);
         owners = new address[](itemCount);
-        sellers = new address[](itemCount);
         prices = new uint256[](itemCount);
         currentlyListeds = new bool[](itemCount);
         
@@ -199,32 +203,33 @@ contract NFTMarketplace is ERC721URIStorage {
         // Second pass: populate arrays
         for (uint i = 0; i < totalItemCount; i++) {
             ListedToken storage token = idToListedToken[i];
-            if (token.owner == msg.sender || token.seller == msg.sender) {
+            if (token.owner == msg.sender) {
                 tokenIds[currentIndex] = token.tokenId;
+                creators[currentIndex] = token.owner;
                 owners[currentIndex] = token.owner;
-                sellers[currentIndex] = token.seller;
                 prices[currentIndex] = token.price;
                 currentlyListeds[currentIndex] = token.currentlyListed;
                 currentIndex++;
             }
         }
 
-        return (tokenIds, owners, sellers, prices, currentlyListeds);
+        return (tokenIds, creators, owners, prices, currentlyListeds);
     }
 
     function excuteSale(uint256 tokenId) public payable {
         ListedToken storage token = idToListedToken[tokenId];
         uint price = token.price;
-        address seller = idToListedToken[tokenId].seller;
+        address seller = idToListedToken[tokenId].owner;
         
         require(token.currentlyListed, "Token is not currently listed for sale");
         require(msg.value == price, "Please submit the asking price in order to complete the sale");
 
+        // Update token state after purchase
         token.currentlyListed = false;
-        token.price = 0;
-        token.seller = payable(msg.sender);
-        _itemSolds += 1;
+        token.price = price; // Price is not reset to 0
+        token.owner = payable(msg.sender);
 
+        // Transfer token to buyer
         _transfer(address(this), msg.sender, tokenId);
         approve(address(this), tokenId);
 
@@ -241,7 +246,7 @@ contract NFTMarketplace is ERC721URIStorage {
     }
 
     function updateTokenPrice(uint256 tokenId, uint256 newPrice) public {
-        require(idToListedToken[tokenId].seller == msg.sender, "Only the seller can update the price");
+        require(idToListedToken[tokenId].owner == msg.sender, "Only the seller can update the price");
         require(newPrice > 0, "Price must be greater than 0");
 
         ListedToken storage token = idToListedToken[tokenId];

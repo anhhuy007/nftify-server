@@ -158,6 +158,7 @@ exports.getCreators = asyncHandler(async (req, res) => {
 exports.getAllNFTs = asyncHandler(async (req, res) => {
     try {
         const result = await MarketplaceService.getAllNFTs();
+        console.log("Result: ", result);
 
         res.json(result);
     }

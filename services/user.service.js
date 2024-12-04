@@ -282,7 +282,7 @@ class UserService {
             updatedAt: new Date(),
         };
         // Create stamp
-        const result = await nftService.listNFT(preparedStamp, 1.2);
+        const result = await nftService.mintNFT(preparedStamp, 1.2, true);
 
         return result;
     }

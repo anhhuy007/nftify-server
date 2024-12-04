@@ -63,11 +63,12 @@ function convertStampToNFTMeta(stampData) {
   return JSON.parse(JSON.stringify(stampData));
 }
 
+// create access url from ipfs hash (gateway url from cid)
 function getIPFSUrl(ipfsHash) {
   return `${process.env.GATEWAY_URL}/ipfs/${ipfsHash}`;
 }
 
-function GetIpfsUrlFromPinata(pinataUrl) {
+function getPinataUrl(pinataUrl) {
   return "https://" + pinataUrl;
 };
 
@@ -78,5 +79,5 @@ module.exports = {
   shuffleArray,
   convertStampToNFTMeta,  
   getIPFSUrl,
-  GetIpfsUrlFromPinata
+  getPinataUrl
 };
