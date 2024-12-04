@@ -35,6 +35,10 @@ const UserSchema = new Schema(
       enum: ["pending", "verified", "rejected"],
       default: "pending",
     },
+    wallet_address: {
+      type: String,
+      required: true,
+    },
   },
   {
     versionKey: false, 
