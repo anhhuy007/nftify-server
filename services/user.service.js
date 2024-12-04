@@ -59,7 +59,8 @@ class UserService {
     return user;
   }
 
-  async filterUser(options = {}) {
+
+  async getUsers(options = {}) {
     const { page = 1, limit = 10, filters = {} } = options;
     const mongoFilter = {};
 
@@ -130,110 +131,13 @@ class UserService {
         await userModel.deleteOne({ _id: userId });
     }
 
-    //filterStamps based on stamp id array that are returned from user query
-    async filterStamps(stampIds, options = {}) {
-        const { page = 1, limit = 10, filters = {} } = options;
-        // Prepare dynamic filter
-        const mongoFilter = {
-            _id: { $in: stampIds },
-        };
-        if (filters.creatorId) {
-            mongoFilter.creatorId = new mongoose.Types.ObjectId(
-                filters.creatorId
-            );
-        }
-        // Title filter (case-insensitive partial match)
-        if (filters.title) {
-            mongoFilter.title = { $regex: filters.title, $options: "i" };
-        }
-
-        // Issued By filter (exact match)
-        if (filters.issuedBy) {
-            mongoFilter.issuedBy = filters.issuedBy;
-        }
-
-        // Date range filter
-        if (filters.startDate || filters.endDate) {
-            mongoFilter.date = {};
-            if (filters.startDate) {
-                mongoFilter.date.$gte = filters.startDate;
-            }
-            if (filters.endDate) {
-                mongoFilter.date.$lte = filters.endDate;
-            }
-        }
-
-        // Denomination range filter
-        if (filters.minDenom || filters.maxDenom) {
-            mongoFilter.denom = {};
-            if (filters.minDenom) {
-                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(
-                    filters.minDenom.toString()
-                );
-            }
-            if (filters.maxDenom) {
-                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(
-                    filters.maxDenom.toString()
-                );
-            }
-        }
-
-        // Color filter
-        if (filters.color) {
-            mongoFilter.color = filters.color;
-        }
-
-        // Function filter
-        if (filters.function) {
-            mongoFilter.function = filters.function;
-        }
-
-        // Sorting
-        let sortField = "createdAt";
-        let sortOrder = -1; // Descending
-        if (filters.sortBy) {
-            sortField = filters.sortBy;
-        }
-        if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
-            sortOrder = 1; // Ascending
-        }
-
-        console.log(
-            `Sorting by ${sortField} in ${
-                sortOrder === 1 ? "ascending" : "descending"
-            } order`
-        );
-
-        // Pagination
-        const parsedPage = Math.max(1, parseInt(page));
-        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
-        const skip = (parsedPage - 1) * parsedLimit;
-
-        // Execute query
-        const [total, items] = await Promise.all([
-            stampModel.countDocuments(mongoFilter),
-            stampModel
-                .find(mongoFilter)
-                .sort({ [sortField]: sortOrder })
-                .skip(skip)
-                .limit(parsedLimit)
-                .select("-__v"), // Exclude version key
-        ]);
-
-        return {
-            total,
-            page: parsedPage,
-            limit: parsedLimit,
-            totalPages: Math.ceil(total / parsedLimit),
-            items,
-        };
-    }
+    
     async getCreatedStamps(userId, options = {}) {
         const createdStamp = await stampModel.find({
             creatorId: userId,
         });
         const stampIds = createdStamp.map((stamp) => stamp._id);
-        const result = await this.filterStamps(stampIds, options);
+        const result = await stampService.filterStamps(stampIds, options);
         return result;
     }
 
@@ -259,13 +163,13 @@ class UserService {
         ]);
         // Return the list of currently owned stamps (extracting itemId)
         const ownedStampsId = subTable.map((record) => record._id);
-        const result = await this.filterStamps(ownedStampsId, options);
+        const result = await stampService.filterStamps(ownedStampsId, options);
         return result;
     }
     async getFavoriteStamps(userId, options = {}) {
         const favouriteStamps = await favouriteModel.findOne({ userId: userId });
         const stampIds = favouriteStamps?.itemId || [];
-        const result = await this.filterStamps(stampIds, options);
+        const result = await stampService.filterStamps(stampIds, options);
         return result;
     }
 

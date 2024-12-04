@@ -5,8 +5,10 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 
 // guest routes
 collectionRouter.get("/list", collectionController.getCollections);
-collectionRouter.get("/list/trending", collectionController.getTredingCollections);
+collectionRouter.get("/list/trending", collectionController.getTrendingCollections);
 collectionRouter.get("/:collectionId", collectionController.getCollectionById);
+collectionRouter.get("/:collectionId/detail", collectionController.getCollectionDetails);
+collectionRouter.get("/:collectionId/stamp", collectionController.getCollectionStamps);
 
 // authenticated-required routes
 collectionRouter.use(authenticateToken);

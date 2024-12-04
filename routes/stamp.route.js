@@ -5,8 +5,9 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 
 // guest routes
 itemRouter.get("/list", stampController.getStamps);
-itemRouter.get("/list/trending", stampController.getTredingStamp);
+itemRouter.get("/list/trending", stampController.getTrendingStamp);
 itemRouter.get("/:id", stampController.getStampById);
+itemRouter.get("/:id/detail", stampController.getStampDetails)
 
 // authenticated-required routes
 itemRouter.use(authenticateToken);
