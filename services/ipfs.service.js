@@ -1,6 +1,7 @@
 const { PinataSDK } = require("pinata-web3")
 const fs = require("fs")
-require("dotenv").config()
+const { Blob } = require("buffer")
+require("dotenv").config({ path: "../.env" });
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
@@ -38,6 +39,27 @@ class IpfsService {
       console.log(error)
     }
   }
+  
+
+  CID = "bafkreietnimfzkvcm25zzpuyd2pals3yzvzswczsqdvzirasxnxy7dyhv4"
+
+  async fetchFile(CID){
+    try {
+      const file = await pinata.gateways.get(CID);
+      console.log(file)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
+
+pinata.testAuthentication().then((result) => {
+  console.log(result)
+}
+).catch((error) => {
+  console.log(error)
+}
+)
+
 
 module.exports = new IpfsService();

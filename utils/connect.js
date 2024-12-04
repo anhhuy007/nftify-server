@@ -159,7 +159,7 @@ async function saveDataUsers(data) {
   for (const user of data) {
     try {
       // Check if document with this id already exists
-      const existingUser = await userModel.findOne({ id: parseInt(user.id) });
+      const existingUser = await userModel.findOne({ id: user._id });
 
       if (existingUser) {
         console.log(`Skipping user with id: ${user.id} - already exists`);
@@ -403,19 +403,44 @@ async function exportItemsData() {
     console.error("An error occurred during the exportItemsData process:", error);
   }
 }
-connectDB()
-exportItemsData()
-  .then(() => console.log("Data export process completed."))
-  .catch((err) => console.error("Error in data export process:", err))
-  .finally(() => {
-    closeConnectDB();
-  });
 
-
+async function exportUsersData() {
+  try {
+    const users = await userModel.find({});
+    const usersData = JSON.stringify(users, null, 2);
+    fs.writeFileSync("../datajson/Users.json", usersData);
+    console.log("Users data exported successfully");
+  } catch (error) {
+    console.error("An error occurred during the exportUsersData process:", error);
+  }
+}
 // connectDB()
-// updateCollectionSchema()
-//   .then(() => console.log('Data save process completed.'))
-//   .catch((err) => console.error('Error in data saving process:', err))
+// exportUsersData()
+//   .then(() => console.log("Data export process completed."))
+//   .catch((err) => console.error("Error in data export process:", err))
+//   .finally(() => {
+//     closeConnectDB();
+//   });
+
+async function deleteAllUsers() {
+  try {
+    await connectDB();
+    const result = await userModel.deleteMany({});
+    console.log(`Deleted ${result.deletedCount} users`);
+  } catch (error) {
+    console.error('Error deleting users:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('Database connection closed');
+  }
+}
+
+
+// deleteAllUsers();
+// connectDB()
+// saveDataUsers(readData().dataUsers)
+//   .then(() => console.log("Data save process completed."))
+//   .catch((err) => console.error("Error in data saving process:", err))
 //   .finally(() => {
 //     closeConnectDB();
 //   });
