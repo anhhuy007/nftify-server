@@ -468,6 +468,20 @@ class StampService {
         const price = priceDoc[0].price;
         return price;
     }
+    async getOwnerId(itemId) {
+        const subTable = await ownershipModel.aggregate([
+            { $match: { itemId: itemId } },
+            { $sort: { createdAt: -1 } },
+            {
+                $group: {
+                    _id: "$itemId",
+                    latestOwnerId: { $first: "$ownerId" },
+                },
+            },
+        ]);
+        const ownerId = await subTable.map((record) => record.latestOwnerId);
+        return ownerId;
+    }
 }
 
 module.exports = new StampService();
