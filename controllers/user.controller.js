@@ -31,7 +31,7 @@ exports.getUsers = asyncHandler(async (req, res) => {
     const filters = {
       name: req.query.name,
     };
-    const result = await userService.filterUser({
+    const result = await userService.getUsers({
       page: req.query.page,
       limit: req.query.limit,
       filters: Object.fromEntries(

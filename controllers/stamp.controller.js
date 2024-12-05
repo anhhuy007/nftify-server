@@ -62,7 +62,7 @@ exports.getStampById = asyncHandler(async (req, res) => {
   }
 });
 
-exports.getTredingStamp = asyncHandler(async (req, res) => {
+exports.getTrendingStamp = asyncHandler(async (req, res) => {
   try {
     const trendingStamp = await StampService.getTrendingStamps(
       {
@@ -113,6 +113,15 @@ exports.increaseStampFavourite = asyncHandler(async (req, res) => {
     })
 
   } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.getStampDetails = asyncHandler(async (req, res) => {
+  try{
+    const stampDetails = await StampService.getStampDetails(req.params.id);
+    res.json(stampDetails);
+  } catch (error){
     handleServiceError(res, error);
   }
 });

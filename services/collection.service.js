@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const collectionModel = require("../models/collection.schema");
-
+const User = require("../models/user.schema");
+const stampService = require("./stamp.service");
 /*
 Table Collection {
   _id string [pk]
@@ -253,6 +254,38 @@ class CollectionService {
     }
 
     await collectionModel.deleteOne({ _id: collectionId });
+  }
+
+  async getColletionDetails(collectionId) {
+    
+    const collection = await collectionModel.findOne({ _id: collectionId });
+    const name = collection.name;
+    const collectionDescription = collection.description;
+    const owner = User.findOne({id: collection.ownerId});
+    const ownerName = owner.name;
+    const ownerAvatar = owner.avatarUrl;
+    const ownerDescription = owner.description;
+    // calculate price sum of all items in collection
+    const itemIds = collection.items;
+    let totalPrice = 0;
+    for (const itemId of itemIds) {
+      const itemPrice = await stampService.getStampPrice(itemId);
+      price += itemPrice;
+    }
+    return {
+      name,
+      collectionDescription,
+      ownerName,
+      ownerAvatar,
+      ownerDescription,
+      totalPrice
+    }
+  }
+  async getCollectionStamps(collectionId, option = {}) {
+    const collection = await collectionModel.findOne({ _id: collectionId });
+    const itemIds = collection.items;
+    const result = await stampService.filterStamps(itemIds, option);
+    return result
   }
 }
 

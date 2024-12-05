@@ -80,7 +80,7 @@ exports.updateCollection = asyncHandler(async (req, res) => {
   }
 });
 
-exports.getTredingCollections = asyncHandler(async (req, res) => {
+exports.getTrendingCollections = asyncHandler(async (req, res) => {
   try {
     const result = await collectionService.getTrendingCollections({
       page: req.query.page,
@@ -121,4 +121,46 @@ exports.deleteCollection = asyncHandler(async (req, res) => {
   } catch (error) {
     handleServiceError(res, error);
   }
+});
+
+exports.getCollectionDetails = asyncHandler(async (req, res) => {
+  try {
+    const collectionDetails = await collectionService.getCollectionDetails(
+      req.params.collectionId
+    );
+    res.json(collectionDetails);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.getCollectionStamps = asyncHandler(async (req, res) => {
+  try {
+    const filters = {
+      title: req.query.title,
+      creatorId: req.query.creatorId,
+      issuedBy: req.query.issuedBy,
+      startDate: req.query.startDate,
+      endDate: req.query.endDate,
+      minDenom: req.query.minDenom,
+      maxDenom: req.query.maxDenom,
+      color: req.query.color,
+      function: req.query.function,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
+    };
+    const result = await collectionService.getCollectionStamps({
+      collectionId: req.params.collectionId,
+      page: req.query.page,
+      limit: req.query.limit,
+      filters: Object.fromEntries(
+        Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+      )
+    });
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+
 });

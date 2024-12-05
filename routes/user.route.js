@@ -4,6 +4,9 @@ const userRouter = express.Router();
 const { authenticateToken } = require("../middlewares/auth.middleware");
 
 // guest routes
+
+
+userRouter.get("list", userController.getUsers);
 // @route   GET /api/v1/user/profile
 // @desc    Get user profile
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b

@@ -146,6 +146,14 @@ class MarketplaceService {
             },
             { $unwind: { path: '$ownerDetails', preserveNullAndEmptyArrays: true } },
             {
+                $lookup: {
+                    from: 'Collection',
+                    localField: 'itemIdString',
+                    foreignField: 'items',
+                    as: 'collection',
+                }
+            },
+            {
                 $project: {
                     'insight._id': 0,
                     'insight.itemId': 0,
@@ -167,6 +175,11 @@ class MarketplaceService {
                     'ownerDetails.status': 0,
                     'ownerDetails.createdAt': 0,
                     'ownerDetails.updatedAt': 0,
+                    'collection.description': 0,
+                    'collection.ownerId': 0,
+                    'collection.items': 0,
+                    'collection.createdAt': 0,
+                    'collection.updatedAt': 0
                 }
             }
         ]);
@@ -288,10 +301,26 @@ class MarketplaceService {
                 $unwind: { path: '$creatorDetails', preserveNullAndEmptyArrays: true },
             },
             {
+                $lookup:{
+                    from :'Stamp',
+                    localField: '_id',
+                    foreignField: 'creatorId',
+                    as: 'creatorStamps',
+                    pipeline: [
+                        {$limit : 3},
+                        {
+                            $project:{imgUrl : 1}
+                        }
+                    ]
+                }
+            },
+            {
                 $project: {
                     _id: 1, 
                     totalViewCount: 1,
-                    'creatorDetails.name': 1
+                    'creatorDetails.name': 1,
+                    'creatorDetails.description': 1,
+                    creatorStamps : '$creatorStamps.imgUrl'
                 }
             }
         ]);
@@ -303,7 +332,7 @@ class MarketplaceService {
             page: parsedPage,
             limit: parsedLimit > total ? total : parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            creators,
+            items: creators,
         };
     }
 
