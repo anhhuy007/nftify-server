@@ -63,7 +63,7 @@ class MarketplaceService {
                 {
                     $project: {
                         itemIdString: 1,
-                        _id : 0,
+                        _id : 1,
                         title: 1,
                         imgUrl: 1,
                         "insight.viewCount": 1, //check purpose
@@ -80,11 +80,11 @@ class MarketplaceService {
                     item.itemIdString
                 );
                 const ownerId = await stampService.getOwnerId(item.itemIdString);
-                const ownerName = await userModel.find({ _id: ownerId }).select('name');
+                const ownerDetails = await userModel.findOne({ _id: ownerId }).select('name avatarUrl');
                 return {
                     ...item,
                     price,
-                    ownerName,
+                    ownerDetails
                 };
             })
         );
@@ -180,6 +180,7 @@ class MarketplaceService {
                     as: 'collection',
                 }
             },
+            { $unwind: { path: '$collection', preserveNullAndEmptyArrays: true } },
             {
                 $project: {
                     "insight._id": 0,
