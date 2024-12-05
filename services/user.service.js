@@ -190,6 +190,7 @@ class UserService {
 
         return result;
     }
+
 }
 
 module.exports = new UserService();
