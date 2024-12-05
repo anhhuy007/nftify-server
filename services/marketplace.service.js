@@ -171,11 +171,14 @@ class MarketplaceService {
                     as: "ownerDetails",
                 },
             },
+            { $unwind: { path: '$ownerDetails', preserveNullAndEmptyArrays: true } },
             {
-                $unwind: {
-                    path: "$ownerDetails",
-                    preserveNullAndEmptyArrays: true,
-                },
+                $lookup: {
+                    from: 'Collection',
+                    localField: 'itemIdString',
+                    foreignField: 'items',
+                    as: 'collection',
+                }
             },
             {
                 $project: {
@@ -194,13 +197,18 @@ class MarketplaceService {
                     "creatorDetails.updatedAt": 0,
                     ownershipDetails: 0,
                     ownerObjId: 0,
-                    "ownerDetails.description": 0,
-                    "ownerDetails.gender": 0,
-                    "ownerDetails.status": 0,
-                    "ownerDetails.createdAt": 0,
-                    "ownerDetails.updatedAt": 0,
-                },
-            },
+                    'ownerDetails.description': 0,
+                    'ownerDetails.gender': 0,
+                    'ownerDetails.status': 0,
+                    'ownerDetails.createdAt': 0,
+                    'ownerDetails.updatedAt': 0,
+                    'collection.description': 0,
+                    'collection.ownerId': 0,
+                    'collection.items': 0,
+                    'collection.createdAt': 0,
+                    'collection.updatedAt': 0
+                }
+            }
         ]);
 
         return stamp[0];
