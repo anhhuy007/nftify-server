@@ -416,7 +416,7 @@ async function exportUsersData() {
   }
 }
 
-async function updateURLCollection(){
+async function updateURLCollection() {
   const thumbUrls = [
     "https://preview.redd.it/timeskip-boruto-art-by-v0-d25xyhlzbhib1.jpg?auto=webp&s=8d65ea78cb1d1ff1758d2a6cc817291364204786",
     "https://free-images.com/lg/96ec/anime_fig_anime_figures_4.jpg",
@@ -429,29 +429,49 @@ async function updateURLCollection(){
     "https://cdn.pixabay.com/photo/2024/05/09/08/07/ai-generated-8750161_1280.jpg"
   ];
 
-  const collections = await collectionModel.find({});
-  console.log(`Found ${collections.length} collections to update`);
+  try {
+    const collections = await collectionModel.find({});
+    console.log(`Found ${collections.length} collections to update`);
 
-  for (const collection of collections) {
-    try {
+    const updatePromises = collections.map(async (collection) => {
       const randomThumbUrl = thumbUrls[Math.floor(Math.random() * thumbUrls.length)];
 
-      await collectionModel.updateOne(
-        { _id: collection._id },
-        {
-          $set: {
-            thumbUrl: randomThumbUrl,
-          },
-        }
-      );
-      console.log(`Updated collection ${collection._id} with thumb URL: ${randomThumbUrl}`);
-    } catch (err) {
-      console.error(`Failed to update collection ${collection._id}:`, err);
-    }
+      try {
+        await collectionModel.updateOne(
+          { _id: collection._id },
+          {
+            $set: {
+              thumbUrl: randomThumbUrl,
+            },
+          }
+        );
+        console.log(`Updated collection ${collection._id} with thumb URL: ${randomThumbUrl}`);
+        return collection._id;
+      } catch (err) {
+        console.error(`Failed to update collection ${collection._id}:`, err);
+        return null;
+      }
+    });
+
+    const results = await Promise.all(updatePromises);
+    
+    // Filter out any failed updates
+    const successfulUpdates = results.filter(result => result !== null);
+    
+    console.log(`Successfully updated ${successfulUpdates.length} out of ${collections.length} collections`);
+  } catch (error) {
+    console.error('An error occurred during the updateURLCollection process:', error);
+    throw error;
   }
-  
 }
 
+connectDB()
+updateURLCollection()
+  .then(() => console.log("URLs updated successfully"))
+  .catch((error) => console.error("Error updating URLs:", error))
+  .finally(() => {
+    closeConnectDB();
+  });
 async function deleteAllUsers() {
   try {
     await connectDB();

@@ -30,7 +30,7 @@ class IpfsService {
     try {
       const StampImgGroup = await pinata.groups.list().name("StampImage");
       const blob = new Blob([stampImg]);
-      const file = new File([blob], "123", { type: "image/jpeg" });
+      const file = new File([blob], {stampId}, { type: "image/jpeg" });
       
     
       const upload = await pinata.upload.file(file)
@@ -102,22 +102,18 @@ class IpfsService {
     }
   }
 
-  async fetchFile(CID){
+  async testAuthentication() {
     try {
-      const file = await pinata.gateways.get(CID);
-      console.log(file)
-    } catch (error) {
-      console.log(error)
+      const auth = await pinata.auth.test();
+      console.log(auth);
+      return auth;
+    }
+    catch (error) {
+      console.log(error);
     }
   }
 
-}
+  
 
-// pinata.testAuthentication().then((result) => {
-//   console.log(result)
-// }
-// ).catch((error) => {
-//   console.log(error)
-// }
-// )
+}
 module.exports = new IpfsService();
