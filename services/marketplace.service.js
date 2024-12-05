@@ -303,7 +303,7 @@ class MarketplaceService {
             page: parsedPage,
             limit: parsedLimit > total ? total : parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            creators,
+            items: creators,
         };
     }
 
