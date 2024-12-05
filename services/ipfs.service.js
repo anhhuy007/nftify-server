@@ -9,6 +9,9 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.GATEWAY_URL
 })
 
+
+
+
 class IpfsService {
   async uploadFile(fileData, filename) {
     try {
@@ -23,10 +26,29 @@ class IpfsService {
       }
   }
 
+  async uploadStampImage(stampImg, stampId) {
+    try {
+      const StampImgGroup = await pinata.groups.list().name("StampImage");
+      const blob = new Blob([stampImg]);
+      const file = new File([blob], "123", { type: "image/jpeg" });
+      
+    
+      const upload = await pinata.upload.file(file)
+        .group(StampImgGroup[0].id)
+        .addMetadata({ name: `Stamp_${stampId}` });
+      return upload;
+    }
+    catch (error) {
+      console.log(error);
+      throw new Error("Failed to upload stamp image to IPFS: " + error.message);
+    }
+}
+    
 
-  // upload stamp medata to Stamp group on pinata
+  // upload stamp metadata to Stamp group on pinata
   async uploadStampMetadata(stamp) {
     try {
+      const StampMetadata = await pinata.groups.list().name("StampMetadata")
       const metadata = {
         _id: stamp._id,
         creatorId: stamp.creatorId,
@@ -40,8 +62,13 @@ class IpfsService {
         createdAt: stamp.createdAt,
       };
 
-      const upload = await pinata.pinJSONToIPFS(metadata);
-
+      const upload = await pinata.upload.json(metadata, { 
+        pinataMetadata: { 
+          name: `${stamp._id}.json`, 
+        }}).group(StampMetadata[0].id);
+      console.log("uploaded metadata with id: ", stamp._id);
+      // log the id and cid into log file
+      fs.appendFileSync("../logs/metadata.log", `${stamp._id}: ${upload.IpfsHash}\n`);
       return upload;
     } catch (error) {
       console.log(error);
@@ -60,9 +87,20 @@ class IpfsService {
       console.log(error)
     }
   }
-  
 
-  CID = "bafkreietnimfzkvcm25zzpuyd2pals3yzvzswczsqdvzirasxnxy7dyhv4"
+  async createGroup(groupName, is_public=false) {
+    try {
+      const group = await pinata.groups.create({
+          name: groupName,
+          is_public: is_public,
+          });
+      console.log("group created: ", group);
+      return group;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to create group: " + error.message);
+    }
+  }
 
   async fetchFile(CID){
     try {
@@ -72,15 +110,14 @@ class IpfsService {
       console.log(error)
     }
   }
+
 }
 
-pinata.testAuthentication().then((result) => {
-  console.log(result)
-}
-).catch((error) => {
-  console.log(error)
-}
-)
-
-
+// pinata.testAuthentication().then((result) => {
+//   console.log(result)
+// }
+// ).catch((error) => {
+//   console.log(error)
+// }
+// )
 module.exports = new IpfsService();

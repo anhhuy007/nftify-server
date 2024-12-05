@@ -9,6 +9,7 @@ const ownershipModel = require("../models/ownership.schema");
 const itemPricingModel = require("../models/itemPricing.schema");
 const fs = require("fs");
 const helperFunc = require("./helperFunc");
+const ipfsService = require("../services/ipfs.service");
 
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`;
 const database_name = "NFTify_1";
@@ -397,7 +398,7 @@ async function exportItemsData() {
   try {
     const items = await itemModel.find({});
     const itemsData = JSON.stringify(items, null, 2);
-    fs.writeFileSync("../datajson/Items.json", itemsData);
+    fs.writeFileSync("../datajson/Stamps.json", itemsData);
     console.log("Items data exported successfully");
   } catch (error) {
     console.error("An error occurred during the exportItemsData process:", error);
@@ -451,14 +452,6 @@ async function updateURLCollection(){
   
 }
 
-// connectDB()
-// exportUsersData()
-//   .then(() => console.log("Data export process completed."))
-//   .catch((err) => console.error("Error in data export process:", err))
-//   .finally(() => {
-//     closeConnectDB();
-//   });
-
 async function deleteAllUsers() {
   try {
     await connectDB();
@@ -469,23 +462,76 @@ async function deleteAllUsers() {
   }
 }
 
-// connectDB()
-// exportItemsData()
-//   .then(() => console.log("Data export process completed."))
-//   .catch((err) => console.error("Error in data export process:", err))
-//   .finally(() => {
-//     closeConnectDB();
-//   });
+async function getCIDbyIdUsingLog(id) {
+  try {
+    // convert to string
+    const stringId = id.toString();
+    // Read log file
+    const data = fs.readFileSync("../logs/metadata.log", "utf8");
+    const lines = data.trim().split("\n");
+    
+    for (const line of lines) {
+      const [stampId, cid] = line.split(": ");
+      
+      if (stampId.toString().trim() === stringId.toString().trim()) {
+        return cid.trim();
+      }
+    }
+    
+    // cannot find CID
+    console.log(`No CID found for stamp ID: ${stringId}`);
+    return null;
+  } catch (error) {
+    console.error(`Error reading metadata log for ID ${id}:`, error);
+    throw error;
+  }
+}
+
+async function updateStampTokenUrl() {
+  try {
+    const items = await itemModel.find({});
+    console.log(`Found ${items.length} items to update`);
+
+    const updatePromises = items.map(async (item) => {
+      try {
+        const existingCID = await getCIDbyIdUsingLog(item._id);
+        
+        // Skip if no CID
+        if (!existingCID) {
+          console.log(`No CID found for item ${item._id}. Skipping.`);
+          return null;
+        }
+
+        // Update cid
+        await itemModel.updateOne(
+          { _id: item._id },
+          {
+            $set: {
+              tokenUrl: existingCID,
+            },
+          }
+        );
+        
+        console.log(`Updated item ${item._id} with token URL: ${existingCID}`);
+        return item._id;
+      } catch (err) {
+        console.error(`Failed to update item ${item._id}:`, err);
+        return null;
+      }
+    });
+
+    const results = await Promise.all(updatePromises);
+    
+    const successfulUpdates = results.filter(result => result !== null);
+    
+    console.log(`Successfully updated ${successfulUpdates.length} out of ${items.length} items`);
+  } catch (error) {
+    console.error('An error occurred during the updateStampTokenUrl process:', error);
+    throw error;
+  }
+}
 
 
-// deleteAllUsers();
-// connectDB()
-// updateURLCollection()
-//   .then(() => console.log("URL update process completed."))
-//   .catch((err) => console.error("Error in URL update process:", err))
-//   .finally(() => {
-//     closeConnectDB();
-//   });
 
 module.exports = {
   connectDB,
