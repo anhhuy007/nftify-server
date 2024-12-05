@@ -146,6 +146,14 @@ class MarketplaceService {
             },
             { $unwind: { path: '$ownerDetails', preserveNullAndEmptyArrays: true } },
             {
+                $lookup: {
+                    from: 'Collection',
+                    localField: 'itemIdString',
+                    foreignField: 'items',
+                    as: 'collection',
+                }
+            },
+            {
                 $project: {
                     'insight._id': 0,
                     'insight.itemId': 0,
@@ -167,6 +175,11 @@ class MarketplaceService {
                     'ownerDetails.status': 0,
                     'ownerDetails.createdAt': 0,
                     'ownerDetails.updatedAt': 0,
+                    'collection.description': 0,
+                    'collection.ownerId': 0,
+                    'collection.items': 0,
+                    'collection.createdAt': 0,
+                    'collection.updatedAt': 0
                 }
             }
         ]);
