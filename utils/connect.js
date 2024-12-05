@@ -414,6 +414,43 @@ async function exportUsersData() {
     console.error("An error occurred during the exportUsersData process:", error);
   }
 }
+
+async function updateURLCollection(){
+  const thumbUrls = [
+    "https://preview.redd.it/timeskip-boruto-art-by-v0-d25xyhlzbhib1.jpg?auto=webp&s=8d65ea78cb1d1ff1758d2a6cc817291364204786",
+    "https://free-images.com/lg/96ec/anime_fig_anime_figures_4.jpg",
+    "https://free-images.com/lg/c5d8/anime_fig_anime_figures_3.jpg",
+    "https://free-images.com/lg/f52e/anime_fig_anime_figures.jpg",
+    "https://cdn.pixabay.com/photo/2022/12/01/04/43/girl-7628308_1280.jpg",
+    "https://cdn.pixabay.com/photo/2022/12/01/04/40/backpacker-7628303_1280.jpg",
+    "https://cdn.pixabay.com/photo/2024/05/09/08/07/ai-generated-8750163_1280.jpg",
+    "https://cdn.pixabay.com/photo/2024/01/10/13/13/ai-generated-8499585_960_720.png",
+    "https://cdn.pixabay.com/photo/2024/05/09/08/07/ai-generated-8750161_1280.jpg"
+  ];
+
+  const collections = await collectionModel.find({});
+  console.log(`Found ${collections.length} collections to update`);
+
+  for (const collection of collections) {
+    try {
+      const randomThumbUrl = thumbUrls[Math.floor(Math.random() * thumbUrls.length)];
+
+      await collectionModel.updateOne(
+        { _id: collection._id },
+        {
+          $set: {
+            thumbUrl: randomThumbUrl,
+          },
+        }
+      );
+      console.log(`Updated collection ${collection._id} with thumb URL: ${randomThumbUrl}`);
+    } catch (err) {
+      console.error(`Failed to update collection ${collection._id}:`, err);
+    }
+  }
+  
+}
+
 // connectDB()
 // exportUsersData()
 //   .then(() => console.log("Data export process completed."))
@@ -429,18 +466,23 @@ async function deleteAllUsers() {
     console.log(`Deleted ${result.deletedCount} users`);
   } catch (error) {
     console.error('Error deleting users:', error);
-  } finally {
-    await mongoose.disconnect();
-    console.log('Database connection closed');
   }
 }
+
+// connectDB()
+// exportItemsData()
+//   .then(() => console.log("Data export process completed."))
+//   .catch((err) => console.error("Error in data export process:", err))
+//   .finally(() => {
+//     closeConnectDB();
+//   });
 
 
 // deleteAllUsers();
 // connectDB()
-// saveDataUsers(readData().dataUsers)
-//   .then(() => console.log("Data save process completed."))
-//   .catch((err) => console.error("Error in data saving process:", err))
+// updateURLCollection()
+//   .then(() => console.log("URL update process completed."))
+//   .catch((err) => console.error("Error in URL update process:", err))
 //   .finally(() => {
 //     closeConnectDB();
 //   });

@@ -1,6 +1,7 @@
 const { PinataSDK } = require("pinata-web3")
 const fs = require("fs")
-const { Blob } = require("buffer")
+const { Blob } = require("buffer");
+const { title } = require("process");
 require("dotenv").config({ path: "../.env" });
 
 const pinata = new PinataSDK({
@@ -25,7 +26,27 @@ class IpfsService {
 
   // upload stamp medata to Stamp group on pinata
   async uploadStampMetadata(stamp) {
-    return;
+    try {
+      const metadata = {
+        _id: stamp._id,
+        creatorId: stamp.creatorId,
+        title: stamp.title,
+        issuedBy: stamp.issuedBy,
+        function: stamp.function,
+        date: stamp.date,
+        denom: stamp.denom,
+        color: stamp.color,
+        imgUrl: stamp.imgUrl,
+        createdAt: stamp.createdAt,
+      };
+
+      const upload = await pinata.pinJSONToIPFS(metadata);
+
+      return upload;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to upload stamp metadata to IPFS: " + error.message);
+    }
   }
 
   async fetchFile(cid) {
