@@ -93,7 +93,7 @@ class MarketplaceService {
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            addOwnerAndPrice,
+            items: addOwnerAndPrice,
         };
     }
 
