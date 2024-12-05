@@ -288,10 +288,26 @@ class MarketplaceService {
                 $unwind: { path: '$creatorDetails', preserveNullAndEmptyArrays: true },
             },
             {
+                $lookup:{
+                    from :'Stamp',
+                    localField: '_id',
+                    foreignField: 'creatorId',
+                    as: 'creatorStamps',
+                    pipeline: [
+                        {$limit : 3},
+                        {
+                            $project:{imgUrl : 1}
+                        }
+                    ]
+                }
+            },
+            {
                 $project: {
                     _id: 1, 
                     totalViewCount: 1,
-                    'creatorDetails.name': 1
+                    'creatorDetails.name': 1,
+                    'creatorDetails.description': 1,
+                    creatorStamps : '$creatorStamps.imgUrl'
                 }
             }
         ]);
