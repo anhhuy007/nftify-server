@@ -131,7 +131,7 @@ async function saveItemInsightData() {
   await itemInsightModel.syncIndexes();
 
   const stampIds = await getDocumentsId(itemModel);
-  const status = ["verified"];
+  const status = ["verified", "selling", "displaying", "rejected"];
   for (const stampId of stampIds) {
     try {
       const modifiedItemInsight = {
@@ -149,6 +149,9 @@ async function saveItemInsightData() {
     }
   }
 }
+
+
+
 
 async function saveDataUsers(data) {
   collection1 = userModel.collection.name;
@@ -652,12 +655,13 @@ async function saveStampDataFromJson(data) {
 async function deleteRecords() {
   try {
     // đổi model cần xóa, tốt nhất là không nên dùng:)))))
-    const result = await ownershipModel.deleteMany({ });
+    const result = await itemInsightModel.deleteMany({ });
     console.log('Delete operation successful:', result);
   } catch (error) {
     console.error('Error deleting records:', error);
   }
 }
+
 
 
 const marketplaceService = require("../services/marketplace.service");
@@ -698,6 +702,12 @@ async function createTransactionJson() {
 
 // connectDB();
 // createTransactionJson();
+
+
+
+connectDB();
+saveItemInsightData();
+
 
 module.exports = {
   connectDB,
