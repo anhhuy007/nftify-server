@@ -17,6 +17,14 @@ const Schema = mongoose.Schema;
 
 const TransactionSchema = new Schema(
   {
+    TransactionHash: {
+      type: String,
+      required: true,
+    },
+    block: {
+      type: Number,
+      required: true,
+    },
     sellerId: {
       type: String,
       required: true,
@@ -25,14 +33,18 @@ const TransactionSchema = new Schema(
       type: String,
       required: true,
     },
-    items: {
+    itemId: {
       type: [String],
     },
-    price: {
+    value: {
       type: Number,
       required: true,
     },
-    fee: {
+    transactionFee: {
+      type: Number,
+      required: true,
+    },
+    gasPrice: {
       type: Number,
       required: true,
     },

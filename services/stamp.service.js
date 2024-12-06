@@ -4,6 +4,7 @@ const itemInsightModel = require("../models/itemInsight.schema");
 const ownershipModel = require("../models/ownership.schema");
 const itemPricingModel = require("../models/itemPricing.schema");
 const userModel = require("../models/user.schema");
+const ipfsService = require("./ipfs.service");
 
 class StampService {
     // Validate input data
@@ -50,7 +51,7 @@ class StampService {
         }
     }
 
-    async createItem(item) {
+    async createItem(creatorId, item) {
         // Validate input
         this.validateItemInput(item);
 
@@ -67,14 +68,18 @@ class StampService {
       imgUrl: "https://example.com/image.jpg",
     }
     */
+        // imgURL = (await ipfsService.uploadStampImage(itemImg, item.title)).IpfsHash;
+        tokenURL = (await ipfsService.uploadStampMetadata(item)).IpfsHash;
 
         // Prepare item for saving
         const preparedItem = {
             ...item,
+            creatorId: creatorId,
             // Ensure numeric denomination
             denom: parseFloat(item.denom),
             // Add creation timestamp if not exists
             createdAt: item.createdAt || new Date(),
+            tokenUrl: tokenUrl,
         };
 
         const newItem = new stampModel(preparedItem);

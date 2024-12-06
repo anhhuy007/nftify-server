@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const AccountsModel = require('../models/account.schema');
+const UserModel = require('../models/user.schema');
 
 const refreshTokens = [];
 
@@ -18,18 +19,34 @@ const registerUser = async (userData) => {
         throw new Error('Username already exists');
     }
 
-    const lastAccount = await AccountsModel.findOne().sort({ id: -1 }).exec();
-    const newId = lastAccount ? parseInt(lastAccount.id) + 1 : 1;
+    const existingEmail = await AccountsModel.findOne({ email: email });
+    if (existingEmail) {
+        throw new Error('Email already exists');
+    }
+
+    // const lastAccount = await AccountsModel.findOne().sort({ id: -1 }).exec();
+    // const newId = lastAccount ? parseInt(lastAccount.id) + 1 : 1;
 
     const account = new AccountsModel({
-        id: newId,
+        // id: newId,
         username: userName,
         password: await bcrypt.hash(password, 10),
         email: email,
         createdAt: new Date()
     });
 
-    return account.save();
+    const user = new UserModel({
+        _id: account._id,
+        name: userName,
+        description: "default description",
+        avatarUrl: "default avatar",
+        gender: "Others",
+        status: "pending",
+        wallet_address: "default wallet address",
+    });
+    account.save(), user.save()
+
+    return { account, user };
 };
 
 const loginUser = async (userData) => {

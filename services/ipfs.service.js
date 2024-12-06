@@ -26,16 +26,15 @@ class IpfsService {
       }
   }
 
-  async uploadStampImage(stampImg, stampId) {
+  async uploadStampImage(stampImg, stampTitle) {
     try {
       const StampImgGroup = await pinata.groups.list().name("StampImage");
       const blob = new Blob([stampImg]);
-      const file = new File([blob], {stampId}, { type: "image/jpeg" });
+      const file = new File([blob], {stampTitle}, { type: "image/jpeg" });
       
     
       const upload = await pinata.upload.file(file)
         .group(StampImgGroup[0].id)
-        .addMetadata({ name: `Stamp_${stampId}` });
       return upload;
     }
     catch (error) {

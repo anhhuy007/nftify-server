@@ -1,7 +1,7 @@
 const ipfsService = require("../services/ipfs.service");
 
 const { PinataSDK } = require("pinata-web3")
-const fs = require("fs")
+const fs = require("fs");
 const { Blob } = require("buffer");
 const { title } = require("process");
 const { get } = require("http");
@@ -35,4 +35,6 @@ const pinata = new PinataSDK({
 //         console.log(error);
 //     }
 // }
+
 // uploadAllMetadata(stamps);
+

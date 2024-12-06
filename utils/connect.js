@@ -10,6 +10,7 @@ const itemPricingModel = require("../models/itemPricing.schema");
 const fs = require("fs");
 const helperFunc = require("./helperFunc");
 const ipfsService = require("../services/ipfs.service");
+const stampService = require("../services/stamp.service");
 
 const connect_url = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@nftify-1.omipa.mongodb.net/`;
 const database_name = "NFTify_1";
@@ -658,6 +659,45 @@ async function deleteRecords() {
   }
 }
 
+
+const marketplaceService = require("../services/marketplace.service");
+
+
+async function createTransactionJson() {
+  try {
+    const items = await itemModel.find({});
+    const transactions = [];
+
+    for (const item of items) {
+      const stamp = await marketplaceService.getStampById(item._id);
+      const ownerId = stamp.ownerId;
+      const creatorId = stamp.creatorId;
+
+      console.log('itemId:', item._id);
+      console.log('ownerId:', ownerId);
+      console.log('creatorId:', creatorId);
+      console.log('---------------------------------');
+      if (ownerId !== creatorId) {
+        const transaction = {
+          itemId: item._id,
+          ownerId: ownerId,
+          creatorId: creatorId,
+        };
+        transactions.push(transaction);
+      }
+    }
+
+    fs.writeFileSync("../datajson/Transactions.json", JSON.stringify(transactions, null, 2));
+    console.log('Transactions data exported successfully');
+    
+  } catch (error) {
+    console.error('An error occurred during the createTransactionJson process:', error);
+    throw error;
+  }
+}
+
+// connectDB();
+// createTransactionJson();
 
 module.exports = {
   connectDB,
