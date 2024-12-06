@@ -50,7 +50,7 @@ class StampService {
         }
     }
 
-    async createItem(item) {
+    async createItem(creatorId, item) {
         // Validate input
         this.validateItemInput(item);
 
@@ -71,9 +71,8 @@ class StampService {
         // Prepare item for saving
         const preparedItem = {
             ...item,
-            // Ensure numeric denomination
+            creatorId: creatorId,
             denom: parseFloat(item.denom),
-            // Add creation timestamp if not exists
             createdAt: item.createdAt || new Date(),
         };
 

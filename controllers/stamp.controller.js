@@ -4,7 +4,7 @@ const { handleServiceError } = require("../utils/helperFunc");
 
 exports.createStamp = asyncHandler(async (req, res) => {
   try {
-    const newStamp = await StampService.createItem(req.body);
+    const newStamp = await StampService.createItem(req.user._id, req.body);
     res.status(201).json(newStamp);
   } catch (error) {
     handleServiceError(res, error);

@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const stampModel = require("../models/stamp.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
-const ItemSellPrice = require("../models/itemPricing.schema");
-const OwnerShip = require("../models/ownership.schema");
-const Collection = require("../models/collection.schema");
+const itemSellPriceModel = require("../models/itemPricing.schema");
+const ownershipModel = require("../models/ownership.schema");
+const collectionModel = require("../models/collection.schema");
 const StampService = require("./stamp.service");
 const collectionService = require("./collection.service");
 const nftService = require("./nft.service");
@@ -216,7 +216,7 @@ class MarketplaceService {
     }
 
     async getStampPriceHistory(id) {
-        const prices = await ItemSellPrice.aggregate([
+        const prices = await itemSellPriceModel.aggregate([
             {
                 $match: { itemId: id },
             },
@@ -227,7 +227,7 @@ class MarketplaceService {
     }
 
     async getStampOwnerHistory(id) {
-        const ownerships = await OwnerShip.aggregate([
+        const ownerships = await ownershipModel.aggregate([
             {
                 $match: { itemId: id },
             },
@@ -288,7 +288,7 @@ class MarketplaceService {
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
 
-        const creators = await OwnerShip.aggregate([
+        const creators = await ownershipModel.aggregate([
             {
                 $lookup: {
                     from: "ItemInsight",
@@ -359,7 +359,7 @@ class MarketplaceService {
             },
         ]);
 
-        const total = await await OwnerShip.distinct("ownerId").then(
+        const total = await await ownershipModel.distinct("ownerId").then(
             (owners) => owners.length
         );
 
@@ -380,8 +380,8 @@ class MarketplaceService {
         const skip = (parsedPage - 1) * parsedLimit;
 
         const [total, collections] = await Promise.all([
-            Collection.countDocuments(),
-            Collection.aggregate([
+            collectionModel.countDocuments(),
+            collectionModel.aggregate([
                 {
                     $sort: { viewCount: -1 },
                 },
@@ -448,6 +448,10 @@ class MarketplaceService {
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
+    
+        const priceFilter = {};
+        if (filters.minPrice) priceFilter.$gte = mongoose.Types.Decimal128.fromString(filters.minPrice.toString());
+        if (filters.maxPrice) priceFilter.$lte = mongoose.Types.Decimal128.fromString(filters.maxPrice.toString());
     
         const [total, items] = await Promise.all([
             stampModel.countDocuments(mongoFilter),
@@ -517,6 +521,11 @@ class MarketplaceService {
                 },
                 { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } },
                 {
+                    $match: {
+                        "currentPrice.price": priceFilter
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -546,7 +555,97 @@ class MarketplaceService {
     }
 
     async getCollectionsWithFilter(options = {}) {
-        return await collectionService.filterCollections(options);
+        const { page = 1, limit = 10, filters = {} } = options;
+        const mongoFilter = {};
+    
+        // Apply filters
+        if (filters.name) {
+            mongoFilter.name = { $regex: new RegExp(filters.name, "i") };
+        }
+        if (filters.description) {
+            mongoFilter.description = { $regex: new RegExp(filters.description, "i") };
+        }
+        if (filters.ownerId) {
+            mongoFilter.ownerId = new mongoose.Types.ObjectId(filters.ownerId);
+        }
+        if (filters.status) {
+            mongoFilter.status = filters.status;
+        }
+    
+        // Range filters
+        if (filters.minViewCount || filters.maxViewCount) {
+            mongoFilter.viewCount = {};
+            if (filters.minViewCount) mongoFilter.viewCount.$gte = filters.minViewCount;
+            if (filters.maxViewCount) mongoFilter.viewCount.$lte = filters.maxViewCount;
+        }
+        if (filters.minFavouriteCount || filters.maxFavouriteCount) {
+            mongoFilter.favouriteCount = {};
+            if (filters.minFavouriteCount) mongoFilter.favouriteCount.$gte = filters.minFavouriteCount;
+            if (filters.maxFavouriteCount) mongoFilter.favouriteCount.$lte = filters.maxFavouriteCount;
+        }
+        if (filters.startDate || filters.endDate) {
+            mongoFilter.createdAt = {};
+            if (filters.startDate) mongoFilter.createdAt.$gte = new Date(filters.startDate);
+            if (filters.endDate) mongoFilter.createdAt.$lte = new Date(filters.endDate);
+        }
+    
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+    
+        const [total, collections] = await Promise.all([
+            collectionModel.countDocuments(mongoFilter),
+            collectionModel.aggregate([
+                { $match: mongoFilter },
+                {
+                    $addFields: {
+                        ownerIdObj: { $toObjectId: "$ownerId" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "User",
+                        localField: "ownerIdObj",
+                        foreignField: "_id",
+                        as: "ownerDetails"
+                    }
+                },
+                { $unwind: "$ownerDetails" },
+                {
+                    $project: {
+                        name: 1,
+                        description: 1,
+                        status: 1,
+                        items: 1,
+                        viewCount: 1,
+                        favouriteCount: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        thumbUrl: 1,
+                        ownerDetails: {
+                            name: "$ownerDetails.name",
+                            avatarUrl: "$ownerDetails.avatarUrl",
+                            description: "$ownerDetails.description"
+                        }
+                    }
+                },
+                { 
+                    $sort: { 
+                        [filters.sortBy || "createdAt"]: filters.sortOrder === "asc" ? 1 : -1 
+                    } 
+                },
+                { $skip: skip },
+                { $limit: parsedLimit }
+            ])
+        ]);
+    
+        return {
+            total,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(total / parsedLimit),
+            items: collections
+        };
     }
 
     async getCreatorsWithFilter(options = {}) {
@@ -619,7 +718,7 @@ class MarketplaceService {
             page: parsedPage,
             limit: parsedLimit > total ? total : parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            creators,
+            items: creators,
         };
     }
 
