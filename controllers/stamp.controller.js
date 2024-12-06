@@ -125,3 +125,17 @@ exports.getStampDetails = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+exports.getStampsByCreator = asyncHandler(async (req, res) => {
+  try {
+    const result = await StampService.getStampsByCreator({
+      creatorId: req.params.creatorId,
+      page: req.query.page,
+      limit: req.query.limit
+    });
+
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

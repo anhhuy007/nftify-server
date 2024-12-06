@@ -3,6 +3,7 @@ const stampModel = require("../models/stamp.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
 const ownershipModel = require("../models/ownership.schema");
 const itemPricingModel = require("../models/itemPricing.schema");
+const userModel = require("../models/user.schema");
 
 class StampService {
     // Validate input data
@@ -263,7 +264,7 @@ class StampService {
         if (filters.sortBy) {
             sortField = filters.sortBy;
         }
-        if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
+        if (filters.sortOrder || filters.sortOrder === "asc") {
             sortOrder = 1; // Ascending
         }
 
@@ -467,6 +468,107 @@ class StampService {
             .limit(1);
         const price = priceDoc[0].price;
         return price;
+    }
+    async getOwnerId(itemId) {
+        const subTable = await ownershipModel.aggregate([
+            { $match: { itemId: itemId } },
+            { $sort: { createdAt: -1 } },
+            {
+                $group: {
+                    _id: "$itemId",
+                    latestOwnerId: { $first: "$ownerId" },
+                },
+            },
+        ]);
+        const ownerId = await subTable.map((record) => record.latestOwnerId);
+        return ownerId;
+    }
+
+    async getStampsByCreator(options = {}) {
+        const { creatorId, page = 1, limit = 10 } = options;
+    
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+    
+        const [total, items] = await Promise.all([
+            stampModel.countDocuments({ creatorId }),
+            stampModel.aggregate([
+                {
+                    $match: { creatorId }
+                },
+                {
+                    $addFields: {
+                        itemIdString: { $toString: "$_id" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "ItemInsight",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        as: "insight"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "Collection",
+                        localField: "itemIdString",
+                        foreignField: "items",
+                        as: "collection"
+                    }
+                },
+                {
+                    $addFields: {
+                        collectionName: {
+                            $ifNull: [
+                                { $arrayElemAt: ["$collection.name", 0] },
+                                "null"
+                            ]
+                        }
+                    }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: parsedLimit
+                },
+                {
+                    $project: {
+                        itemIdString: 1,
+                        _id: 1,
+                        title: 1,
+                        imgUrl: 1,
+                        "insight.viewCount": 1
+                    }
+                }
+            ])
+        ]);
+    
+        const itemsWithDetails = await Promise.all(
+            items.map(async (item) => {
+                const price = await this.getStampPrice(item.itemIdString);
+                const ownerId = await this.getOwnerId(item.itemIdString);
+                const ownerDetails = await userModel.findOne({ _id: ownerId }).select('name avatarUrl');
+                return {
+                    ...item,
+                    price,
+                    ownerDetails
+                };
+            })
+        );
+    
+        return {
+            total,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(total / parsedLimit),
+            items: itemsWithDetails
+        };
     }
 }
 

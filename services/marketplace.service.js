@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
-const stampModel = require('../models/stamp.schema');
-const itemInsightModel = require('../models/itemInsight.schema');
-const ItemSellPrice = require('../models/itemPricing.schema');
-const OwnerShip = require('../models/ownership.schema');
-const Collection = require('../models/collection.schema');
-const StampService = require('./stamp.service');
-const collectionService = require('./collection.service');
+const mongoose = require("mongoose");
+const stampModel = require("../models/stamp.schema");
+const itemInsightModel = require("../models/itemInsight.schema");
+const ItemSellPrice = require("../models/itemPricing.schema");
+const OwnerShip = require("../models/ownership.schema");
+const Collection = require("../models/collection.schema");
+const StampService = require("./stamp.service");
+const collectionService = require("./collection.service");
 const nftService = require("./nft.service");
+const stampService = require("./stamp.service");
+const userModel = require("../models/user.schema");
 class MarketplaceService {
     async getTrendingStamps(options = {}) {
         const { page = 1, limit = 10 } = options;
@@ -20,42 +22,37 @@ class MarketplaceService {
             stampModel.aggregate([
                 {
                     $addFields: {
-                        itemIdString: { $toString: '$_id' },
+                        itemIdString: { $toString: "$_id" },
                     },
                 },
                 {
                     $lookup: {
-                        from: 'ItemInsight',
-                        localField: 'itemIdString',
-                        foreignField: 'itemId',
-                        as: 'insight',
+                        from: "ItemInsight",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        as: "insight",
                     },
                 },
                 {
                     $lookup: {
-                        from: 'ItemPricing',
-                        localField: 'itemIdString',
-                        foreignField: 'itemId',
-                        as: 'price',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'Collection',
-                        localField: 'itemIdString',
-                        foreignField: 'items',
-                        as: 'collection',
+                        from: "Collection",
+                        localField: "itemIdString",
+                        foreignField: "items",
+                        as: "collection",
                     },
                 },
                 {
                     $addFields: {
-                        collectionName: { 
-                            $ifNull: [{ $arrayElemAt: ['$collection.name', 0] }, 'null'] 
+                        collectionName: {
+                            $ifNull: [
+                                { $arrayElemAt: ["$collection.name", 0] },
+                                "null",
+                            ],
                         },
                     },
                 },
                 {
-                    $sort: { 'insight.viewCount': -1 },
+                    $sort: { "insight.viewCount": -1 },
                 },
                 {
                     $skip: skip,
@@ -65,19 +62,39 @@ class MarketplaceService {
                 },
                 {
                     $project: {
-                        collection: 0
+                        itemIdString: 1,
+                        _id : 1,
+                        title: 1,
+                        imgUrl: 1,
+                        "insight.viewCount": 1, //check purpose
                     },
-                }
-            ])
+                },
+            ]),
         ]);
-
+        // const ownerId = stampService.getOwnerId(id )
+        // const price = await stampService.getStampPrice(id)
+        // Then, fetch prices for each stamp
+        const addOwnerAndPrice= await Promise.all(
+            items.map(async (item) => {
+                const price = await stampService.getStampPrice(
+                    item.itemIdString
+                );
+                const ownerId = await stampService.getOwnerId(item.itemIdString);
+                const ownerDetails = await userModel.findOne({ _id: ownerId }).select('name avatarUrl');
+                return {
+                    ...item,
+                    price,
+                    ownerDetails
+                };
+            })
+        );
         return {
             total,
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            items,
-        }
+            items: addOwnerAndPrice,
+        };
     }
 
     async getStampById(id) {
@@ -89,60 +106,70 @@ class MarketplaceService {
             },
             {
                 $addFields: {
-                    itemIdString: { $toString: '$_id' },
+                    itemIdString: { $toString: "$_id" },
                 },
             },
             {
                 $lookup: {
-                    from: 'ItemInsight',
-                    localField: 'itemIdString',
-                    foreignField: 'itemId',
-                    as: 'insight',
+                    from: "ItemInsight",
+                    localField: "itemIdString",
+                    foreignField: "itemId",
+                    as: "insight",
                 },
             },
-            { $unwind: '$insight' },
+            { $unwind: "$insight" },
             {
                 $lookup: {
-                    from: 'ItemPricing',
-                    localField: 'itemIdString',
-                    foreignField: 'itemId',
-                    as: 'price',
+                    from: "ItemPricing",
+                    localField: "itemIdString",
+                    foreignField: "itemId",
+                    as: "price",
                 },
             },
-            { $unwind: '$price' },
-            { $addFields: { creatorObjId: { $toObjectId: '$creatorId' } } },
+            { $unwind: "$price" },
+            { $addFields: { creatorObjId: { $toObjectId: "$creatorId" } } },
             {
                 $lookup: {
-                    from: 'User',
-                    localField: 'creatorObjId',
-                    foreignField: '_id',
-                    as: 'creatorDetails',
-                }
+                    from: "User",
+                    localField: "creatorObjId",
+                    foreignField: "_id",
+                    as: "creatorDetails",
+                },
             },
-            { $unwind: { path: '$creatorDetails', preserveNullAndEmptyArrays: true } },
+            {
+                $unwind: {
+                    path: "$creatorDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $lookup: {
-                    from: 'OwnerShip',
-                    localField: 'itemIdString', 
-                    foreignField: 'itemId',
-                    as: 'ownershipDetails',
-                }
+                    from: "OwnerShip",
+                    localField: "itemIdString",
+                    foreignField: "itemId",
+                    as: "ownershipDetails",
+                },
             },
-            { $unwind: { path: '$ownershipDetails', preserveNullAndEmptyArrays: true } },
-            { $sort: { 'ownershipDetails.createdAt': -1 } },
+            {
+                $unwind: {
+                    path: "$ownershipDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            { $sort: { "ownershipDetails.createdAt": -1 } },
             { $limit: 1 },
             {
                 $addFields: {
-                    ownerObjId: { $toObjectId: '$ownershipDetails.ownerId' }
-                }
+                    ownerObjId: { $toObjectId: "$ownershipDetails.ownerId" },
+                },
             },
             {
                 $lookup: {
-                    from: 'User',
-                    localField: 'ownerObjId',
-                    foreignField: '_id',
-                    as: 'ownerDetails',
-                }
+                    from: "User",
+                    localField: "ownerObjId",
+                    foreignField: "_id",
+                    as: "ownerDetails",
+                },
             },
             { $unwind: { path: '$ownerDetails', preserveNullAndEmptyArrays: true } },
             {
@@ -153,22 +180,23 @@ class MarketplaceService {
                     as: 'collection',
                 }
             },
+            { $unwind: { path: '$collection', preserveNullAndEmptyArrays: true } },
             {
                 $project: {
-                    'insight._id': 0,
-                    'insight.itemId': 0,
-                    'insight.updatedAt': 0,
-                    'price._id': 0,
-                    'price.itemId': 0,
-                    'price.createdAt': 0,
+                    "insight._id": 0,
+                    "insight.itemId": 0,
+                    "insight.updatedAt": 0,
+                    "price._id": 0,
+                    "price.itemId": 0,
+                    "price.createdAt": 0,
                     itemIdString: 0,
                     creatorObjId: 0,
-                    'creatorDetails.description': 0,
-                    'creatorDetails.gender': 0,
-                    'creatorDetails.status': 0,
-                    'creatorDetails.createdAt': 0,
-                    'creatorDetails.updatedAt': 0,
-                    'ownershipDetails': 0,
+                    "creatorDetails.description": 0,
+                    "creatorDetails.gender": 0,
+                    "creatorDetails.status": 0,
+                    "creatorDetails.createdAt": 0,
+                    "creatorDetails.updatedAt": 0,
+                    ownershipDetails: 0,
                     ownerObjId: 0,
                     'ownerDetails.description': 0,
                     'ownerDetails.gender': 0,
@@ -190,9 +218,9 @@ class MarketplaceService {
     async getStampPriceHistory(id) {
         const prices = await ItemSellPrice.aggregate([
             {
-                $match: { itemId: id }
+                $match: { itemId: id },
             },
-            { $sort: { createdAt: -1 } }
+            { $sort: { createdAt: -1 } },
         ]);
 
         return prices;
@@ -201,31 +229,34 @@ class MarketplaceService {
     async getStampOwnerHistory(id) {
         const ownerships = await OwnerShip.aggregate([
             {
-                $match: { itemId: id }
+                $match: { itemId: id },
             },
             {
-                $addFields: { ownerObjectId: { $toObjectId: '$ownerId' } }
+                $addFields: { ownerObjectId: { $toObjectId: "$ownerId" } },
             },
             {
                 $lookup: {
-                    from: 'User',
-                    localField: 'ownerObjectId',
-                    foreignField: '_id',
-                    as: 'ownerDetails',
+                    from: "User",
+                    localField: "ownerObjectId",
+                    foreignField: "_id",
+                    as: "ownerDetails",
                 },
             },
             {
-                $unwind: { path: '$ownerDetails', preserveNullAndEmptyArrays: true },
+                $unwind: {
+                    path: "$ownerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
             { $sort: { createdAt: -1 } },
             {
                 $project: {
-                    'ownerDetails.password': 0,
-                    'ownerDetails.email': 0,
-                    'ownerDetails.createdAt': 0,
-                    'ownerDetails.updatedAt': 0,
-                }
-            }
+                    "ownerDetails.password": 0,
+                    "ownerDetails.email": 0,
+                    "ownerDetails.createdAt": 0,
+                    "ownerDetails.updatedAt": 0,
+                },
+            },
         ]);
 
         return ownerships;
@@ -235,7 +266,7 @@ class MarketplaceService {
         const categories = await stampModel.aggregate([
             {
                 $group: {
-                    _id: '$category',
+                    _id: "$category",
                     count: { $sum: 1 },
                 },
             },
@@ -260,20 +291,20 @@ class MarketplaceService {
         const creators = await OwnerShip.aggregate([
             {
                 $lookup: {
-                    from: 'ItemInsight',
-                    localField: 'itemId',
-                    foreignField: 'itemId',
-                    as: 'insight',
-                }
+                    from: "ItemInsight",
+                    localField: "itemId",
+                    foreignField: "itemId",
+                    as: "insight",
+                },
             },
             {
-                $unwind: '$insight',
+                $unwind: "$insight",
             },
             {
                 $group: {
-                    _id: '$ownerId',
-                    totalViewCount: { $sum: '$insight.viewCount' },
-                }
+                    _id: "$ownerId",
+                    totalViewCount: { $sum: "$insight.viewCount" },
+                },
             },
             {
                 $sort: { totalViewCount: -1 },
@@ -286,46 +317,51 @@ class MarketplaceService {
             },
             {
                 $addFields: {
-                    creatorId: { $toObjectId: '$_id' },
-                }
+                    creatorId: { $toObjectId: "$_id" },
+                },
             },
             {
                 $lookup: {
-                    from: 'User',
-                    localField: 'creatorId',
-                    foreignField: '_id',
-                    as: 'creatorDetails',
-                }
+                    from: "User",
+                    localField: "creatorId",
+                    foreignField: "_id",
+                    as: "creatorDetails",
+                },
             },
             {
-                $unwind: { path: '$creatorDetails', preserveNullAndEmptyArrays: true },
+                $unwind: {
+                    path: "$creatorDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
             {
-                $lookup:{
-                    from :'Stamp',
-                    localField: '_id',
-                    foreignField: 'creatorId',
-                    as: 'creatorStamps',
+                $lookup: {
+                    from: "Stamp",
+                    localField: "_id",
+                    foreignField: "creatorId",
+                    as: "creatorStamps",
                     pipeline: [
-                        {$limit : 3},
+                        { $limit: 3 },
                         {
-                            $project:{imgUrl : 1}
-                        }
-                    ]
-                }
+                            $project: { imgUrl: 1 },
+                        },
+                    ],
+                },
             },
             {
                 $project: {
-                    _id: 1, 
+                    _id: 1,
                     totalViewCount: 1,
-                    'creatorDetails.name': 1,
-                    'creatorDetails.description': 1,
-                    creatorStamps : '$creatorStamps.imgUrl'
-                }
-            }
+                    "creatorDetails.name": 1,
+                    "creatorDetails.description": 1,
+                    creatorStamps: "$creatorStamps.imgUrl",
+                },
+            },
         ]);
 
-        const total = await await OwnerShip.distinct('ownerId').then((owners) => owners.length);
+        const total = await await OwnerShip.distinct("ownerId").then(
+            (owners) => owners.length
+        );
 
         return {
             total,
@@ -347,33 +383,166 @@ class MarketplaceService {
             Collection.countDocuments(),
             Collection.aggregate([
                 {
-                    $sort: { viewCount: -1 }
+                    $sort: { viewCount: -1 },
                 },
                 {
-                    $skip: skip
+                    $skip: skip,
                 },
                 {
-                    $limit: parsedLimit
+                    $limit: parsedLimit,
                 },
                 {
                     $project: {
-                        items: 0
-                    }
-                }
-            ])
-          ]);
-      
-          return {
+                        items: 0,
+                    },
+                },
+            ]),
+        ]);
+
+        return {
             total,
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
             items: collections,
-          };
+        };
     }
 
     async getStampsWithFilter(options = {}) {
-        return await StampService.filterItems(options);
+        const { page = 1, limit = 10, filters = {} } = options;
+    
+        // Prepare dynamic filter
+        const mongoFilter = {};
+        if (filters.creatorId) {
+            mongoFilter.creatorId = new mongoose.Types.ObjectId(filters.creatorId);
+        }
+        if (filters.title) {
+            mongoFilter.title = { $regex: filters.title, $options: "i" };
+        }
+        if (filters.issuedBy) {
+            mongoFilter.issuedBy = filters.issuedBy;
+        }
+        if (filters.color) {
+            mongoFilter.color = filters.color;
+        }
+        if (filters.function) {
+            mongoFilter.function = filters.function;
+        }
+    
+        // Date and denomination filters
+        if (filters.startDate || filters.endDate) {
+            mongoFilter.date = {};
+            if (filters.startDate) mongoFilter.date.$gte = filters.startDate;
+            if (filters.endDate) mongoFilter.date.$lte = filters.endDate;
+        }
+        if (filters.minDenom || filters.maxDenom) {
+            mongoFilter.denom = {};
+            if (filters.minDenom) {
+                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(filters.minDenom.toString());
+            }
+            if (filters.maxDenom) {
+                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(filters.maxDenom.toString());
+            }
+        }
+    
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+    
+        const [total, items] = await Promise.all([
+            stampModel.countDocuments(mongoFilter),
+            stampModel.aggregate([
+                { $match: mongoFilter },
+                {
+                    $addFields: {
+                        itemIdString: { $toString: "$_id" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "ItemInsight",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        as: "insight"
+                    }
+                },
+                { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "Collection",
+                        localField: "itemIdString",
+                        foreignField: "items",
+                        as: "collection"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "ItemPricing",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        pipeline: [
+                            { $sort: { createdAt: -1 } },
+                            { $limit: 1 }
+                        ],
+                        as: "currentPrice"
+                    }
+                },
+                { $unwind: { path: "$currentPrice", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "OwnerShip",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        pipeline: [
+                            { $sort: { createdAt: -1 } },
+                            { $limit: 1 }
+                        ],
+                        as: "ownership"
+                    }
+                },
+                { $unwind: { path: "$ownership", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "User",
+                        let: { ownerId: "$ownership.ownerId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$_id", { $toObjectId: "$$ownerId" }] }
+                                }
+                            }
+                        ],
+                        as: "ownerDetails"
+                    }
+                },
+                { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        imgUrl: 1,
+                        price: "$currentPrice.price",
+                        viewCount: "$insight.viewCount",
+                        collectionName: { $arrayElemAt: ["$collection.name", 0] },
+                        ownerDetails: {
+                            name: "$ownerDetails.name",
+                            avatarUrl: "$ownerDetails.avatarUrl"
+                        }
+                    }
+                },
+                { $sort: { [filters.sortBy || "createdAt"]: filters.sortOrder === "asc" ? 1 : -1 } },
+                { $skip: skip },
+                { $limit: parsedLimit }
+            ])
+        ]);
+    
+        return {
+            total,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(total / parsedLimit),
+            items
+        };
     }
 
     async getCollectionsWithFilter(options = {}) {
@@ -391,28 +560,28 @@ class MarketplaceService {
         const pipeline = [
             {
                 $group: {
-                    _id: '$creatorId',
-                    total: { $sum: 1 }
-                }
+                    _id: "$creatorId",
+                    total: { $sum: 1 },
+                },
             },
             {
                 $addFields: {
-                    creatorId: { $toObjectId: '$_id' }
-                }
+                    creatorId: { $toObjectId: "$_id" },
+                },
             },
             {
                 $lookup: {
-                    from: 'User',
-                    localField: 'creatorId',    
-                    foreignField: '_id',
-                    as: 'creatorDetails'
-                }
+                    from: "User",
+                    localField: "creatorId",
+                    foreignField: "_id",
+                    as: "creatorDetails",
+                },
             },
             {
-                $unwind: { 
-                    path: '$creatorDetails', 
-                    preserveNullAndEmptyArrays: true 
-                }
+                $unwind: {
+                    path: "$creatorDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
             }
         ];
 
@@ -420,11 +589,11 @@ class MarketplaceService {
         if (name) {
             pipeline.push({
                 $match: {
-                    'creatorDetails.name': { 
-                        $regex: name, 
-                        $options: 'i' 
-                    }
-                }
+                    "creatorDetails.name": {
+                        $regex: name,
+                        $options: "i",
+                    },
+                },
             });
         }
 
@@ -436,9 +605,9 @@ class MarketplaceService {
                 $project: {
                     _id: 1,
                     total: 1,
-                    name: '$creatorDetails.name',
-                    avatar: '$creatorDetails.avatarUrl'
-                }
+                    name: "$creatorDetails.name",
+                    avatar: "$creatorDetails.avatarUrl",
+                },
             }
         );
 
@@ -460,7 +629,7 @@ class MarketplaceService {
 
         return {
             total,
-            data: nfts
+            data: nfts,
         };
     }
 }
