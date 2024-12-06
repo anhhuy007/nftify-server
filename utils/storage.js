@@ -35,5 +35,4 @@ const pinata = new PinataSDK({
 //         console.log(error);
 //     }
 // }
-
 // uploadAllMetadata(stamps);

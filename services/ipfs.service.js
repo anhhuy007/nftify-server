@@ -66,7 +66,7 @@ class IpfsService {
         pinataMetadata: { 
           name: `${stamp._id}.json`, 
         }}).group(StampMetadata[0].id);
-      console.log("uploaded metadata with id: ", stamp._id);
+      console.log("Uploaded metadata with id: ", stamp._id);
       // log the id and cid into log file
       fs.appendFileSync("../logs/metadata.log", `${stamp._id}: ${upload.IpfsHash}\n`);
       return upload;

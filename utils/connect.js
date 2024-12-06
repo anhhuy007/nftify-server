@@ -59,7 +59,7 @@ async function getDocumentsId(objectModel) {
 // data from file
 function readData() {
   const dataItems = JSON.parse(
-    fs.readFileSync("../testing_data/stamps.json", "utf8")
+    fs.readFileSync("../testing_data/Stamps.json", "utf8")
   );
   const dataUsers = JSON.parse(
     fs.readFileSync("../datajson/Users.json", "utf8")
@@ -276,14 +276,6 @@ async function saveDataAccount(data) {
     }
   }
 }
-// comment this to run server
-// connectDB()
-// saveDataUsers(readData().dataUsers)
-// .then(() => console.log('Data save process completed.'))
-//     .catch((err) => console.error('Error in data saving process:', err))
-//     .finally(() => {
-//         //
-//     });
 
 async function saveGeneratedOwnership() {
   try {
@@ -367,9 +359,6 @@ async function updateStampSchema() {
     console.error('An error occurred during the updateStampSchema process:', error);
   }
 }
-//connectDB()
-// Run the update script
-//updateStampSchema();
 
 async function updateCollectionSchema(){
   const collections = await collectionModel.find({});
@@ -465,13 +454,6 @@ async function updateURLCollection() {
   }
 }
 
-connectDB()
-updateURLCollection()
-  .then(() => console.log("URLs updated successfully"))
-  .catch((error) => console.error("Error updating URLs:", error))
-  .finally(() => {
-    closeConnectDB();
-  });
 async function deleteAllUsers() {
   try {
     await connectDB();
@@ -514,13 +496,9 @@ async function updateStampTokenUrl() {
 
     const updatePromises = items.map(async (item) => {
       try {
-        const existingCID = await getCIDbyIdUsingLog(item._id);
-        
-        // Skip if no CID
-        if (!existingCID) {
-          console.log(`No CID found for item ${item._id}. Skipping.`);
-          return null;
-        }
+        // Upload stamp metadata to IPFS
+
+        CID = (await ipfsService.uploadStampMetadata(item)).IpfsHash;
 
         // Update cid
         await itemModel.updateOne(
@@ -551,6 +529,134 @@ async function updateStampTokenUrl() {
   }
 }
 
+async function reGenerateCreatorId() {
+  try {
+    const items = await itemModel.find({});
+    console.log(`Found ${items.length} items to update`);
+
+    const creatorIds = await getDocumentsId(userModel);
+
+    const updatePromises = items.map(async (item) => {
+      try {
+        const newCreatorId = creatorIds[Math.floor(Math.random() * creatorIds.length)];
+        
+        // Update creatorId
+        await itemModel.updateOne(
+          { _id: item._id },
+          {
+            $set: {
+              creatorId: newCreatorId,
+            },
+          }
+        );
+        
+        console.log(`Updated item ${item._id} with creatorId: ${newCreatorId}`);
+        return item._id;
+      } catch (err) {
+        console.error(`Failed to update item ${item._id}:`, err);
+        return null;
+      }
+    });
+
+    const results = await Promise.all(updatePromises);
+    
+    const successfulUpdates = results.filter(result => result !== null);
+    
+    console.log(`Successfully updated ${successfulUpdates.length} out of ${items.length} items`);
+  } catch (error) {
+    console.error('An error occurred during the reGenerateCreatorId process:', error);
+    throw error;
+  }
+}
+
+async function deleteItemNotMatch(){
+  try {
+    const items = await itemModel.find({});
+    const stampList = JSON.parse(fs.readFileSync("../datajson/Stamps.json", "utf8"));
+    const stampIds = stampList.map((stamp) => stamp._id);
+    console.log(`Found ${items.length} items to update`);
+
+    const updatePromises = items.map(async (item) => {
+      try {
+        if (!stampIds.includes(item._id)) {
+          // Delete item
+          await itemModel.deleteOne({ _id: item._id });
+          console.log(`Deleted item ${item._id}`);
+          return item._id;
+        }
+      } catch (err) {
+        console.error(`Failed to delete item ${item._id}:`, err);
+      }
+    });
+
+    const results = await Promise.all(updatePromises);
+    
+    const successfulUpdates = results.filter(result => result !== null);
+    
+    console.log(`Successfully deleted ${successfulUpdates.length} out of ${items.length} items`);
+  } catch (error) {
+    console.error('An error occurred during the deleteItemNotMatch process:', error);
+    throw error;
+  }
+}
+
+async function saveStampDataFromJson(data) {
+  const items = itemModel.collection.name;
+  console.log(
+    `Attempting to save ${data.length} items to ${database_name}.${items} collection`
+  );
+
+  try {
+    await itemModel.collection.dropIndexes();
+    await itemModel.syncIndexes();
+
+    const creatorIds = await getDocumentsId(userModel);
+
+    for (const item of data) {
+      try {
+        // Check existing item by title
+        const existingItem = await itemModel.findOne({ title: item.title });
+        if (existingItem) {
+          console.log(`Skipping item with title: ${item.title} - already exists`);
+          continue;
+        }
+
+        // Get token URL from IPFS
+        const uploadedMetadata = await ipfsService.uploadStampMetadata(item);
+        const tokenUrl = uploadedMetadata.IpfsHash;
+
+        const modifiedItem = {
+          ...item,
+          creatorId: creatorIds[Math.floor(Math.random() * creatorIds.length)],
+          denom: ((Math.round(Math.random() * 10000) + 1) / 100).toFixed(2),
+          date: helperFunc.randomDates("01/01/1900", "01/01/2000"),
+          tokenUrl: tokenUrl,
+        };
+
+        const newItem = new itemModel(modifiedItem);
+        await newItem.save();
+        console.log(
+          `Saved with title: ${item.title} to ${database_name}.${items}`
+        );
+      } catch (error) {
+        console.error(`Failed to save with title: ${item.title}`, error);
+      }
+    }
+  } catch (mainError) {
+    console.error('An error occurred during the saveStampData process:', mainError);
+    throw mainError;
+  }
+}
+
+async function deleteRecords() {
+  try {
+    // đổi model cần xóa, tốt nhất là không nên dùng:)))))
+    const result = await ownershipModel.deleteMany({ });
+    console.log('Delete operation successful:', result);
+  } catch (error) {
+    console.error('Error deleting records:', error);
+  }
+}
 
 
 module.exports = {

@@ -1,6 +1,8 @@
 [
   {
-    "_id": "6745e274336bf17419810d05",
+    "_id": {
+      "$oid": "6745e274336bf17419810d05"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "King Luis I Type of 1870",
     "issuedBy": "Azores",
@@ -14,7 +16,9 @@
     "createdAt": "2024-11-26T15:00:04.225Z"
   },
   {
-    "_id": "6745e274336bf17419810d09",
+    "_id": {
+      "$oid": "6745e274336bf17419810d09"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Wheelchair",
     "issuedBy": "Australia",
@@ -28,7 +32,9 @@
     "createdAt": "2024-11-26T15:00:04.431Z"
   },
   {
-    "_id": "6745e274336bf17419810d0d",
+    "_id": {
+      "$oid": "6745e274336bf17419810d0d"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Pilot amp biplane Hansa Brandenburg C 1",
     "issuedBy": "Austria",
@@ -42,7 +48,9 @@
     "createdAt": "2024-11-26T15:00:04.629Z"
   },
   {
-    "_id": "6745e274336bf17419810d11",
+    "_id": {
+      "$oid": "6745e274336bf17419810d11"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Hippeastrum sp",
     "issuedBy": "Benin",
@@ -56,7 +64,9 @@
     "createdAt": "2024-11-26T15:00:04.822Z"
   },
   {
-    "_id": "6745e275336bf17419810d15",
+    "_id": {
+      "$oid": "6745e275336bf17419810d15"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Exhibition pavilion",
     "issuedBy": "Algeria",
@@ -70,7 +80,9 @@
     "createdAt": "2024-11-26T15:00:05.117Z"
   },
   {
-    "_id": "6745e275336bf17419810d19",
+    "_id": {
+      "$oid": "6745e275336bf17419810d19"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "16th Commonwealth Parliamentary Association Conference",
     "issuedBy": "Australia",
@@ -84,7 +96,9 @@
     "createdAt": "2024-11-26T15:00:05.317Z"
   },
   {
-    "_id": "6745e275336bf17419810d1d",
+    "_id": {
+      "$oid": "6745e275336bf17419810d1d"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "King Baudouin",
     "issuedBy": "Belgium",
@@ -98,7 +112,9 @@
     "createdAt": "2024-11-26T15:00:05.512Z"
   },
   {
-    "_id": "6745e275336bf17419810d21",
+    "_id": {
+      "$oid": "6745e275336bf17419810d21"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Alte Innbr uuml cke near Finsterm uuml nz Tyrol",
     "issuedBy": "Austria",
@@ -112,7 +128,9 @@
     "createdAt": "2024-11-26T15:00:05.731Z"
   },
   {
-    "_id": "6745e275336bf17419810d25",
+    "_id": {
+      "$oid": "6745e275336bf17419810d25"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Overprint and precancellation",
     "issuedBy": "Belgium",
@@ -126,7 +144,9 @@
     "createdAt": "2024-11-26T15:00:05.925Z"
   },
   {
-    "_id": "6745e276336bf17419810d29",
+    "_id": {
+      "$oid": "6745e276336bf17419810d29"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Yuan Shih Kai Founding of Republic",
     "issuedBy": "China",
@@ -140,7 +160,9 @@
     "createdAt": "2024-11-26T15:00:06.122Z"
   },
   {
-    "_id": "6745e276336bf17419810d2d",
+    "_id": {
+      "$oid": "6745e276336bf17419810d2d"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Common Heather Calluna vulgaris",
     "issuedBy": "Finland",
@@ -154,7 +176,9 @@
     "createdAt": "2024-11-26T15:00:06.321Z"
   },
   {
-    "_id": "6745e276336bf17419810d31",
+    "_id": {
+      "$oid": "6745e276336bf17419810d31"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Dr Sun Yat sen 1866 1925",
     "issuedBy": "Northeastern Provinces",
@@ -168,7 +192,9 @@
     "createdAt": "2024-11-26T15:00:06.525Z"
   },
   {
-    "_id": "6745e276336bf17419810d35",
+    "_id": {
+      "$oid": "6745e276336bf17419810d35"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Southern Cross",
     "issuedBy": "Western Australia",
@@ -182,7 +208,9 @@
     "createdAt": "2024-11-26T15:00:06.747Z"
   },
   {
-    "_id": "6745e276336bf17419810d39",
+    "_id": {
+      "$oid": "6745e276336bf17419810d39"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Seal of the Colony Large Format",
     "issuedBy": "Barbados",
@@ -196,7 +224,9 @@
     "createdAt": "2024-11-26T15:00:06.943Z"
   },
   {
-    "_id": "6745e277336bf17419810d3d",
+    "_id": {
+      "$oid": "6745e277336bf17419810d3d"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Seal",
     "issuedBy": "Antigua",
@@ -210,7 +240,9 @@
     "createdAt": "2024-11-26T15:00:07.135Z"
   },
   {
-    "_id": "6745e277336bf17419810d41",
+    "_id": {
+      "$oid": "6745e277336bf17419810d41"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Lesser Chinchilla Chinchilla laniger",
     "issuedBy": "Bolivia",
@@ -224,7 +256,9 @@
     "createdAt": "2024-11-26T15:00:07.334Z"
   },
   {
-    "_id": "6745e277336bf17419810d45",
+    "_id": {
+      "$oid": "6745e277336bf17419810d45"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Figure",
     "issuedBy": "Crete",
@@ -238,7 +272,9 @@
     "createdAt": "2024-11-26T15:00:07.526Z"
   },
   {
-    "_id": "6745e277336bf17419810d4c",
+    "_id": {
+      "$oid": "6745e277336bf17419810d4c"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Mt Chimborazo",
     "issuedBy": "Ecuador",
@@ -252,7 +288,9 @@
     "createdAt": "2024-11-26T15:00:07.855Z"
   },
   {
-    "_id": "6745e278336bf17419810d50",
+    "_id": {
+      "$oid": "6745e278336bf17419810d50"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Coat of arms in oval",
     "issuedBy": "Prussia",
@@ -266,7 +304,9 @@
     "createdAt": "2024-11-26T15:00:08.049Z"
   },
   {
-    "_id": "6745e278336bf17419810d54",
+    "_id": {
+      "$oid": "6745e278336bf17419810d54"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Colnect 136 771 quot Farmers Dance quot by Pieter Breugel the Elder c 1525 1569",
     "issuedBy": "Austria",
@@ -280,7 +320,9 @@
     "createdAt": "2024-11-26T15:00:08.244Z"
   },
   {
-    "_id": "6745e278336bf17419810d5b",
+    "_id": {
+      "$oid": "6745e278336bf17419810d5b"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Wolf Canis lupus",
     "issuedBy": "Czechoslovakia",
@@ -294,7 +336,9 @@
     "createdAt": "2024-11-26T15:00:08.572Z"
   },
   {
-    "_id": "6745e278336bf17419810d5f",
+    "_id": {
+      "$oid": "6745e278336bf17419810d5f"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Yacht Hirondelle 1870",
     "issuedBy": "Monaco",
@@ -308,7 +352,9 @@
     "createdAt": "2024-11-26T15:00:08.765Z"
   },
   {
-    "_id": "6745e278336bf17419810d63",
+    "_id": {
+      "$oid": "6745e278336bf17419810d63"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Fasting Sacrifice",
     "issuedBy": "Liechtenstein",
@@ -322,7 +368,9 @@
     "createdAt": "2024-11-26T15:00:08.961Z"
   },
   {
-    "_id": "6745e279336bf17419810d67",
+    "_id": {
+      "$oid": "6745e279336bf17419810d67"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Issues of 1895 99",
     "issuedBy": "Grenada",
@@ -336,7 +384,9 @@
     "createdAt": "2024-11-26T15:00:09.160Z"
   },
   {
-    "_id": "6745e279336bf17419810d6e",
+    "_id": {
+      "$oid": "6745e279336bf17419810d6e"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Ceres",
     "issuedBy": "Portugal",
@@ -350,7 +400,9 @@
     "createdAt": "2024-11-26T15:00:09.483Z"
   },
   {
-    "_id": "6745e279336bf17419810d72",
+    "_id": {
+      "$oid": "6745e279336bf17419810d72"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Saint Virgin from El Cobre",
     "issuedBy": "Cuba",
@@ -364,7 +416,9 @@
     "createdAt": "2024-11-26T15:00:09.677Z"
   },
   {
-    "_id": "6745e27a336bf17419810d7c",
+    "_id": {
+      "$oid": "6745e27a336bf17419810d7c"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "San Francesco overprinted",
     "issuedBy": "Cyrenaica",
@@ -378,7 +432,9 @@
     "createdAt": "2024-11-26T15:00:10.133Z"
   },
   {
-    "_id": "6745e27a336bf17419810d86",
+    "_id": {
+      "$oid": "6745e27a336bf17419810d86"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "1587_Design_100.png",
     "issuedBy": "Hungary",
@@ -392,7 +448,9 @@
     "createdAt": "2024-11-26T15:00:10.589Z"
   },
   {
-    "_id": "6745e27a336bf17419810d8a",
+    "_id": {
+      "$oid": "6745e27a336bf17419810d8a"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Stamps_of_Germany_%28DDR%29_1972%2C_MiNr_1772",
     "issuedBy": "German Democratic Republic",
@@ -406,7 +464,9 @@
     "createdAt": "2024-11-26T15:00:10.785Z"
   },
   {
-    "_id": "6745e27a336bf17419810d8e",
+    "_id": {
+      "$oid": "6745e27a336bf17419810d8e"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Vytis cross",
     "issuedBy": "Lithuania",
@@ -420,7 +480,9 @@
     "createdAt": "2024-11-26T15:00:10.983Z"
   },
   {
-    "_id": "6745e27b336bf17419810d95",
+    "_id": {
+      "$oid": "6745e27b336bf17419810d95"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Issues of 1921 37",
     "issuedBy": "Hong Kong",
@@ -434,7 +496,9 @@
     "createdAt": "2024-11-26T15:00:11.313Z"
   },
   {
-    "_id": "6745e27b336bf17419810d99",
+    "_id": {
+      "$oid": "6745e27b336bf17419810d99"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Queen Victoria",
     "issuedBy": "Victoria",
@@ -448,7 +512,9 @@
     "createdAt": "2024-11-26T15:00:11.517Z"
   },
   {
-    "_id": "6745e27b336bf17419810d9d",
+    "_id": {
+      "$oid": "6745e27b336bf17419810d9d"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Yellowtail Snapper Ocyurus chrysurus",
     "issuedBy": "Cuba",
@@ -462,7 +528,9 @@
     "createdAt": "2024-11-26T15:00:11.728Z"
   },
   {
-    "_id": "6745e27b336bf17419810da1",
+    "_id": {
+      "$oid": "6745e27b336bf17419810da1"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Arms of Ibagu eacute discus thrower of Myron",
     "issuedBy": "Colombia",
@@ -476,7 +544,9 @@
     "createdAt": "2024-11-26T15:00:11.920Z"
   },
   {
-    "_id": "6745e27c336bf17419810da5",
+    "_id": {
+      "$oid": "6745e27c336bf17419810da5"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Dominican Pavilion",
     "issuedBy": "Dominican Republic",
@@ -490,7 +560,9 @@
     "createdAt": "2024-11-26T15:00:12.111Z"
   },
   {
-    "_id": "6745e27c336bf17419810da9",
+    "_id": {
+      "$oid": "6745e27c336bf17419810da9"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Spanish Art Gerona Cathedral",
     "issuedBy": "Spain",
@@ -504,7 +576,9 @@
     "createdAt": "2024-11-26T15:00:12.306Z"
   },
   {
-    "_id": "6745e27c336bf17419810dad",
+    "_id": {
+      "$oid": "6745e27c336bf17419810dad"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Sports Hurdling",
     "issuedBy": "China, ROC",
@@ -518,7 +592,9 @@
     "createdAt": "2024-11-26T15:00:12.497Z"
   },
   {
-    "_id": "6745e27c336bf17419810db1",
+    "_id": {
+      "$oid": "6745e27c336bf17419810db1"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Map",
     "issuedBy": "Seychelles",
@@ -532,7 +608,9 @@
     "createdAt": "2024-11-26T15:00:12.689Z"
   },
   {
-    "_id": "6745e27c336bf17419810db5",
+    "_id": {
+      "$oid": "6745e27c336bf17419810db5"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "75th Anniversary of the UPU",
     "issuedBy": "Kedah",
@@ -546,7 +624,9 @@
     "createdAt": "2024-11-26T15:00:12.893Z"
   },
   {
-    "_id": "6745e27d336bf17419810dbc",
+    "_id": {
+      "$oid": "6745e27d336bf17419810dbc"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Butterfly stroke",
     "issuedBy": "Hungary",
@@ -560,7 +640,9 @@
     "createdAt": "2024-11-26T15:00:13.213Z"
   },
   {
-    "_id": "6745e27d336bf17419810dc6",
+    "_id": {
+      "$oid": "6745e27d336bf17419810dc6"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "TH123.04",
     "issuedBy": "Thailand",
@@ -574,7 +656,9 @@
     "createdAt": "2024-11-26T15:00:13.678Z"
   },
   {
-    "_id": "6745e27d336bf17419810dca",
+    "_id": {
+      "$oid": "6745e27d336bf17419810dca"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "LK049.08",
     "issuedBy": "Sri Lanka",
@@ -588,7 +672,9 @@
     "createdAt": "2024-11-26T15:00:13.873Z"
   },
   {
-    "_id": "6745e27e336bf17419810dce",
+    "_id": {
+      "$oid": "6745e27e336bf17419810dce"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Numeral New Type",
     "issuedBy": "Cape Verde",
@@ -602,7 +688,9 @@
     "createdAt": "2024-11-26T15:00:14.066Z"
   },
   {
-    "_id": "6745e27e336bf17419810dd2",
+    "_id": {
+      "$oid": "6745e27e336bf17419810dd2"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "STS Gambia 3 300dpi.jpg crop 401x350at967 790",
     "issuedBy": "Gambia",
@@ -616,7 +704,9 @@
     "createdAt": "2024-11-26T15:00:14.265Z"
   },
   {
-    "_id": "6745e27e336bf17419810dd6",
+    "_id": {
+      "$oid": "6745e27e336bf17419810dd6"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "King George V",
     "issuedBy": "Turks & Caicos Islands",
@@ -630,7 +720,9 @@
     "createdAt": "2024-11-26T15:00:14.460Z"
   },
   {
-    "_id": "6745e27e336bf17419810dda",
+    "_id": {
+      "$oid": "6745e27e336bf17419810dda"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Coat of Arms",
     "issuedBy": "Panama",
@@ -644,7 +736,9 @@
     "createdAt": "2024-11-26T15:00:14.658Z"
   },
   {
-    "_id": "6745e27e336bf17419810dde",
+    "_id": {
+      "$oid": "6745e27e336bf17419810dde"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "DBP_BuS_ _Schloss_Pfaueninsel_Berlin_ _190_Pf",
     "issuedBy": "Germany",
@@ -658,7 +752,9 @@
     "createdAt": "2024-11-26T15:00:14.849Z"
   },
   {
-    "_id": "6745e27f336bf17419810de2",
+    "_id": {
+      "$oid": "6745e27f336bf17419810de2"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "NO026.11",
     "issuedBy": "Norway",
@@ -672,7 +768,9 @@
     "createdAt": "2024-11-26T15:00:15.041Z"
   },
   {
-    "_id": "6745e27f336bf17419810de6",
+    "_id": {
+      "$oid": "6745e27f336bf17419810de6"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Stripes in the colors of both countries",
     "issuedBy": "Netherlands",
@@ -686,7 +784,9 @@
     "createdAt": "2024-11-26T15:00:15.234Z"
   },
   {
-    "_id": "6745e27f336bf17419810dea",
+    "_id": {
+      "$oid": "6745e27f336bf17419810dea"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Conductor",
     "issuedBy": "New Zealand",
@@ -700,7 +800,9 @@
     "createdAt": "2024-11-26T15:00:15.427Z"
   },
   {
-    "_id": "6745e27f336bf17419810dee",
+    "_id": {
+      "$oid": "6745e27f336bf17419810dee"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Dromedary Camelus dromedarius Post Rider with overprint",
     "issuedBy": "Bahrain",
@@ -714,7 +816,9 @@
     "createdAt": "2024-11-26T15:00:15.619Z"
   },
   {
-    "_id": "6745e27f336bf17419810df5",
+    "_id": {
+      "$oid": "6745e27f336bf17419810df5"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Opava",
     "issuedBy": "Czech Republic",
@@ -728,7 +832,9 @@
     "createdAt": "2024-11-26T15:00:15.941Z"
   },
   {
-    "_id": "6745e280336bf17419810df9",
+    "_id": {
+      "$oid": "6745e280336bf17419810df9"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Liberty",
     "issuedBy": "Nicaragua",
@@ -742,7 +848,9 @@
     "createdAt": "2024-11-26T15:00:16.140Z"
   },
   {
-    "_id": "6745e280336bf17419810dfd",
+    "_id": {
+      "$oid": "6745e280336bf17419810dfd"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Thomas Jefferson 1743 1826 third President of the USA",
     "issuedBy": "United States",
@@ -756,7 +864,9 @@
     "createdAt": "2024-11-26T15:00:16.344Z"
   },
   {
-    "_id": "6745e280336bf17419810e04",
+    "_id": {
+      "$oid": "6745e280336bf17419810e04"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "IN036.06",
     "issuedBy": "India",
@@ -770,7 +880,9 @@
     "createdAt": "2024-11-26T15:00:16.668Z"
   },
   {
-    "_id": "6745e281336bf17419810e0c",
+    "_id": {
+      "$oid": "6745e281336bf17419810e0c"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Fourth coat of arms lion overprinted OFICIAL",
     "issuedBy": "Paraguay",
@@ -784,7 +896,9 @@
     "createdAt": "2024-11-26T15:00:17.055Z"
   },
   {
-    "_id": "6745e281336bf17419810e10",
+    "_id": {
+      "$oid": "6745e281336bf17419810e10"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "The Garden on Green Mountains",
     "issuedBy": "Ascension",
@@ -798,7 +912,9 @@
     "createdAt": "2024-11-26T15:00:17.251Z"
   },
   {
-    "_id": "6745e281336bf17419810e14",
+    "_id": {
+      "$oid": "6745e281336bf17419810e14"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Friuli Venezia Giulia corn",
     "issuedBy": "Italy",
@@ -812,7 +928,9 @@
     "createdAt": "2024-11-26T15:00:17.443Z"
   },
   {
-    "_id": "6745e281336bf17419810e18",
+    "_id": {
+      "$oid": "6745e281336bf17419810e18"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "STS Somali Coast 2 300dpi.jpg crop 493x318at395 2380",
     "issuedBy": "Somali Coast",
@@ -826,7 +944,9 @@
     "createdAt": "2024-11-26T15:00:17.658Z"
   },
   {
-    "_id": "6745e281336bf17419810e1c",
+    "_id": {
+      "$oid": "6745e281336bf17419810e1c"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "DZ015.02",
     "issuedBy": "Algeria",
@@ -840,7 +960,9 @@
     "createdAt": "2024-11-26T15:00:17.850Z"
   },
   {
-    "_id": "6745e282336bf17419810e20",
+    "_id": {
+      "$oid": "6745e282336bf17419810e20"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "ZW020.09",
     "issuedBy": "Zimbabwe",
@@ -854,7 +976,9 @@
     "createdAt": "2024-11-26T15:00:18.040Z"
   },
   {
-    "_id": "6745e282336bf17419810e24",
+    "_id": {
+      "$oid": "6745e282336bf17419810e24"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Holberg Ludvig",
     "issuedBy": "Norway",
@@ -868,7 +992,9 @@
     "createdAt": "2024-11-26T15:00:18.234Z"
   },
   {
-    "_id": "6745e282336bf17419810e28",
+    "_id": {
+      "$oid": "6745e282336bf17419810e28"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "World Telecommunications Exhibition",
     "issuedBy": "Malaysia",
@@ -882,7 +1008,9 @@
     "createdAt": "2024-11-26T15:00:18.448Z"
   },
   {
-    "_id": "6745e282336bf17419810e2c",
+    "_id": {
+      "$oid": "6745e282336bf17419810e2c"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "World Telecommunications Day",
     "issuedBy": "Belgium",
@@ -896,7 +1024,9 @@
     "createdAt": "2024-11-26T15:00:18.657Z"
   },
   {
-    "_id": "6745e282336bf17419810e30",
+    "_id": {
+      "$oid": "6745e282336bf17419810e30"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "CG003.06",
     "issuedBy": "Republic of the Congo",
@@ -910,7 +1040,9 @@
     "createdAt": "2024-11-26T15:00:18.878Z"
   },
   {
-    "_id": "6745e283336bf17419810e34",
+    "_id": {
+      "$oid": "6745e283336bf17419810e34"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Corn Ground Beetle Zabrus tenebrioides",
     "issuedBy": "Hungary",
@@ -924,7 +1056,9 @@
     "createdAt": "2024-11-26T15:00:19.095Z"
   },
   {
-    "_id": "6745e283336bf17419810e3b",
+    "_id": {
+      "$oid": "6745e283336bf17419810e3b"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "CEPT Bridge",
     "issuedBy": "Isle of Man",
@@ -938,7 +1072,9 @@
     "createdAt": "2024-11-26T15:00:19.443Z"
   },
   {
-    "_id": "6745e283336bf17419810e3f",
+    "_id": {
+      "$oid": "6745e283336bf17419810e3f"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Kairouan",
     "issuedBy": "Tunisia",
@@ -952,7 +1088,9 @@
     "createdAt": "2024-11-26T15:00:19.635Z"
   },
   {
-    "_id": "6745e283336bf17419810e43",
+    "_id": {
+      "$oid": "6745e283336bf17419810e43"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "LU036.08",
     "issuedBy": "Luxembourg",
@@ -966,7 +1104,9 @@
     "createdAt": "2024-11-26T15:00:19.837Z"
   },
   {
-    "_id": "6745e284336bf17419810e47",
+    "_id": {
+      "$oid": "6745e284336bf17419810e47"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Centennial of Sadiki College",
     "issuedBy": "Tunisia",
@@ -980,7 +1120,9 @@
     "createdAt": "2024-11-26T15:00:20.040Z"
   },
   {
-    "_id": "6745e284336bf17419810e4b",
+    "_id": {
+      "$oid": "6745e284336bf17419810e4b"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Crested Fireback Lophura ignata ",
     "issuedBy": "Thailand",
@@ -994,7 +1136,9 @@
     "createdAt": "2024-11-26T15:00:20.233Z"
   },
   {
-    "_id": "6745e284336bf17419810e4f",
+    "_id": {
+      "$oid": "6745e284336bf17419810e4f"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Freight train",
     "issuedBy": "Spanish Morocco",
@@ -1008,7 +1152,9 @@
     "createdAt": "2024-11-26T15:00:20.701Z"
   },
   {
-    "_id": "6745e284336bf17419810e53",
+    "_id": {
+      "$oid": "6745e284336bf17419810e53"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Orange",
     "issuedBy": "Surinam",
@@ -1022,7 +1168,9 @@
     "createdAt": "2024-11-26T15:00:20.909Z"
   },
   {
-    "_id": "6745e285336bf17419810e57",
+    "_id": {
+      "$oid": "6745e285336bf17419810e57"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Father Mother and Children",
     "issuedBy": "Chile",
@@ -1036,7 +1184,9 @@
     "createdAt": "2024-11-26T15:00:21.389Z"
   },
   {
-    "_id": "6745e285336bf17419810e5b",
+    "_id": {
+      "$oid": "6745e285336bf17419810e5b"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "IO015.06",
     "issuedBy": "British Indian Ocean Territory",
@@ -1050,7 +1200,9 @@
     "createdAt": "2024-11-26T15:00:21.607Z"
   },
   {
-    "_id": "6745e285336bf17419810e5f",
+    "_id": {
+      "$oid": "6745e285336bf17419810e5f"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "AO008.08",
     "issuedBy": "Angola",
@@ -1064,7 +1216,9 @@
     "createdAt": "2024-11-26T15:00:21.838Z"
   },
   {
-    "_id": "6745e286336bf17419810e63",
+    "_id": {
+      "$oid": "6745e286336bf17419810e63"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "25th European Basketball Championship Scenes",
     "issuedBy": "Greece",
@@ -1078,7 +1232,9 @@
     "createdAt": "2024-11-26T15:00:22.043Z"
   },
   {
-    "_id": "6745e286336bf17419810e67",
+    "_id": {
+      "$oid": "6745e286336bf17419810e67"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Sim%C3%B3n Bol%C3%ADvar overprinted",
     "issuedBy": "Venezuela",
@@ -1092,7 +1248,9 @@
     "createdAt": "2024-11-26T15:00:22.235Z"
   },
   {
-    "_id": "6745e286336bf17419810e6b",
+    "_id": {
+      "$oid": "6745e286336bf17419810e6b"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Antenna and dancing figures",
     "issuedBy": "Italy",
@@ -1106,7 +1264,9 @@
     "createdAt": "2024-11-26T15:00:22.429Z"
   },
   {
-    "_id": "6745e286336bf17419810e6f",
+    "_id": {
+      "$oid": "6745e286336bf17419810e6f"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "The Principia Mathematica",
     "issuedBy": "Great Britain",
@@ -1120,7 +1280,9 @@
     "createdAt": "2024-11-26T15:00:22.638Z"
   },
   {
-    "_id": "6745e286336bf17419810e73",
+    "_id": {
+      "$oid": "6745e286336bf17419810e73"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "WWI cannon 75 mm and %E2%80%9CGood soldier Svejk 1915",
     "issuedBy": "Czechoslovakia",
@@ -1134,7 +1296,9 @@
     "createdAt": "2024-11-26T15:00:22.835Z"
   },
   {
-    "_id": "6745e287336bf17419810e77",
+    "_id": {
+      "$oid": "6745e287336bf17419810e77"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Shikina en Gardens",
     "issuedBy": "Japan",
@@ -1148,7 +1312,9 @@
     "createdAt": "2024-11-26T15:00:23.028Z"
   },
   {
-    "_id": "6745e287336bf17419810e7b",
+    "_id": {
+      "$oid": "6745e287336bf17419810e7b"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "SD 40 2 CoCo",
     "issuedBy": "St. Vincent",
@@ -1162,7 +1328,9 @@
     "createdAt": "2024-11-26T15:00:23.230Z"
   },
   {
-    "_id": "6745e287336bf17419810e7f",
+    "_id": {
+      "$oid": "6745e287336bf17419810e7f"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "St Margaret 1242 1270",
     "issuedBy": "Hungary",
@@ -1176,7 +1344,9 @@
     "createdAt": "2024-11-26T15:00:23.422Z"
   },
   {
-    "_id": "6745e287336bf17419810e83",
+    "_id": {
+      "$oid": "6745e287336bf17419810e83"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "On deck of Bounty",
     "issuedBy": "Pitcairn Islands",
@@ -1190,7 +1360,9 @@
     "createdAt": "2024-11-26T15:00:23.614Z"
   },
   {
-    "_id": "6745e287336bf17419810e87",
+    "_id": {
+      "$oid": "6745e287336bf17419810e87"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Soccer",
     "issuedBy": "Upper Volta",
@@ -1204,7 +1376,9 @@
     "createdAt": "2024-11-26T15:00:23.815Z"
   },
   {
-    "_id": "6745e288336bf17419810e8b",
+    "_id": {
+      "$oid": "6745e288336bf17419810e8b"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Easter 2001",
     "issuedBy": "Czech Republic",
@@ -1218,7 +1392,9 @@
     "createdAt": "2024-11-26T15:00:24.010Z"
   },
   {
-    "_id": "6745e288336bf17419810e8f",
+    "_id": {
+      "$oid": "6745e288336bf17419810e8f"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Mustache Bat Chilonycteris parnellii",
     "issuedBy": "Antigua",
@@ -1232,7 +1408,9 @@
     "createdAt": "2024-11-26T15:00:24.204Z"
   },
   {
-    "_id": "6745e288336bf17419810e93",
+    "_id": {
+      "$oid": "6745e288336bf17419810e93"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "LI020.04",
     "issuedBy": "Liechtenstein",
@@ -1246,7 +1424,9 @@
     "createdAt": "2024-11-26T15:00:24.396Z"
   },
   {
-    "_id": "6745e288336bf17419810e97",
+    "_id": {
+      "$oid": "6745e288336bf17419810e97"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Razgrad",
     "issuedBy": "Bulgaria",
@@ -1260,7 +1440,9 @@
     "createdAt": "2024-11-26T15:00:24.602Z"
   },
   {
-    "_id": "6745e288336bf17419810e9b",
+    "_id": {
+      "$oid": "6745e288336bf17419810e9b"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "STS Mauritius 6 300dpi.jpeg crop 715x531at96 2594.jpg crop 357x524at7 4",
     "issuedBy": "Mauritius",
@@ -1274,7 +1456,9 @@
     "createdAt": "2024-11-26T15:00:24.818Z"
   },
   {
-    "_id": "6745e289336bf17419810e9f",
+    "_id": {
+      "$oid": "6745e289336bf17419810e9f"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Violet Oil Beetle Meloe violaceus",
     "issuedBy": "Czechoslovakia",
@@ -1288,7 +1472,9 @@
     "createdAt": "2024-11-26T15:00:25.026Z"
   },
   {
-    "_id": "6745e289336bf17419810ea3",
+    "_id": {
+      "$oid": "6745e289336bf17419810ea3"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Self portrait by V V Reiner 1689 1743",
     "issuedBy": "Czechoslovakia",
@@ -1302,7 +1488,9 @@
     "createdAt": "2024-11-26T15:00:25.222Z"
   },
   {
-    "_id": "6745e289336bf17419810ea7",
+    "_id": {
+      "$oid": "6745e289336bf17419810ea7"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Montreal Olympic Games Emblem and Water Polo",
     "issuedBy": "Albania",
@@ -1316,7 +1504,9 @@
     "createdAt": "2024-11-26T15:00:25.745Z"
   },
   {
-    "_id": "6745e289336bf17419810eab",
+    "_id": {
+      "$oid": "6745e289336bf17419810eab"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "The Fifth Zionist Congress at Basel by E M Lilien",
     "issuedBy": "Israel",
@@ -1330,7 +1520,9 @@
     "createdAt": "2024-11-26T15:00:25.986Z"
   },
   {
-    "_id": "6745e28a336bf17419810eaf",
+    "_id": {
+      "$oid": "6745e28a336bf17419810eaf"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Dragon s head Cowrie Cypraea caputdraconia",
     "issuedBy": "Chile",
@@ -1344,7 +1536,9 @@
     "createdAt": "2024-11-26T15:00:26.190Z"
   },
   {
-    "_id": "6745e28a336bf17419810eb3",
+    "_id": {
+      "$oid": "6745e28a336bf17419810eb3"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Winter Olympic Games Lillehammer",
     "issuedBy": "Belarus",
@@ -1358,7 +1552,9 @@
     "createdAt": "2024-11-26T15:00:26.388Z"
   },
   {
-    "_id": "6745e28a336bf17419810eb7",
+    "_id": {
+      "$oid": "6745e28a336bf17419810eb7"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Domestic Rabbit Oryctolagus cuniculus domesticus",
     "issuedBy": "Indonesia",
@@ -1372,7 +1568,9 @@
     "createdAt": "2024-11-26T15:00:26.611Z"
   },
   {
-    "_id": "6745e28a336bf17419810ebb",
+    "_id": {
+      "$oid": "6745e28a336bf17419810ebb"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Airplane and flowers",
     "issuedBy": "Tunisia",
@@ -1386,7 +1584,9 @@
     "createdAt": "2024-11-26T15:00:26.810Z"
   },
   {
-    "_id": "6745e28b336bf17419810ebf",
+    "_id": {
+      "$oid": "6745e28b336bf17419810ebf"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "Digit in a circle",
     "issuedBy": "Surinam",
@@ -1400,7 +1600,9 @@
     "createdAt": "2024-11-26T15:00:27.006Z"
   },
   {
-    "_id": "6745e28b336bf17419810ec3",
+    "_id": {
+      "$oid": "6745e28b336bf17419810ec3"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Decorative dahlias",
     "issuedBy": "Cuba",
@@ -1414,7 +1616,9 @@
     "createdAt": "2024-11-26T15:00:27.214Z"
   },
   {
-    "_id": "6745e28b336bf17419810ec7",
+    "_id": {
+      "$oid": "6745e28b336bf17419810ec7"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Opening of Azhar Tunnels Cairo",
     "issuedBy": "Egypt",
@@ -1428,7 +1632,9 @@
     "createdAt": "2024-11-26T15:00:27.414Z"
   },
   {
-    "_id": "6745e28b336bf17419810ecb",
+    "_id": {
+      "$oid": "6745e28b336bf17419810ecb"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "1510 The Charming Garden",
     "issuedBy": "Angola",
@@ -1442,7 +1648,9 @@
     "createdAt": "2024-11-26T15:00:27.889Z"
   },
   {
-    "_id": "6745e28c336bf17419810ecf",
+    "_id": {
+      "$oid": "6745e28c336bf17419810ecf"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Harald S%C3%A6verud",
     "issuedBy": "Norway",
@@ -1456,7 +1664,9 @@
     "createdAt": "2024-11-26T15:00:28.086Z"
   },
   {
-    "_id": "6745e28c336bf17419810ed3",
+    "_id": {
+      "$oid": "6745e28c336bf17419810ed3"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Death Centenary of Louis Pasteur",
     "issuedBy": "Pakistan",
@@ -1470,7 +1680,9 @@
     "createdAt": "2024-11-26T15:00:28.283Z"
   },
   {
-    "_id": "6745e28c336bf17419810ed7",
+    "_id": {
+      "$oid": "6745e28c336bf17419810ed7"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Christmas",
     "issuedBy": "Haiti",
@@ -1484,7 +1696,9 @@
     "createdAt": "2024-11-26T15:00:28.478Z"
   },
   {
-    "_id": "6745e28c336bf17419810edb",
+    "_id": {
+      "$oid": "6745e28c336bf17419810edb"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "TR006.14",
     "issuedBy": "Turkey",
@@ -1498,7 +1712,9 @@
     "createdAt": "2024-11-26T15:00:28.671Z"
   },
   {
-    "_id": "6745e28c336bf17419810edf",
+    "_id": {
+      "$oid": "6745e28c336bf17419810edf"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "25 years of Child help",
     "issuedBy": "Oman",
@@ -1512,7 +1728,9 @@
     "createdAt": "2024-11-26T15:00:28.867Z"
   },
   {
-    "_id": "6745e28d336bf17419810ee3",
+    "_id": {
+      "$oid": "6745e28d336bf17419810ee3"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "Mosaic in Jordan",
     "issuedBy": "Jordan",
@@ -1526,7 +1744,9 @@
     "createdAt": "2024-11-26T15:00:29.064Z"
   },
   {
-    "_id": "6745e28d336bf17419810ee7",
+    "_id": {
+      "$oid": "6745e28d336bf17419810ee7"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "MA012.05",
     "issuedBy": "Morocco",
@@ -1540,7 +1760,9 @@
     "createdAt": "2024-11-26T15:00:29.264Z"
   },
   {
-    "_id": "6745e28d336bf17419810eeb",
+    "_id": {
+      "$oid": "6745e28d336bf17419810eeb"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Bruce Lee 1940 1973",
     "issuedBy": "Antigua",
@@ -1554,7 +1776,9 @@
     "createdAt": "2024-11-26T15:00:29.459Z"
   },
   {
-    "_id": "6745e28d336bf17419810eef",
+    "_id": {
+      "$oid": "6745e28d336bf17419810eef"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "HU092.14",
     "issuedBy": "Hungary",
@@ -1568,7 +1792,9 @@
     "createdAt": "2024-11-26T15:00:29.657Z"
   },
   {
-    "_id": "6745e28d336bf17419810ef3",
+    "_id": {
+      "$oid": "6745e28d336bf17419810ef3"
+    },
     "creatorId": "673876c24af03358be502d87",
     "title": "Hussar 18th century",
     "issuedBy": "Czechoslovakia",
@@ -1582,7 +1808,9 @@
     "createdAt": "2024-11-26T15:00:29.849Z"
   },
   {
-    "_id": "6745e28e336bf17419810ef7",
+    "_id": {
+      "$oid": "6745e28e336bf17419810ef7"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Textile industry wmk 11",
     "issuedBy": "Hungary",
@@ -1596,7 +1824,9 @@
     "createdAt": "2024-11-26T15:00:30.041Z"
   },
   {
-    "_id": "6745e28e336bf17419810efb",
+    "_id": {
+      "$oid": "6745e28e336bf17419810efb"
+    },
     "creatorId": "673876c24af03358be502d81",
     "title": "Nueva Esparta 20",
     "issuedBy": "Venezuela",
@@ -1610,7 +1840,9 @@
     "createdAt": "2024-11-26T15:00:30.235Z"
   },
   {
-    "_id": "6745e28e336bf17419810eff",
+    "_id": {
+      "$oid": "6745e28e336bf17419810eff"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "MD016.08",
     "issuedBy": "Moldova",
@@ -1624,7 +1856,9 @@
     "createdAt": "2024-11-26T15:00:30.427Z"
   },
   {
-    "_id": "6745e28e336bf17419810f03",
+    "_id": {
+      "$oid": "6745e28e336bf17419810f03"
+    },
     "creatorId": "67387693db2193ef3c0c6b46",
     "title": "BO031.12",
     "issuedBy": "Bolivia",
@@ -1638,7 +1872,9 @@
     "createdAt": "2024-11-26T15:00:30.650Z"
   },
   {
-    "_id": "6745e28e336bf17419810f07",
+    "_id": {
+      "$oid": "6745e28e336bf17419810f07"
+    },
     "creatorId": "673876c24af03358be502d7e",
     "title": "GB022.05",
     "issuedBy": "Great Britain",
@@ -1652,7 +1888,9 @@
     "createdAt": "2024-11-26T15:00:30.859Z"
   },
   {
-    "_id": "6745e28f336bf17419810f0b",
+    "_id": {
+      "$oid": "6745e28f336bf17419810f0b"
+    },
     "creatorId": "673876c24af03358be502d7b",
     "title": "Installation of Yang di Pertuan Agong",
     "issuedBy": "Malaysia",
@@ -1666,7 +1904,9 @@
     "createdAt": "2024-11-26T15:00:31.060Z"
   },
   {
-    "_id": "6745e28f336bf17419810f0f",
+    "_id": {
+      "$oid": "6745e28f336bf17419810f0f"
+    },
     "creatorId": "673876c24af03358be502d84",
     "title": "Colnect 6254 607 The Safetyman miner lamp by FZolnhofer",
     "issuedBy": "Saar",
@@ -1678,299 +1918,5 @@
     "color": "dark green blue",
     "imgUrl": "https://stampdata.com/files/thumbs/nz/300px-Colnect-6254-607--The-Safetyman--miner---lamp-by-FZolnhofer.jpg",
     "createdAt": "2024-11-26T15:00:31.265Z"
-  },
-  {
-    "_id": "6749c47b222a32cc9e2e9bf8",
-    "creatorId": "abcdef123456",
-    "title": "First Stamp",
-    "issuedBy": "Issuer 1",
-    "function": "Postage",
-    "date": "01/01/2021",
-    "denom": {
-      "$numberDecimal": "1.5"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/image.jpg",
-    "createdAt": "2024-11-29T13:41:15.071Z"
-  },
-  {
-    "_id": "674abb4107114cb329b61f5c",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-11-30T07:14:09.427Z"
-  },
-  {
-    "_id": "674abc19d1b59575338f3b02",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-11-30T07:17:45.451Z"
-  },
-  {
-    "_id": "674abe514d2fcd1cd69c78f4",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-11-30T07:27:13.593Z"
-  },
-  {
-    "_id": "674abf5d86c417cdae267b19",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-11-30T07:31:41.552Z"
-  },
-  {
-    "_id": "674c15728449327fb98bdc2f",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Second Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1999",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Blue",
-    "imgUrl": "https://plum-quickest-aardvark-348.mypinata.cloud/ipfs/QmeDyXjLVNnBrnuCzyTSsNns7pTu2RmP4RSxJ2jbeveR9w",
-    "createdAt": "2024-12-01T07:51:14.884Z"
-  },
-  {
-    "_id": "674c158ba685a947f794c8c0",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Second Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1999",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Blue",
-    "imgUrl": "https://plum-quickest-aardvark-348.mypinata.cloud/ipfs/QmeDyXjLVNnBrnuCzyTSsNns7pTu2RmP4RSxJ2jbeveR9w",
-    "createdAt": "2024-12-01T07:51:39.954Z"
-  },
-  {
-    "_id": "674c17d3b1ec1eb9d1f993a7",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Second Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1999",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Blue",
-    "imgUrl": "https://plum-quickest-aardvark-348.mypinata.cloud/ipfs/QmeDyXjLVNnBrnuCzyTSsNns7pTu2RmP4RSxJ2jbeveR9w",
-    "createdAt": "2024-12-01T08:01:23.768Z"
-  },
-  {
-    "_id": "674d66d8c4550a2d1f4b8df8",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T07:50:48.724Z"
-  },
-  {
-    "_id": "674d66ee123c23f408b0fd07",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T07:51:10.043Z"
-  },
-  {
-    "_id": "674d6754c7bb2b06940205a2",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T07:52:52.585Z"
-  },
-  {
-    "_id": "674d677612510dcbc5f1e7d1",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T07:53:26.346Z"
-  },
-  {
-    "_id": "674d679f8a8b52ab3265ba5b",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T07:54:07.157Z"
-  },
-  {
-    "_id": "674d67eeaa63720baee6f95d",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T07:55:26.470Z"
-  },
-  {
-    "_id": "674d6921cbb050f2b318dfa5",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:00:33.359Z"
-  },
-  {
-    "_id": "674d696c33846e7240e6dee1",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "First Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "10"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:01:48.435Z"
-  },
-  {
-    "_id": "674d69e591e553f291694223",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Second Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:03:49.312Z"
-  },
-  {
-    "_id": "674d6a043343eab796e902e3",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Second Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:04:20.109Z"
-  },
-  {
-    "_id": "674d6a15cacd047629bd7ef3",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Second Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:04:37.249Z"
-  },
-  {
-    "_id": "674d6a94df9fc2ccb7526745",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Third Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:06:44.671Z"
-  },
-  {
-    "_id": "674d6afaa21e30d4f9c183fb",
-    "creatorId": "67473b8a1717c42b0d42396d",
-    "title": "Third Stamp",
-    "issuedBy": "Post Office",
-    "function": "Postage Stamp",
-    "date": "08/01/1990",
-    "denom": {
-      "$numberDecimal": "20"
-    },
-    "color": "Red",
-    "imgUrl": "https://example.com/stamp.jpg",
-    "createdAt": "2024-12-02T08:08:26.146Z"
   }
 ]
