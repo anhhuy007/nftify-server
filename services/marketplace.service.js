@@ -449,10 +449,30 @@ class MarketplaceService {
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
     
+        if(!filters.minPrice && !filters.maxPrice) {
+            filters.minPrice = 0.1;
+        }
+        console.log(filters)
         const priceFilter = {};
         if (filters.minPrice) priceFilter.$gte = mongoose.Types.Decimal128.fromString(filters.minPrice.toString());
         if (filters.maxPrice) priceFilter.$lte = mongoose.Types.Decimal128.fromString(filters.maxPrice.toString());
-    
+        
+        // Sorting
+        let sortField = "createdAt";
+        let sortOrder = -1; // Descending
+        if (filters.sortBy) {
+            sortField = filters.sortBy;
+        }
+        if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
+            sortOrder = 1; // Ascending
+        }
+
+        console.log(
+            `Sorting by ${sortField} in ${
+                sortOrder === 1 ? "ascending" : "descending"
+            } order`
+        );
+
         const [total, items] = await Promise.all([
             stampModel.countDocuments(mongoFilter),
             stampModel.aggregate([
@@ -479,6 +499,7 @@ class MarketplaceService {
                         as: "collection"
                     }
                 },
+                { $unwind: { path: "$collection", preserveNullAndEmptyArrays: true } },
                 {
                     $lookup: {
                         from: "ItemPricing",
@@ -532,7 +553,7 @@ class MarketplaceService {
                         imgUrl: 1,
                         price: "$currentPrice.price",
                         viewCount: "$insight.viewCount",
-                        collectionName: { $arrayElemAt: ["$collection.name", 0] },
+                        collectionName: "$collection.name",
                         ownerDetails: {
                             name: "$ownerDetails.name",
                             avatarUrl: "$ownerDetails.avatarUrl"
