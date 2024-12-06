@@ -409,7 +409,140 @@ class MarketplaceService {
     }
 
     async getStampsWithFilter(options = {}) {
-        return await StampService.filterItems(options);
+        const { page = 1, limit = 10, filters = {} } = options;
+    
+        // Prepare dynamic filter
+        const mongoFilter = {};
+        if (filters.creatorId) {
+            mongoFilter.creatorId = new mongoose.Types.ObjectId(filters.creatorId);
+        }
+        if (filters.title) {
+            mongoFilter.title = { $regex: filters.title, $options: "i" };
+        }
+        if (filters.issuedBy) {
+            mongoFilter.issuedBy = filters.issuedBy;
+        }
+        if (filters.color) {
+            mongoFilter.color = filters.color;
+        }
+        if (filters.function) {
+            mongoFilter.function = filters.function;
+        }
+    
+        // Date and denomination filters
+        if (filters.startDate || filters.endDate) {
+            mongoFilter.date = {};
+            if (filters.startDate) mongoFilter.date.$gte = filters.startDate;
+            if (filters.endDate) mongoFilter.date.$lte = filters.endDate;
+        }
+        if (filters.minDenom || filters.maxDenom) {
+            mongoFilter.denom = {};
+            if (filters.minDenom) {
+                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(filters.minDenom.toString());
+            }
+            if (filters.maxDenom) {
+                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(filters.maxDenom.toString());
+            }
+        }
+    
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+    
+        const [total, items] = await Promise.all([
+            stampModel.countDocuments(mongoFilter),
+            stampModel.aggregate([
+                { $match: mongoFilter },
+                {
+                    $addFields: {
+                        itemIdString: { $toString: "$_id" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "ItemInsight",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        as: "insight"
+                    }
+                },
+                { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "Collection",
+                        localField: "itemIdString",
+                        foreignField: "items",
+                        as: "collection"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "ItemPricing",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        pipeline: [
+                            { $sort: { createdAt: -1 } },
+                            { $limit: 1 }
+                        ],
+                        as: "currentPrice"
+                    }
+                },
+                { $unwind: { path: "$currentPrice", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "OwnerShip",
+                        localField: "itemIdString",
+                        foreignField: "itemId",
+                        pipeline: [
+                            { $sort: { createdAt: -1 } },
+                            { $limit: 1 }
+                        ],
+                        as: "ownership"
+                    }
+                },
+                { $unwind: { path: "$ownership", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "User",
+                        let: { ownerId: "$ownership.ownerId" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$_id", { $toObjectId: "$$ownerId" }] }
+                                }
+                            }
+                        ],
+                        as: "ownerDetails"
+                    }
+                },
+                { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        imgUrl: 1,
+                        price: "$currentPrice.price",
+                        viewCount: "$insight.viewCount",
+                        collectionName: { $arrayElemAt: ["$collection.name", 0] },
+                        ownerDetails: {
+                            name: "$ownerDetails.name",
+                            avatarUrl: "$ownerDetails.avatarUrl"
+                        }
+                    }
+                },
+                { $sort: { [filters.sortBy || "createdAt"]: filters.sortOrder === "asc" ? 1 : -1 } },
+                { $skip: skip },
+                { $limit: parsedLimit }
+            ])
+        ]);
+    
+        return {
+            total,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(total / parsedLimit),
+            items
+        };
     }
 
     async getCollectionsWithFilter(options = {}) {
@@ -449,7 +582,7 @@ class MarketplaceService {
                     path: "$creatorDetails",
                     preserveNullAndEmptyArrays: true,
                 },
-            },
+            }
         ];
 
         // Add name filter if provided

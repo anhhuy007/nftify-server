@@ -77,7 +77,7 @@ exports.getStampPriceHistory = asyncHandler(async (req, res) => {
     }
 });
 
-exports.getStamps = asyncHandler(async (req, res) => {
+exports.getStampsWithFilter = asyncHandler(async (req, res) => {
     try {
         const filters = {
             title: req.query.title,
@@ -157,7 +157,7 @@ exports.getCreators = asyncHandler(async (req, res) => {
 
 exports.getAllNFTs = asyncHandler(async (req, res) => {
     try {
-        const result = await MarketplaceService.getAllNFTs();
+        const result = await MarketplaceService.getStampsWithFilter();
         console.log("Result: ", result);
 
         res.json(result);
