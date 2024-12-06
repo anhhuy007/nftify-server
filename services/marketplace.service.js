@@ -452,7 +452,7 @@ class MarketplaceService {
         if(!filters.minPrice && !filters.maxPrice) {
             filters.minPrice = 0.1;
         }
-        console.log(filters)
+        // console.log(filters)
         const priceFilter = {};
         if (filters.minPrice) priceFilter.$gte = mongoose.Types.Decimal128.fromString(filters.minPrice.toString());
         if (filters.maxPrice) priceFilter.$lte = mongoose.Types.Decimal128.fromString(filters.maxPrice.toString());
@@ -463,7 +463,7 @@ class MarketplaceService {
         if (filters.sortBy) {
             sortField = filters.sortBy;
         }
-        if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
+        if (filters.sortOrder || filters.sortOrder === "asc") {
             sortOrder = 1; // Ascending
         }
 
