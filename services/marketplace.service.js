@@ -484,14 +484,7 @@ class MarketplaceService {
             );
 
         // Sorting
-        let sortField = "createdAt";
-        let sortOrder = -1; // Descending
-        if (filters.sortBy) {
-            sortField = filters.sortBy;
-        }
-        if (filters.sortOrder || filters.sortOrder === "asc") {
-            sortOrder = 1; // Ascending
-        }
+        const { sortField, sortOrder } = this.handleSortOption(filters.sort);
 
         console.log(
             `Sorting by ${sortField} in ${
@@ -616,9 +609,7 @@ class MarketplaceService {
                     "insight.verifyStatus": filters.status,
                 },
             });
-
         }
-
 
         pipeline.push(
             {
@@ -628,6 +619,7 @@ class MarketplaceService {
                     imgUrl: 1,
                     price: "$currentPrice.price",
                     viewCount: "$insight.viewCount",
+                    favouriteCount: "$insight.favoriteCount",
                     status: "$insight.verifyStatus",
                     collectionName: { $ifNull: ["$collection.name", "null"] },
                     ownerDetails: {
@@ -656,6 +648,45 @@ class MarketplaceService {
         };
     }
 
+    handleSortOption(sortOption) {
+        // Sorting
+        let sortField = "createdAt";
+        let sortOrder = -1; // Descending
+
+        if (sortOption) {
+            switch (sortOption) {
+                case "price-up":
+                    sortField = "price";
+                    sortOrder = 1; // Ascending
+                    break;
+                case "price-down":
+                    sortField = "price";
+                    sortOrder = -1; // Descending
+                    break;
+                case "trending":
+                    sortField = "viewCount";
+                    sortOrder = -1; // Descending
+                    break;
+                case "favourite":
+                    sortField = "favouriteCount";
+                    sortOrder = -1; // Descending
+                    break;
+                case "a-to-z":
+                    sortField = "title";
+                    sortOrder = 1; // Ascending
+                    break;
+                case "z-to-a":
+                    sortField = "title";
+                    sortOrder = -1; // Descending
+                    break;
+                default:
+                    sortField = "createdAt";
+                    sortOrder = -1; // Descending
+                    break;
+            }
+        }
+        return { sortField, sortOrder };
+    }
     async getCollectionsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
         const mongoFilter = {};

@@ -94,6 +94,7 @@ exports.getStampsWithFilter = asyncHandler(async (req, res) => {
             sortBy: req.query.sortBy,
             sortOrder: req.query.sortOrder,
             status: req.query.status,
+            sort: req.query.sort
         };
 
         // example api 
