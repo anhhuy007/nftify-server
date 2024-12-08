@@ -424,129 +424,80 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
-
+    
         // Prepare dynamic filter
         const mongoFilter = {};
         if (filters.creatorId) {
-            mongoFilter.creatorId = new mongoose.Types.ObjectId(
-                filters.creatorId
-            );
+            mongoFilter.creatorId = new mongoose.Types.ObjectId(filters.creatorId);
         }
         if (filters.title) {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
-        if (filters.issuedBy) {
-            mongoFilter.issuedBy = filters.issuedBy;
-        }
-        if (filters.color) {
-            mongoFilter.color = filters.color;
-        }
-        if (filters.function) {
-            mongoFilter.function = filters.function;
-        }
-
-        // Date and denomination filters
-        if (filters.startDate || filters.endDate) {
-            mongoFilter.date = {};
-            if (filters.startDate) mongoFilter.date.$gte = filters.startDate;
-            if (filters.endDate) mongoFilter.date.$lte = filters.endDate;
-        }
-        if (filters.minDenom || filters.maxDenom) {
-            mongoFilter.denom = {};
-            if (filters.minDenom) {
-                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(
-                    filters.minDenom.toString()
-                );
+    
+        // Handle price filter
+        const priceFilter = {};
+        if (filters.minPrice || filters.maxPrice) {
+            if (filters.minPrice) {
+                priceFilter.$gte = mongoose.Types.Decimal128.fromString(filters.minPrice.toString());
             }
-            if (filters.maxDenom) {
-                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(
-                    filters.maxDenom.toString()
-                );
+            if (filters.maxPrice) {
+                priceFilter.$lte = mongoose.Types.Decimal128.fromString(filters.maxPrice.toString());
             }
         }
-
+    
+        // Handle sorting
+        const { sortField, sortOrder } = this.handleSortOption(filters.sort);
+    
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
-
-        if (!filters.minPrice && !filters.maxPrice) {
-            filters.minPrice = 0.1;
-        }
-
-        const priceFilter = {};
-        if (filters.minPrice)
-            priceFilter.$gte = mongoose.Types.Decimal128.fromString(
-                filters.minPrice.toString()
-            );
-        if (filters.maxPrice)
-            priceFilter.$lte = mongoose.Types.Decimal128.fromString(
-                filters.maxPrice.toString()
-            );
-
-        // Sorting
-        const { sortField, sortOrder } = this.handleSortOption(filters.sort);
-
-        // Aggregation Pipeline
+    
+        // Build pipeline
         const pipeline = [
             { $match: mongoFilter },
             {
                 $addFields: {
-                    itemIdString: { $toString: "$_id" },
-                },
+                    itemIdString: { $toString: "$_id" }
+                }
             },
             {
                 $lookup: {
                     from: "ItemInsight",
                     localField: "itemIdString",
                     foreignField: "itemId",
-                    as: "insight",
-                },
+                    as: "insight"
+                }
             },
             { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
-            {
-                $lookup: {
-                    from: "Collection",
-                    localField: "itemIdString",
-                    foreignField: "items",
-                    as: "collection",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$collection",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
             {
                 $lookup: {
                     from: "ItemPricing",
                     localField: "itemIdString",
                     foreignField: "itemId",
                     pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
-                    as: "currentPrice",
-                },
+                    as: "currentPrice"
+                }
             },
+            { $unwind: { path: "$currentPrice", preserveNullAndEmptyArrays: true } },
             {
-                $unwind: {
-                    path: "$currentPrice",
-                    preserveNullAndEmptyArrays: true,
-                },
+                $lookup: {
+                    from: "Collection",
+                    localField: "itemIdString",
+                    foreignField: "items",
+                    as: "collection"
+                }
             },
+            { $unwind: { path: "$collection", preserveNullAndEmptyArrays: true } },
             {
                 $lookup: {
                     from: "OwnerShip",
                     localField: "itemIdString",
                     foreignField: "itemId",
                     pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
-                    as: "ownership",
-                },
+                    as: "ownership"
+                }
             },
-            {
-                $unwind: {
-                    path: "$ownership",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
+            { $unwind: { path: "$ownership", preserveNullAndEmptyArrays: true } },
             {
                 $lookup: {
                     from: "User",
@@ -554,99 +505,82 @@ class MarketplaceService {
                     pipeline: [
                         {
                             $match: {
-                                $expr: {
-                                    $eq: ["$_id", { $toObjectId: "$$ownerId" }],
-                                },
-                            },
-                        },
+                                $expr: { $eq: ["$_id", { $toObjectId: "$$ownerId" }] }
+                            }
+                        }
                     ],
-                    as: "ownerDetails",
-                },
+                    as: "ownerDetails"
+                }
             },
-            {
-                $unwind: {
-                    path: "$ownerDetails",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
+            { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } }
         ];
-
-        // Price filter
-        pipeline.push({
-            $match: { "currentPrice.price": priceFilter },
-        });
-        // Conditional filters for ownerName and collectionName
-        if (filters.collectionName) {
+    
+        // Apply price filter if exists
+        if (Object.keys(priceFilter).length > 0) {
             pipeline.push({
                 $match: {
-                    "collection.name": {
-                        $regex: filters.collectionName,
-                        $options: "i",
-                    },
-                },
+                    "currentPrice.price": priceFilter
+                }
             });
         }
-        if (filters.ownerName) {
-            pipeline.push({
-                $match: {
-                    "ownerDetails.name": {
-                        $regex: filters.ownerName,
-                        $options: "i",
-                    },
-                },
-            });
-        }
-
-        // apply status filter
+    
+        // Apply status filter
         if (filters.status === "all") {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": { $ne: "rejected" },
-                },
+                    "insight.verifyStatus": { $ne: "rejected" }
+                }
             });
-        }
-        else if (filters.status) {
+        } else if (filters.status) {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": filters.status,
-                },
+                    "insight.verifyStatus": filters.status
+                }
             });
         }
-
+    
+        // Group to remove duplicates
         pipeline.push(
             {
-                $project: {
-                    _id: 1,
-                    title: 1,
-                    imgUrl: 1,
-                    price: "$currentPrice.price",
-                    viewCount: "$insight.viewCount",
-                    favouriteCount: "$insight.favoriteCount",
-                    status: "$insight.verifyStatus",
-                    collectionName: { $ifNull: ["$collection.name", "null"] },
+                $group: {
+                    _id: "$_id",
+                    title: { $first: "$title" },
+                    imgUrl: { $first: "$imgUrl" },
+                    price: { $first: "$currentPrice.price" },
+                    viewCount: { $first: "$insight.viewCount" },
+                    favouriteCount: { $first: "$insight.favoriteCount" },
+                    status: { $first: "$insight.verifyStatus" },
+                    collectionName: { $first: { $ifNull: ["$collection.name", "null"] } },
                     ownerDetails: {
-                        name: "$ownerDetails.name",
-                        avatarUrl: "$ownerDetails.avatarUrl",
+                        $first: {
+                            name: "$ownerDetails.name",
+                            avatarUrl: "$ownerDetails.avatarUrl"
+                        }
                     },
-                },
+                    createdAt: { $first: "$createdAt" }
+                }
             },
             { $sort: { [sortField]: sortOrder } },
             { $skip: skip },
             { $limit: parsedLimit }
         );
-
-        // Execute the queries
-        const [total, items] = await Promise.all([
-            stampModel.countDocuments(mongoFilter),
-            stampModel.aggregate(pipeline),
+    
+        // Get total count of unique items and execute pipeline
+        const [totalUnique, items] = await Promise.all([
+            stampModel.aggregate([
+                { $match: mongoFilter },
+                { $group: { _id: "$_id" } },
+                { $count: "total" }
+            ]).then(result => result[0]?.total || 0),
+            stampModel.aggregate(pipeline)
         ]);
-
+    
         return {
-            total,
+            total: totalUnique,
             page: parsedPage,
             limit: parsedLimit,
-            totalPages: Math.ceil(total / parsedLimit),
-            items,
+            totalPages: Math.ceil(totalUnique / parsedLimit),
+            items
         };
     }
 
