@@ -77,20 +77,24 @@ exports.getStampPriceHistory = asyncHandler(async (req, res) => {
     }
 });
 
-exports.getStamps = asyncHandler(async (req, res) => {
+exports.getStampsWithFilter = asyncHandler(async (req, res) => {
     try {
         const filters = {
             title: req.query.title,
             creatorId: req.query.creatorId,
-            issuedBy: req.query.issuedBy,
-            startDate: req.query.startDate,
-            endDate: req.query.endDate,
-            minDenom: req.query.minDenom,
-            maxDenom: req.query.maxDenom,
-            color: req.query.color,
-            function: req.query.function,
+            // issuedBy: req.query.issuedBy,
+            // startDate: req.query.startDate,
+            // endDate: req.query.endDate,
+            minPrice: req.query.minPrice,
+            maxPrice: req.query.maxPrice,
+            // color: req.query.color,
+            // function: req.query.function,
+            collectionName: req.query.collectionName,
+            ownerName: req.query.ownerName,
             sortBy: req.query.sortBy,
-            sortOrder: req.query.sortOrder
+            sortOrder: req.query.sortOrder,
+            status: req.query.status,
+            sort: req.query.sort
         };
 
         // example api 
@@ -114,11 +118,11 @@ exports.getCollections = asyncHandler(async (req, res) => {
     try {
         const filters = {
             name: req.query.name,
-            description: req.query.description,
+            // description: req.query.description,
             ownerId: req.query.ownerId,
             status: req.query.status,
-            minDate: req.query.minDate,
-            maxDate: req.query.maxDate,
+            // minDate: req.query.minDate,
+            // maxDate: req.query.maxDate,
             minViewCount: req.query.minViewCount,
             maxViewCount: req.query.maxViewCount,
             minFavouriteCount: req.query.minFavouriteCount,
@@ -157,8 +161,7 @@ exports.getCreators = asyncHandler(async (req, res) => {
 
 exports.getAllNFTs = asyncHandler(async (req, res) => {
     try {
-        const result = await MarketplaceService.getAllNFTs();
-        console.log("Result: ", result);
+        const result = await MarketplaceService.getStampsWithFilter();
 
         res.json(result);
     }
