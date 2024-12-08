@@ -486,13 +486,6 @@ class MarketplaceService {
         // Sorting
         const { sortField, sortOrder } = this.handleSortOption(filters.sort);
 
-        console.log(
-            `Sorting by ${sortField} in ${
-                sortOrder === 1 ? "ascending" : "descending"
-            } order`
-        );
-        // console.log(filters);
-        // console.log(mongoFilter);
         // Aggregation Pipeline
         const pipeline = [
             { $match: mongoFilter },
@@ -603,7 +596,16 @@ class MarketplaceService {
                 },
             });
         }
-        if (filters.status) {
+
+        // apply status filter
+        if (filters.status === "all") {
+            pipeline.push({
+                $match: {
+                    "insight.verifyStatus": { $ne: "rejected" },
+                },
+            });
+        }
+        else if (filters.status) {
             pipeline.push({
                 $match: {
                     "insight.verifyStatus": filters.status,
@@ -734,8 +736,7 @@ class MarketplaceService {
         //     if (filters.startDate) mongoFilter.createdAt.$gte = new Date(filters.startDate);
         //     if (filters.endDate) mongoFilter.createdAt.$lte = new Date(filters.endDate);
         // }
-        console.log("filters");
-        console.log(filters);
+
         // Sorting
         let sortField = "createdAt";
         let sortOrder = -1; // Descending
@@ -745,13 +746,6 @@ class MarketplaceService {
         if (filters.sortOrder || filters.sortOrder === "asc") {
             sortOrder = 1; // Ascending
         }
-
-        console.log(
-            `Sorting by ${sortField} in ${
-                sortOrder === 1 ? "ascending" : "descending"
-            } order`
-        );
-        console.log(mongoFilter);
 
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);

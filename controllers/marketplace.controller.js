@@ -162,7 +162,6 @@ exports.getCreators = asyncHandler(async (req, res) => {
 exports.getAllNFTs = asyncHandler(async (req, res) => {
     try {
         const result = await MarketplaceService.getStampsWithFilter();
-        console.log("Result: ", result);
 
         res.json(result);
     }
