@@ -538,6 +538,24 @@ class MarketplaceService {
                 }
             });
         }
+
+        // Apply collection filter
+        if (filters.collectionName) {
+            pipeline.push({
+                $match: {
+                    "collection.name": { $regex: filters.collectionName, $options: "i" }
+                }
+            });
+        }
+
+        // Apply owner filter
+        if (filters.ownerName) {
+            pipeline.push({
+                $match: {
+                    "ownerDetails.name": { $regex: filters.ownerName, $options: "i" }
+                }
+            });
+        }
     
         // Group to remove duplicates
         pipeline.push(
