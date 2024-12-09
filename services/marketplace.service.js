@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const stampModel = require("../models/stamp.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
-const ItemSellPrice = require("../models/itemPricing.schema");
-const OwnerShip = require("../models/ownership.schema");
-const Collection = require("../models/collection.schema");
+const itemSellPriceModel = require("../models/itemPricing.schema");
+const ownershipModel = require("../models/ownership.schema");
+const collectionModel = require("../models/collection.schema");
 const StampService = require("./stamp.service");
 const collectionService = require("./collection.service");
 const nftService = require("./nft.service");
@@ -63,7 +63,7 @@ class MarketplaceService {
                 {
                     $project: {
                         itemIdString: 1,
-                        _id : 1,
+                        _id: 1,
                         title: 1,
                         imgUrl: 1,
                         "insight.viewCount": 1, //check purpose
@@ -74,17 +74,21 @@ class MarketplaceService {
         // const ownerId = stampService.getOwnerId(id )
         // const price = await stampService.getStampPrice(id)
         // Then, fetch prices for each stamp
-        const addOwnerAndPrice= await Promise.all(
+        const addOwnerAndPrice = await Promise.all(
             items.map(async (item) => {
                 const price = await stampService.getStampPrice(
                     item.itemIdString
                 );
-                const ownerId = await stampService.getOwnerId(item.itemIdString);
-                const ownerDetails = await userModel.findOne({ _id: ownerId }).select('name avatarUrl');
+                const ownerId = await stampService.getOwnerId(
+                    item.itemIdString
+                );
+                const ownerDetails = await userModel
+                    .findOne({ _id: ownerId })
+                    .select("name avatarUrl");
                 return {
                     ...item,
                     price,
-                    ownerDetails
+                    ownerDetails,
                 };
             })
         );
@@ -171,16 +175,26 @@ class MarketplaceService {
                     as: "ownerDetails",
                 },
             },
-            { $unwind: { path: '$ownerDetails', preserveNullAndEmptyArrays: true } },
+            {
+                $unwind: {
+                    path: "$ownerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $lookup: {
-                    from: 'Collection',
-                    localField: 'itemIdString',
-                    foreignField: 'items',
-                    as: 'collection',
-                }
+                    from: "Collection",
+                    localField: "itemIdString",
+                    foreignField: "items",
+                    as: "collection",
+                },
             },
-            { $unwind: { path: '$collection', preserveNullAndEmptyArrays: true } },
+            {
+                $unwind: {
+                    path: "$collection",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $project: {
                     "insight._id": 0,
@@ -198,25 +212,25 @@ class MarketplaceService {
                     "creatorDetails.updatedAt": 0,
                     ownershipDetails: 0,
                     ownerObjId: 0,
-                    'ownerDetails.description': 0,
-                    'ownerDetails.gender': 0,
-                    'ownerDetails.status': 0,
-                    'ownerDetails.createdAt': 0,
-                    'ownerDetails.updatedAt': 0,
-                    'collection.description': 0,
-                    'collection.ownerId': 0,
-                    'collection.items': 0,
-                    'collection.createdAt': 0,
-                    'collection.updatedAt': 0
-                }
-            }
+                    "ownerDetails.description": 0,
+                    "ownerDetails.gender": 0,
+                    "ownerDetails.status": 0,
+                    "ownerDetails.createdAt": 0,
+                    "ownerDetails.updatedAt": 0,
+                    "collection.description": 0,
+                    "collection.ownerId": 0,
+                    "collection.items": 0,
+                    "collection.createdAt": 0,
+                    "collection.updatedAt": 0,
+                },
+            },
         ]);
 
         return stamp[0];
     }
 
     async getStampPriceHistory(id) {
-        const prices = await ItemSellPrice.aggregate([
+        const prices = await itemSellPriceModel.aggregate([
             {
                 $match: { itemId: id },
             },
@@ -227,7 +241,7 @@ class MarketplaceService {
     }
 
     async getStampOwnerHistory(id) {
-        const ownerships = await OwnerShip.aggregate([
+        const ownerships = await ownershipModel.aggregate([
             {
                 $match: { itemId: id },
             },
@@ -288,7 +302,7 @@ class MarketplaceService {
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
 
-        const creators = await OwnerShip.aggregate([
+        const creators = await ownershipModel.aggregate([
             {
                 $lookup: {
                     from: "ItemInsight",
@@ -359,9 +373,9 @@ class MarketplaceService {
             },
         ]);
 
-        const total = await await OwnerShip.distinct("ownerId").then(
-            (owners) => owners.length
-        );
+        const total = await await ownershipModel
+            .distinct("ownerId")
+            .then((owners) => owners.length);
 
         return {
             total,
@@ -380,8 +394,8 @@ class MarketplaceService {
         const skip = (parsedPage - 1) * parsedLimit;
 
         const [total, collections] = await Promise.all([
-            Collection.countDocuments(),
-            Collection.aggregate([
+            collectionModel.countDocuments(),
+            collectionModel.aggregate([
                 {
                     $sort: { viewCount: -1 },
                 },
@@ -419,134 +433,330 @@ class MarketplaceService {
         if (filters.title) {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
-        if (filters.issuedBy) {
-            mongoFilter.issuedBy = filters.issuedBy;
-        }
-        if (filters.color) {
-            mongoFilter.color = filters.color;
-        }
-        if (filters.function) {
-            mongoFilter.function = filters.function;
+    
+        // Handle price filter
+        const priceFilter = {};
+        if (filters.minPrice || filters.maxPrice) {
+            if (filters.minPrice) {
+                priceFilter.$gte = mongoose.Types.Decimal128.fromString(filters.minPrice.toString());
+            }
+            if (filters.maxPrice) {
+                priceFilter.$lte = mongoose.Types.Decimal128.fromString(filters.maxPrice.toString());
+            }
         }
     
-        // Date and denomination filters
-        if (filters.startDate || filters.endDate) {
-            mongoFilter.date = {};
-            if (filters.startDate) mongoFilter.date.$gte = filters.startDate;
-            if (filters.endDate) mongoFilter.date.$lte = filters.endDate;
-        }
-        if (filters.minDenom || filters.maxDenom) {
-            mongoFilter.denom = {};
-            if (filters.minDenom) {
-                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(filters.minDenom.toString());
-            }
-            if (filters.maxDenom) {
-                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(filters.maxDenom.toString());
-            }
-        }
+        // Handle sorting
+        const { sortField, sortOrder } = this.handleSortOption(filters.sort);
     
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
     
-        const [total, items] = await Promise.all([
-            stampModel.countDocuments(mongoFilter),
-            stampModel.aggregate([
-                { $match: mongoFilter },
-                {
-                    $addFields: {
-                        itemIdString: { $toString: "$_id" }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "ItemInsight",
-                        localField: "itemIdString",
-                        foreignField: "itemId",
-                        as: "insight"
-                    }
-                },
-                { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
-                {
-                    $lookup: {
-                        from: "Collection",
-                        localField: "itemIdString",
-                        foreignField: "items",
-                        as: "collection"
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "ItemPricing",
-                        localField: "itemIdString",
-                        foreignField: "itemId",
-                        pipeline: [
-                            { $sort: { createdAt: -1 } },
-                            { $limit: 1 }
-                        ],
-                        as: "currentPrice"
-                    }
-                },
-                { $unwind: { path: "$currentPrice", preserveNullAndEmptyArrays: true } },
-                {
-                    $lookup: {
-                        from: "OwnerShip",
-                        localField: "itemIdString",
-                        foreignField: "itemId",
-                        pipeline: [
-                            { $sort: { createdAt: -1 } },
-                            { $limit: 1 }
-                        ],
-                        as: "ownership"
-                    }
-                },
-                { $unwind: { path: "$ownership", preserveNullAndEmptyArrays: true } },
-                {
-                    $lookup: {
-                        from: "User",
-                        let: { ownerId: "$ownership.ownerId" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: { $eq: ["$_id", { $toObjectId: "$$ownerId" }] }
-                                }
+        // Build pipeline
+        const pipeline = [
+            { $match: mongoFilter },
+            {
+                $addFields: {
+                    itemIdString: { $toString: "$_id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "ItemInsight",
+                    localField: "itemIdString",
+                    foreignField: "itemId",
+                    as: "insight"
+                }
+            },
+            { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "ItemPricing",
+                    localField: "itemIdString",
+                    foreignField: "itemId",
+                    pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
+                    as: "currentPrice"
+                }
+            },
+            { $unwind: { path: "$currentPrice", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "Collection",
+                    localField: "itemIdString",
+                    foreignField: "items",
+                    as: "collection"
+                }
+            },
+            { $unwind: { path: "$collection", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "OwnerShip",
+                    localField: "itemIdString",
+                    foreignField: "itemId",
+                    pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
+                    as: "ownership"
+                }
+            },
+            { $unwind: { path: "$ownership", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "User",
+                    let: { ownerId: "$ownership.ownerId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", { $toObjectId: "$$ownerId" }] }
                             }
-                        ],
-                        as: "ownerDetails"
-                    }
-                },
-                { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } },
-                {
-                    $project: {
-                        _id: 1,
-                        title: 1,
-                        imgUrl: 1,
-                        price: "$currentPrice.price",
-                        viewCount: "$insight.viewCount",
-                        collectionName: { $arrayElemAt: ["$collection.name", 0] },
-                        ownerDetails: {
+                        }
+                    ],
+                    as: "ownerDetails"
+                }
+            },
+            { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } }
+        ];
+    
+        // Apply price filter if exists
+        if (Object.keys(priceFilter).length > 0) {
+            pipeline.push({
+                $match: {
+                    "currentPrice.price": priceFilter
+                }
+            });
+        }
+    
+        // Apply status filter
+        if (filters.status === "all") {
+            pipeline.push({
+                $match: {
+                    "insight.verifyStatus": { $ne: "rejected" }
+                }
+            });
+        } else if (filters.status) {
+            pipeline.push({
+                $match: {
+                    "insight.verifyStatus": filters.status
+                }
+            });
+        }
+
+        // Apply collection filter
+        if (filters.collectionName) {
+            pipeline.push({
+                $match: {
+                    "collection.name": { $regex: filters.collectionName, $options: "i" }
+                }
+            });
+        }
+
+        // Apply owner filter
+        if (filters.ownerName) {
+            pipeline.push({
+                $match: {
+                    "ownerDetails.name": { $regex: filters.ownerName, $options: "i" }
+                }
+            });
+        }
+    
+        // Group to remove duplicates
+        pipeline.push(
+            {
+                $group: {
+                    _id: "$_id",
+                    title: { $first: "$title" },
+                    imgUrl: { $first: "$imgUrl" },
+                    price: { $first: "$currentPrice.price" },
+                    viewCount: { $first: "$insight.viewCount" },
+                    favouriteCount: { $first: "$insight.favoriteCount" },
+                    status: { $first: "$insight.verifyStatus" },
+                    collectionName: { $first: { $ifNull: ["$collection.name", "null"] } },
+                    ownerDetails: {
+                        $first: {
                             name: "$ownerDetails.name",
                             avatarUrl: "$ownerDetails.avatarUrl"
                         }
-                    }
-                },
-                { $sort: { [filters.sortBy || "createdAt"]: filters.sortOrder === "asc" ? 1 : -1 } },
-                { $skip: skip },
-                { $limit: parsedLimit }
-            ])
+                    },
+                    createdAt: { $first: "$createdAt" }
+                }
+            },
+            { $sort: { [sortField]: sortOrder } },
+            { $skip: skip },
+            { $limit: parsedLimit }
+        );
+    
+        // Get total count of unique items and execute pipeline
+        const [totalUnique, items] = await Promise.all([
+            stampModel.aggregate([
+                { $match: mongoFilter },
+                { $group: { _id: "$_id" } },
+                { $count: "total" }
+            ]).then(result => result[0]?.total || 0),
+            stampModel.aggregate(pipeline)
         ]);
     
+        return {
+            total: totalUnique,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(totalUnique / parsedLimit),
+            items
+        };
+    }
+
+    handleSortOption(sortOption) {
+        // Sorting
+        let sortField = "createdAt";
+        let sortOrder = -1; // Descending
+
+        if (sortOption) {
+            switch (sortOption) {
+                case "price-up":
+                    sortField = "price";
+                    sortOrder = 1; // Ascending
+                    break;
+                case "price-down":
+                    sortField = "price";
+                    sortOrder = -1; // Descending
+                    break;
+                case "trending":
+                    sortField = "viewCount";
+                    sortOrder = -1; // Descending
+                    break;
+                case "favourite":
+                    sortField = "favouriteCount";
+                    sortOrder = -1; // Descending
+                    break;
+                case "a-to-z":
+                    sortField = "title";
+                    sortOrder = 1; // Ascending
+                    break;
+                case "z-to-a":
+                    sortField = "title";
+                    sortOrder = -1; // Descending
+                    break;
+                default:
+                    sortField = "createdAt";
+                    sortOrder = -1; // Descending
+                    break;
+            }
+        }
+        return { sortField, sortOrder };
+    }
+    async getCollectionsWithFilter(options = {}) {
+        const { page = 1, limit = 10, filters = {} } = options;
+        const mongoFilter = {};
+
+        // Apply filters
+        if (filters.name) {
+            mongoFilter.name = { $regex: new RegExp(filters.name, "i") };
+        }
+        // if (filters.description) {
+        //     mongoFilter.description = { $regex: new RegExp(filters.description, "i") };
+        // }
+        if (filters.ownerId) {
+            mongoFilter.ownerId = new mongoose.Types.ObjectId(filters.ownerId);
+        }
+        if (filters.status) {
+            mongoFilter.status = filters.status;
+        }
+
+        // Range filters
+        if (filters.minViewCount || filters.maxViewCount) {
+            mongoFilter.viewCount = {};
+            if (filters.minViewCount) {
+                const minViewCount = Number(filters.minViewCount);
+                mongoFilter.viewCount.$gte = minViewCount;
+            }
+            if (filters.maxViewCount) {
+                const maxViewCount = Number(filters.maxViewCount);
+                mongoFilter.viewCount.$lte = maxViewCount;
+            }
+        }
+        if (filters.minFavouriteCount || filters.maxFavouriteCount) {
+            mongoFilter.favouriteCount = {};
+            if (filters.minFavouriteCount) {
+                const minFavouriteCount = Number(filters.minFavouriteCount);
+                mongoFilter.favouriteCount.$gte = minFavouriteCount;
+            }
+            if (filters.maxFavouriteCount) {
+                const maxFavouriteCount = Number(filters.maxFavouriteCount);
+                mongoFilter.favouriteCount.$lte = maxFavouriteCount;
+            }
+        }
+
+        // if (filters.startDate || filters.endDate) {
+        //     mongoFilter.createdAt = {};
+        //     if (filters.startDate) mongoFilter.createdAt.$gte = new Date(filters.startDate);
+        //     if (filters.endDate) mongoFilter.createdAt.$lte = new Date(filters.endDate);
+        // }
+
+        // Sorting
+        let sortField = "createdAt";
+        let sortOrder = -1; // Descending
+        if (filters.sortBy) {
+            sortField = filters.sortBy;
+        }
+        if (filters.sortOrder || filters.sortOrder === "asc") {
+            sortOrder = 1; // Ascending
+        }
+
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        const [total, collections] = await Promise.all([
+            collectionModel.countDocuments(mongoFilter),
+            collectionModel.aggregate([
+                { $match: mongoFilter },
+                {
+                    $addFields: {
+                        ownerIdObj: { $toObjectId: "$ownerId" },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "User",
+                        localField: "ownerIdObj",
+                        foreignField: "_id",
+                        as: "ownerDetails",
+                    },
+                },
+                { $unwind: "$ownerDetails" },
+                {
+                    $project: {
+                        name: 1,
+                        description: 1,
+                        status: 1,
+                        items: 1,
+                        viewCount: 1,
+                        favouriteCount: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        thumbUrl: 1,
+                        ownerDetails: {
+                            name: "$ownerDetails.name",
+                            avatarUrl: "$ownerDetails.avatarUrl",
+                            description: "$ownerDetails.description",
+                        },
+                    },
+                },
+                {
+                    $sort: {
+                        [filters.sortBy || "createdAt"]:
+                            sortOrder === 1 ? 1 : -1,
+                    },
+                },
+                { $skip: skip },
+                { $limit: parsedLimit },
+            ]),
+        ]);
+
         return {
             total,
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            items
+            items: collections,
         };
-    }
-
-    async getCollectionsWithFilter(options = {}) {
-        return await collectionService.filterCollections(options);
     }
 
     async getCreatorsWithFilter(options = {}) {
@@ -582,7 +792,7 @@ class MarketplaceService {
                     path: "$creatorDetails",
                     preserveNullAndEmptyArrays: true,
                 },
-            }
+            },
         ];
 
         // Add name filter if provided
@@ -619,7 +829,7 @@ class MarketplaceService {
             page: parsedPage,
             limit: parsedLimit > total ? total : parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            creators,
+            items: creators,
         };
     }
 

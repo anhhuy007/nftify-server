@@ -77,7 +77,6 @@ class StampService {
             creatorId: creatorId,
             // Ensure numeric denomination
             denom: parseFloat(item.denom),
-            // Add creation timestamp if not exists
             createdAt: item.createdAt || new Date(),
             tokenUrl: tokenUrl,
         };
