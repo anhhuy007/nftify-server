@@ -131,7 +131,7 @@ async function saveItemInsightData() {
   await itemInsightModel.syncIndexes();
 
   const stampIds = await getDocumentsId(itemModel);
-  const status = ["verified", "selling", "displaying", "rejected"];
+  const status = ["verified", "selling", "displaying", "unverified"];
   for (const stampId of stampIds) {
     try {
       const modifiedItemInsight = {
@@ -149,8 +149,6 @@ async function saveItemInsightData() {
     }
   }
 }
-
-
 
 
 async function saveDataUsers(data) {
@@ -700,13 +698,48 @@ async function createTransactionJson() {
   }
 }
 
+
+async function saveGeneratedCollections(){
+  try {
+    const collections = await collectionModel.find({});
+    console.log(`Found ${collections.length} collections to update`);
+    i = 0;
+    // Update item ids in each collection
+    for (const collection of collections) {
+      const stampIds = await getDocumentsId(itemModel);
+      const len = stampIds.length / collections.length;
+      const modifiedCollection = {
+        ...collection,
+        items: stampIds.slice(i, i + len),
+      };
+
+      await collectionModel.updateOne(
+        { _id: collection._id },
+        {
+          $set: {
+            items: modifiedCollection.items,
+          },
+        }
+      );
+      console.log(`Updated collection ${collection._id}`);
+      i += len;
+    }
+  } catch (error) {
+    console.error('An error occurred during the saveGeneratedCollections process:', error);
+  }
+}
+
+
+// connectDB();
+// saveGeneratedCollections();
+
 // connectDB();
 // createTransactionJson();
 
 
 
-connectDB();
-saveItemInsightData();
+// connectDB();
+// deleteRecords();
 
 
 module.exports = {
