@@ -145,6 +145,15 @@ exports.getCollections = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getCollectionAbout = asyncHandler(async (req, res) => {
+    try {
+        const collection = await MarketplaceService.getCollectionAbout(req.params.id);
+        res.json(collection);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});
+
 exports.getCreators = asyncHandler(async (req, res) => {
     try {
         const result = await MarketplaceService.getCreatorsWithFilter({
@@ -169,3 +178,4 @@ exports.getAllNFTs = asyncHandler(async (req, res) => {
         handleServiceError(res, error);
     }
 });
+

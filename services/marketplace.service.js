@@ -424,49 +424,55 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
-    
+
         // Prepare dynamic filter
         const mongoFilter = {};
         if (filters.creatorId) {
-            mongoFilter.creatorId = new mongoose.Types.ObjectId(filters.creatorId);
+            mongoFilter.creatorId = new mongoose.Types.ObjectId(
+                filters.creatorId
+            );
         }
         if (filters.title) {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
-    
+
         // Handle price filter
         const priceFilter = {};
         if (filters.minPrice || filters.maxPrice) {
             if (filters.minPrice) {
-                priceFilter.$gte = mongoose.Types.Decimal128.fromString(filters.minPrice.toString());
+                priceFilter.$gte = mongoose.Types.Decimal128.fromString(
+                    filters.minPrice.toString()
+                );
             }
             if (filters.maxPrice) {
-                priceFilter.$lte = mongoose.Types.Decimal128.fromString(filters.maxPrice.toString());
+                priceFilter.$lte = mongoose.Types.Decimal128.fromString(
+                    filters.maxPrice.toString()
+                );
             }
         }
-    
+
         // Handle sorting
         const { sortField, sortOrder } = this.handleSortOption(filters.sort);
-    
+
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
-    
+
         // Build pipeline
         const pipeline = [
             { $match: mongoFilter },
             {
                 $addFields: {
-                    itemIdString: { $toString: "$_id" }
-                }
+                    itemIdString: { $toString: "$_id" },
+                },
             },
             {
                 $lookup: {
                     from: "ItemInsight",
                     localField: "itemIdString",
                     foreignField: "itemId",
-                    as: "insight"
-                }
+                    as: "insight",
+                },
             },
             { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
             {
@@ -475,29 +481,44 @@ class MarketplaceService {
                     localField: "itemIdString",
                     foreignField: "itemId",
                     pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
-                    as: "currentPrice"
-                }
+                    as: "currentPrice",
+                },
             },
-            { $unwind: { path: "$currentPrice", preserveNullAndEmptyArrays: true } },
+            {
+                $unwind: {
+                    path: "$currentPrice",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $lookup: {
                     from: "Collection",
                     localField: "itemIdString",
                     foreignField: "items",
-                    as: "collection"
-                }
+                    as: "collection",
+                },
             },
-            { $unwind: { path: "$collection", preserveNullAndEmptyArrays: true } },
+            {
+                $unwind: {
+                    path: "$collection",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $lookup: {
                     from: "OwnerShip",
                     localField: "itemIdString",
                     foreignField: "itemId",
                     pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
-                    as: "ownership"
-                }
+                    as: "ownership",
+                },
             },
-            { $unwind: { path: "$ownership", preserveNullAndEmptyArrays: true } },
+            {
+                $unwind: {
+                    path: "$ownership",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $lookup: {
                     from: "User",
@@ -505,37 +526,44 @@ class MarketplaceService {
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ["$_id", { $toObjectId: "$$ownerId" }] }
-                            }
-                        }
+                                $expr: {
+                                    $eq: ["$_id", { $toObjectId: "$$ownerId" }],
+                                },
+                            },
+                        },
                     ],
-                    as: "ownerDetails"
-                }
+                    as: "ownerDetails",
+                },
             },
-            { $unwind: { path: "$ownerDetails", preserveNullAndEmptyArrays: true } }
+            {
+                $unwind: {
+                    path: "$ownerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
         ];
-    
+
         // Apply price filter if exists
         if (Object.keys(priceFilter).length > 0) {
             pipeline.push({
                 $match: {
-                    "currentPrice.price": priceFilter
-                }
+                    "currentPrice.price": priceFilter,
+                },
             });
         }
-    
+
         // Apply status filter
         if (filters.status === "all") {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": { $ne: "rejected" }
-                }
+                    "insight.verifyStatus": { $ne: "rejected" },
+                },
             });
         } else if (filters.status) {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": filters.status
-                }
+                    "insight.verifyStatus": filters.status,
+                },
             });
         }
 
@@ -543,8 +571,11 @@ class MarketplaceService {
         if (filters.collectionName) {
             pipeline.push({
                 $match: {
-                    "collection.name": { $regex: filters.collectionName, $options: "i" }
-                }
+                    "collection.name": {
+                        $regex: filters.collectionName,
+                        $options: "i",
+                    },
+                },
             });
         }
 
@@ -552,11 +583,14 @@ class MarketplaceService {
         if (filters.ownerName) {
             pipeline.push({
                 $match: {
-                    "ownerDetails.name": { $regex: filters.ownerName, $options: "i" }
-                }
+                    "ownerDetails.name": {
+                        $regex: filters.ownerName,
+                        $options: "i",
+                    },
+                },
             });
         }
-    
+
         // Group to remove duplicates
         pipeline.push(
             {
@@ -568,37 +602,41 @@ class MarketplaceService {
                     viewCount: { $first: "$insight.viewCount" },
                     favouriteCount: { $first: "$insight.favoriteCount" },
                     status: { $first: "$insight.verifyStatus" },
-                    collectionName: { $first: { $ifNull: ["$collection.name", "null"] } },
+                    collectionName: {
+                        $first: { $ifNull: ["$collection.name", "null"] },
+                    },
                     ownerDetails: {
                         $first: {
                             name: "$ownerDetails.name",
-                            avatarUrl: "$ownerDetails.avatarUrl"
-                        }
+                            avatarUrl: "$ownerDetails.avatarUrl",
+                        },
                     },
-                    createdAt: { $first: "$createdAt" }
-                }
+                    createdAt: { $first: "$createdAt" },
+                },
             },
             { $sort: { [sortField]: sortOrder } },
             { $skip: skip },
             { $limit: parsedLimit }
         );
-    
+
         // Get total count of unique items and execute pipeline
         const [totalUnique, items] = await Promise.all([
-            stampModel.aggregate([
-                { $match: mongoFilter },
-                { $group: { _id: "$_id" } },
-                { $count: "total" }
-            ]).then(result => result[0]?.total || 0),
-            stampModel.aggregate(pipeline)
+            stampModel
+                .aggregate([
+                    { $match: mongoFilter },
+                    { $group: { _id: "$_id" } },
+                    { $count: "total" },
+                ])
+                .then((result) => result[0]?.total || 0),
+            stampModel.aggregate(pipeline),
         ]);
-    
+
         return {
             total: totalUnique,
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(totalUnique / parsedLimit),
-            items
+            items,
         };
     }
 
@@ -841,6 +879,103 @@ class MarketplaceService {
             total,
             data: nfts,
         };
+    }
+
+    async getCollectionAbout(collectionId) {
+        const pipeline = [
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(collectionId),
+                },
+            },
+            {
+                $addFields: {
+                    collectionId: { $toObjectId: collectionId },
+                },
+            },
+            {
+                $addFields: {
+                    ownerIdObj: { $toObjectId: "$ownerId" }, // Convert string ownerId to ObjectId
+                },
+            },
+            // Because items is an array of itemIds
+            {
+                $unwind: { path: "$items", preserveNullAndEmptyArrays: true },
+            },
+            // a picture of the collection
+            {
+                $lookup: {
+                    from: "Stamp",
+                    localField: "items",
+                    foreignField: "_id",
+                    as: "stamp",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$stamp",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "ItemPricing",
+                    localField: "items",
+                    foreignField: "itemId",
+                    as: "itemPrices",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$itemPrices",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "User",
+                    localField: "ownerIdObj",
+                    foreignField: "_id",
+                    as: "ownerDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$ownerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    name: { $first: "$name" },
+                    ownerId: { $first: "$ownerId" },
+                    description: { $first: "$description" },
+                    ownerDetails: { $first: "$ownerDetails" }, // Maintain ownerDetails
+                    totalPrice: { $sum: "$itemPrices.price" },
+                    stampPicture: { $first: "$stamp.imgUrl" } 
+                },
+            },
+            {
+                $project: {
+                    name: 1,
+                    description: 1,
+                    ownerId: 1,
+                    ownerDetails: {
+                        _id: "$ownerDetails._id",
+                        name: "$ownerDetails.name",
+                        avatarUrl: "$ownerDetails.avatarUrl",
+                        description: "$ownerDetails.description",
+                    },
+                    totalPrice: 1,
+                    backgroundPicture: "$stampPicture"
+                }
+            }
+        ];
+    
+        // Execute the aggregation pipeline
+        const result = await collectionModel.aggregate(pipeline);
+        return result;
     }
 }
 
