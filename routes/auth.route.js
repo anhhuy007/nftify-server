@@ -6,11 +6,11 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
 // guest routes
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.post('/token', authController.token);
-router.delete('/logout', authController.logout);
+router.post('/refresh-token', authController.refreshToken);
 
 // authenticated-required routes
 router.use(authenticateToken);
+router.delete('/logout', authController.logout);
 router.get('/posts', authController.posts);
 
 module.exports = router;

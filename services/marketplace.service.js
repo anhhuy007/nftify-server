@@ -881,7 +881,7 @@ class MarketplaceService {
         };
     }
 
-    async getCollectionAbout(collectionId) {
+    async getCollectionById(collectionId) {
         const pipeline = [
             {
                 $match: {

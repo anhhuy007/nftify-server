@@ -179,3 +179,11 @@ exports.getAllNFTs = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getCollectionById = asyncHandler(async (req, res) => {
+    try {
+        const collection = await MarketplaceService.getCollectionById(req.params.id);
+        res.json(collection);
+    } catch (error) {
+        handleServiceError(res, error);
+    }
+});

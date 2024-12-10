@@ -18,6 +18,7 @@ router.get("/list/collections/:id/about", marketplaceController.getCollectionAbo
 router.get("/list/creators", marketplaceController.getCreators);
 
 router.get("/stamp/:id", marketplaceController.getStampById);
+router.get("/collection/:id", marketplaceController.getCollectionById);
 
 router.get("/history/stampOwner/:id", marketplaceController.getStampOwnerHistory);
 router.get("/history/stampPrice/:id", marketplaceController.getStampPriceHistory);
