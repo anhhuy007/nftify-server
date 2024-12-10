@@ -7,6 +7,7 @@ const nftService = require("./nft.service");
 const helperFunc = require("../utils/helperFunc");
 const ownershipModel = require("../models/ownership.schema");
 const favouriteModel = require("../models/favouriteItem.schema");
+const collectionModel = require("../models/collection.schema");
 
 class UserService {
   validateUserInput(user) {
@@ -171,6 +172,11 @@ class UserService {
         const stampIds = favouriteStamps?.itemId || [];
         const result = await stampService.filterStamps(stampIds, options);
         return result;
+    }
+
+    async getUserCollections(userId, options = {}) {
+      const collections = await collectionModel.find({ ownerId: userId });
+      return collections;
     }
 
     async createNewStamp(userId, stamp) {

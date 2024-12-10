@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { handleServiceError } = require("../utils/helperFunc");
 const userService = require("../services/user.service");
 const nftService = require("../services/nft.service");
+const { on } = require("../models/user.schema");
 
 exports.createUser = asyncHandler(async (req, res) => {
   try {
@@ -192,3 +193,40 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+
+exports.getUserCollections = asyncHandler(async (req, res) => {
+  try{
+    const userCollection = await userService.getUserCollections(req.params.userId);
+    collections = [];
+    for (collection of userCollection)
+    {
+      collections.push({
+        name: collection.name,
+        imgURL: collection.thumbUrl,
+        //bgURL: collection.bgURL,
+      });
+
+    }
+
+    if (collections.length === 0) {
+      return res.status(404).json({ 
+        success: false,
+        message: "User collections not found" });
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: "Get user collection successfully",
+      data: collections,
+    });
+
+
+  }
+  catch(error)
+  {
+    handleServiceError(res, error);
+  }
+});
+
+

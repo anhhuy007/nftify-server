@@ -17,6 +17,11 @@ userRouter.get("/profile/:userId", userController.getUserByID);
 userRouter.get("/find", userController.getUsers);
 
 
+// @route   GET /api/v1/user/profile/:userId/collections
+// @desc    get user collections
+// http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/collections
+userRouter.get("/profile/:userId/collections", userController.getUserCollections);
+
 // @route   GET /api/v1/user/display/:userId/created
 // @desc    get created stamps by user
 // http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/created
