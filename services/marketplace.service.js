@@ -424,6 +424,7 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
+        // console.log("filter in stamp filter = ", filters);
 
         // Prepare dynamic filter
         const mongoFilter = {};
@@ -435,58 +436,30 @@ class MarketplaceService {
         if (filters.title) {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
-        if (filters.issuedBy) {
-            mongoFilter.issuedBy = filters.issuedBy;
-        }
-        if (filters.color) {
-            mongoFilter.color = filters.color;
-        }
-        if (filters.function) {
-            mongoFilter.function = filters.function;
+
+        // Handle price filter
+        const priceFilter = {};
+        if (filters.minPrice || filters.maxPrice) {
+            if (filters.minPrice) {
+                priceFilter.$gte = mongoose.Types.Decimal128.fromString(
+                    filters.minPrice.toString()
+                );
+            }
+            if (filters.maxPrice) {
+                priceFilter.$lte = mongoose.Types.Decimal128.fromString(
+                    filters.maxPrice.toString()
+                );
+            }
         }
 
-        // Date and denomination filters
-        if (filters.startDate || filters.endDate) {
-            mongoFilter.date = {};
-            if (filters.startDate) mongoFilter.date.$gte = filters.startDate;
-            if (filters.endDate) mongoFilter.date.$lte = filters.endDate;
-        }
-        if (filters.minDenom || filters.maxDenom) {
-            mongoFilter.denom = {};
-            if (filters.minDenom) {
-                mongoFilter.denom.$gte = mongoose.Types.Decimal128.fromString(
-                    filters.minDenom.toString()
-                );
-            }
-            if (filters.maxDenom) {
-                mongoFilter.denom.$lte = mongoose.Types.Decimal128.fromString(
-                    filters.maxDenom.toString()
-                );
-            }
-        }
+        // Handle sorting
+        const { sortField, sortOrder } = this.handleSortOption(filters.sort);
 
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
 
-        if (!filters.minPrice && !filters.maxPrice) {
-            filters.minPrice = 0.1;
-        }
-
-        const priceFilter = {};
-        if (filters.minPrice)
-            priceFilter.$gte = mongoose.Types.Decimal128.fromString(
-                filters.minPrice.toString()
-            );
-        if (filters.maxPrice)
-            priceFilter.$lte = mongoose.Types.Decimal128.fromString(
-                filters.maxPrice.toString()
-            );
-
-        // Sorting
-        const { sortField, sortOrder } = this.handleSortOption(filters.sort);
-
-        // Aggregation Pipeline
+        // Build pipeline
         const pipeline = [
             { $match: mongoFilter },
             {
@@ -505,20 +478,6 @@ class MarketplaceService {
             { $unwind: { path: "$insight", preserveNullAndEmptyArrays: true } },
             {
                 $lookup: {
-                    from: "Collection",
-                    localField: "itemIdString",
-                    foreignField: "items",
-                    as: "collection",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$collection",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
-                $lookup: {
                     from: "ItemPricing",
                     localField: "itemIdString",
                     foreignField: "itemId",
@@ -529,6 +488,20 @@ class MarketplaceService {
             {
                 $unwind: {
                     path: "$currentPrice",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "Collection",
+                    localField: "itemIdString",
+                    foreignField: "items",
+                    as: "collection",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$collection",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -571,11 +544,31 @@ class MarketplaceService {
             },
         ];
 
-        // Price filter
-        pipeline.push({
-            $match: { "currentPrice.price": priceFilter },
-        });
-        // Conditional filters for ownerName and collectionName
+        // Apply price filter if exists
+        if (Object.keys(priceFilter).length > 0) {
+            pipeline.push({
+                $match: {
+                    "currentPrice.price": priceFilter,
+                },
+            });
+        }
+
+        // Apply status filter
+        if (filters.status === "all") {
+            pipeline.push({
+                $match: {
+                    "insight.verifyStatus": { $ne: "rejected" },
+                },
+            });
+        } else if (filters.status) {
+            pipeline.push({
+                $match: {
+                    "insight.verifyStatus": filters.status,
+                },
+            });
+        }
+
+        // Apply collection filter
         if (filters.collectionName) {
             pipeline.push({
                 $match: {
@@ -586,6 +579,8 @@ class MarketplaceService {
                 },
             });
         }
+
+        // Apply owner filter
         if (filters.ownerName) {
             pipeline.push({
                 $match: {
@@ -597,37 +592,27 @@ class MarketplaceService {
             });
         }
 
-        // apply status filter
-        if (filters.status === "all") {
-            pipeline.push({
-                $match: {
-                    "insight.verifyStatus": { $ne: "rejected" },
-                },
-            });
-        }
-        else if (filters.status) {
-            pipeline.push({
-                $match: {
-                    "insight.verifyStatus": filters.status,
-                },
-            });
-        }
-
+        // Group to remove duplicates
         pipeline.push(
             {
-                $project: {
-                    _id: 1,
-                    title: 1,
-                    imgUrl: 1,
-                    price: "$currentPrice.price",
-                    viewCount: "$insight.viewCount",
-                    favouriteCount: "$insight.favoriteCount",
-                    status: "$insight.verifyStatus",
-                    collectionName: { $ifNull: ["$collection.name", "null"] },
-                    ownerDetails: {
-                        name: "$ownerDetails.name",
-                        avatarUrl: "$ownerDetails.avatarUrl",
+                $group: {
+                    _id: "$_id",
+                    title: { $first: "$title" },
+                    imgUrl: { $first: "$imgUrl" },
+                    price: { $first: "$currentPrice.price" },
+                    viewCount: { $first: "$insight.viewCount" },
+                    favouriteCount: { $first: "$insight.favoriteCount" },
+                    status: { $first: "$insight.verifyStatus" },
+                    collectionName: {
+                        $first: { $ifNull: ["$collection.name", "null"] },
                     },
+                    ownerDetails: {
+                        $first: {
+                            name: "$ownerDetails.name",
+                            avatarUrl: "$ownerDetails.avatarUrl",
+                        },
+                    },
+                    createdAt: { $first: "$createdAt" },
                 },
             },
             { $sort: { [sortField]: sortOrder } },
@@ -635,17 +620,23 @@ class MarketplaceService {
             { $limit: parsedLimit }
         );
 
-        // Execute the queries
-        const [total, items] = await Promise.all([
-            stampModel.countDocuments(mongoFilter),
+        // Get total count of unique items and execute pipeline
+        const [totalUnique, items] = await Promise.all([
+            stampModel
+                .aggregate([
+                    { $match: mongoFilter },
+                    { $group: { _id: "$_id" } },
+                    { $count: "total" },
+                ])
+                .then((result) => result[0]?.total || 0),
             stampModel.aggregate(pipeline),
         ]);
 
         return {
-            total,
+            total: totalUnique,
             page: parsedPage,
             limit: parsedLimit,
-            totalPages: Math.ceil(total / parsedLimit),
+            totalPages: Math.ceil(totalUnique / parsedLimit),
             items,
         };
     }
@@ -890,6 +881,158 @@ class MarketplaceService {
             data: nfts,
         };
     }
+
+    async getCollectionById(collectionId) {
+        const pipeline = [
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(collectionId),
+                },
+            },
+            {
+                $addFields: {
+                    collectionId: { $toObjectId: collectionId },
+                },
+            },
+            {
+                $addFields: {
+                    ownerIdObj: { $toObjectId: "$ownerId" }, // Convert string ownerId to ObjectId
+                },
+            },
+            // Because items is an array of itemIds
+            {
+                $unwind: { path: "$items", preserveNullAndEmptyArrays: true },
+            },
+            // a picture of the collection
+            {
+                $lookup: {
+                    from: "Stamp",
+                    localField: "items",
+                    foreignField: "_id",
+                    as: "stamp",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$stamp",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "ItemPricing",
+                    localField: "items",
+                    foreignField: "itemId",
+                    as: "itemPrices",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$itemPrices",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "User",
+                    localField: "ownerIdObj",
+                    foreignField: "_id",
+                    as: "ownerDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$ownerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    name: { $first: "$name" },
+                    ownerId: { $first: "$ownerId" },
+                    description: { $first: "$description" },
+                    ownerDetails: { $first: "$ownerDetails" }, // Maintain ownerDetails
+                    totalPrice: { $sum: "$itemPrices.price" },
+                    stampPicture: { $first: "$stamp.imgUrl" },
+                },
+            },
+            {
+                $project: {
+                    name: 1,
+                    description: 1,
+                    ownerId: 1,
+                    ownerDetails: {
+                        _id: "$ownerDetails._id",
+                        name: "$ownerDetails.name",
+                        avatarUrl: "$ownerDetails.avatarUrl",
+                        description: "$ownerDetails.description",
+                    },
+                    totalPrice: 1,
+                    backgroundPicture: "$stampPicture", //change to thumbUrl
+                },
+            },
+        ];
+
+        // Execute the aggregation pipeline
+        const result = await collectionModel.aggregate(pipeline);
+        return result;
+    }
+
+    async getCollectionItems(params = {}) {
+        const collectionId = params.collectionId;
+        const filters = params.filters;
+
+        // Set default values for page and limit, and merge with existing options
+        const page = params.page || 1;
+        const limit = params.limit||10;
+
+        // console.log(filters);
+
+
+        const stamps = await this.getStampsWithFilter({page:1, limit:1000,filters});// maybe lack of data
+        // console.log("id = ", collectionId);
+        // console.log("options = ", options);
+        
+        // Fetch the collection from the database by ID
+        const collection = await collectionModel.findById(collectionId);
+        
+        // Get the collection's item IDs
+        const collectionItemIds = collection.items;
+        const collectionItemIdsStrings = collectionItemIds.map(id => id.toString());  // Convert to string for easy comparison
+    
+        // console.log("Collection item IDs:", collectionItemIdsStrings);
+        // console.log("----------- Stamps data --------");
+        // console.log(stamps.items);
+        let arr = [];
+        for (let i =  0 ; i < stamps.items.length ; i++) {
+            // console.log(stamps.items[i]._id)
+            if (collectionItemIdsStrings.includes(stamps.items[i]._id.toString())) {
+                arr.push(stamps.items[i]);
+            }
+        }
+        // console.log(arr);
+        // add pagination
+
+        // const parsedPage = Math.max(1, parseInt(page));
+        // const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        // const skip = (parsedPage - 1) * parsedLimit;
+        const total = arr.length;
+        const endpage = total;
+        if (limit * page <= total - 1){
+            endpage = limit * page;
+        }
+        const items = arr.slice(limit*(page-1),  endpage); // as page start = 1
+        
+        return {
+            total: total,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(total / limit),
+            items : items
+        };
+    }
+    
 }
 
 module.exports = new MarketplaceService();

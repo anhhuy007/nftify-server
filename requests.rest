@@ -1,4 +1,5 @@
-GET  http://localhost:3000/
+POST  http://localhost:3000/api/v1/auth/posts
+Content-Type: application/json
 
 ###------------------ item routes
 GET  http://localhost:3000/stamp/6746a68f6e4e0266ac6716a1
