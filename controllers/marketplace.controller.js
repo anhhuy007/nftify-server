@@ -179,3 +179,39 @@ exports.getAllNFTs = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getCollectionItems = asyncHandler(async (req, res)=> {
+    try {
+        const filters = {
+            title: req.query.title,
+            creatorId: req.query.creatorId,
+            // issuedBy: req.query.issuedBy,
+            // startDate: req.query.startDate,
+            // endDate: req.query.endDate,
+            minPrice: req.query.minPrice,
+            maxPrice: req.query.maxPrice,
+            // color: req.query.color,
+            // function: req.query.function,
+            collectionName: req.query.collectionName,
+            ownerName: req.query.ownerName,
+            sortBy: req.query.sortBy,
+            sortOrder: req.query.sortOrder,
+            status: req.query.status,
+            sort: req.query.sort
+        };
+        const result = await MarketplaceService.getCollectionItems({
+            collectionId : req.params.id,
+            page: req.query.page,
+            limit: req.query.limit,
+            filters: Object.fromEntries(
+                Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+            )
+        });
+
+        res.json(result);
+    }
+    catch (error) {
+        handleServiceError(res, error);
+    }
+
+
+})
