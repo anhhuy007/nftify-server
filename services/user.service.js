@@ -13,38 +13,44 @@ class UserService {
     if (!user) {
       throw new Error("User data is required");
     }
+
     // Validate required fields
-    const requiredFields = ["name", "gender", "status"];
+    const requiredFields = ["name"];
     for (const field of requiredFields) {
       if (!user[field]) {
         throw new Error(`Missing required field: ${field}`);
       }
     }
+
     // Validate status
     const validStatus = ["pending", "verified", "rejected"];
     if (!validStatus.includes(user.status)) {
       throw new Error("Invalid status value");
     }
+
     // Validate gender
     const validGender = ["male", "female"];
     if (!validGender.includes(user.gender)) {
       throw new Error("Invalid gender value");
     }
+
     // check if username already exists
-    const existingUser = userModel.find({
-      name: user.name,
-    });
-    if (existingUser) throw new Error("Username already exists");
+    // const existingUser = userModel.find({
+    //   name: user.name,
+    // });
+    // console.log("Existing user", existingUser);
+    // if (existingUser) throw new Error("Username already exists");
   }
 
-  async createUser(user) {
+  async createUser(userId, user) {
+    console.log("Create new user", user);
+
     // Validate input
     this.validateUserInput(user);
     // Prepare user for saving
     const preparedUser = {
       ...user,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      _id: userId,
     };
 
     const newUser = await userModel.create(preparedUser);
@@ -191,6 +197,18 @@ class UserService {
         return result;
     }
 
+    async connectWallet(userId, walletAddress) {
+        const user = await userModel.findOne({ _id: userId });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        const updatedUser = await userModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: { walletAddress } },
+            { new: true }
+        );
+        return updatedUser;
+    }
 }
 
 module.exports = new UserService();
