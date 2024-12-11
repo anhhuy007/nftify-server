@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const collectionModel = require("../models/collection.schema");
 const User = require("../models/user.schema");
 const stampService = require("./stamp.service");
+const marketplaceService = require("./marketplace.service");
 /*
 Table Collection {
   _id string [pk]
@@ -388,7 +389,7 @@ class CollectionService {
 
         // console.log(filters);
 
-        const stamps = await this.getStampsWithFilter({
+        const stamps = await marketplaceService.getStampsWithFilter({
             page: 1,
             limit: 1000,
             filters,
