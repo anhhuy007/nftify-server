@@ -13,7 +13,7 @@ exports.register = asyncHandler(async (req, res) => {
 
 exports.login = asyncHandler(async (req, res) => {
     try {
-        const tokens = await authServices.loginUser(req.body);
+        const tokens = await authServices.login(req.body);
         return res.json({
             message: 'Login successful',
             ...tokens
