@@ -229,4 +229,49 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
   }
 });
 
+exports.getUserActivity = asyncHandler(async (req, res) => {
+  try{
+    const userActivity = await userService.getUserActivity(req.params.userId);
+    activities = [];
+    for (activity of userActivity)
+    {
+      activities.push({
+        name: activity.name,
+        imgURL: activity.thumbUrl,
+        //bgURL: collection.bgURL,
+      });
 
+    }
+
+    if (activities.length === 0) {
+      return res.status(404).json({ 
+        success: false,
+        message: "User activities not found" });
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: "Get user activities successfully",
+      data: activities,
+    });
+}
+catch(error)
+{
+  handleServiceError(res, error);
+}
+});
+
+exports.getItemsOnSale = asyncHandler(async (req, res) => {
+  try {
+    const itemsOnSale = await userService.getUserOnSaleItems(req.params.userId);
+    if (itemsOnSale.length === 0) {
+      return res.status(404).json({ message: "Items on sale not found" });
+    }
+    res.json(itemsOnSale);
+  }
+catch(error)
+{
+  handleServiceError(res, error);
+}
+}
+);

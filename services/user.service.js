@@ -197,6 +197,49 @@ class UserService {
         return result;
     }
 
+    async getUserOnSaleItems(userId, options = {}) {
+      const onSaleItems = await ownershipModel.aggregate([
+          // Match user's owned items
+          {
+              $match: {
+                  ownerId: userId
+              }
+          },
+          // Join with itemInsight collection
+          {
+              $lookup: {
+                  from: 'ItemInsight', // collection name in MongoDB
+                  localField: 'itemId',
+                  foreignField: 'itemId',
+                  as: 'saleInfo'
+              }
+          },
+          // Unwind the saleInfo array
+          {
+              $unwind: '$saleInfo'
+          },
+          // Match only items that are on sale
+          {
+              $match: {
+                  'saleInfo.verifyStatus': 'selling',
+              }
+          },
+          // Project final shape
+          // {
+          //     $project: {
+          //         _id: 1,
+          //         itemId: 1,
+          //         ownerId: 1,
+          //         salePrice: '$saleInfo.price',
+          //         listedAt: '$saleInfo.listedAt'
+          //     }
+          // }
+      ]);
+  
+      return onSaleItems;
+  }
+
+
 }
 
 module.exports = new UserService();
