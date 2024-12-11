@@ -12,7 +12,7 @@ class AuthService {
                 email: user.email
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '15m' }
+            { expiresIn: '15s' }
         );
     }
 
@@ -86,12 +86,12 @@ class AuthService {
         };
     }
 
-    async refreshAccessToken(userId) {
-        if (!userId) {
+    async refreshAccessToken(refreshToken) {
+        if (!refreshToken) {
             throw new Error('No refresh token provided');
         }
 
-        const savedToken = await TokenModel.findOne({ userId });
+        const savedToken = await TokenModel.findOne({ token: refreshToken });
 
         if (!savedToken) {
             throw new Error('Invalid refresh token');
@@ -99,17 +99,12 @@ class AuthService {
 
         // check expired refresh token
         if (savedToken.expiresAt < Date.now()) {
-            await TokenModel.deleteOne({ userId });
+            await TokenModel.deleteOne({ token: refreshToken });
             throw new Error('Refresh token expired');
         }
 
         try {
             const decoded = jwt.verify(savedToken.token, process.env.REFRESH_TOKEN_SECRET);
-
-            // check account id match
-            if (decoded.id !== userId) {
-                throw new Error('Invalid refresh token');
-            }
 
             const account = await AccountModel.findById(decoded.id);
             if (!account) {
@@ -117,6 +112,10 @@ class AuthService {
             }   
 
             const accessToken = this.generateAccessToken(account);
+
+            console.log("New access token generated: ", accessToken);
+            console.log("Account: ", account);
+
             return { accessToken };
         }
         catch (error) {
