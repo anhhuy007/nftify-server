@@ -38,7 +38,7 @@ class AuthService {
 
         // check for existing account
         const existingAccount = await AccountsModel.findOne({ 
-            $or: [{ username: userName }, { email: email }] 
+            $or: [{ username: username }, { email: email }] 
         });
         if (existingAccount) {
             throw new Error('Account already exists');
@@ -73,7 +73,9 @@ class AuthService {
 
         // save refresh token to database
         const newToken = new TokenModel({
-            token: refreshToken
+            userId: account._id,
+            token: refreshToken,
+            expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         await newToken.save();
 
