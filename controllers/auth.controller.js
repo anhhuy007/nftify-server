@@ -19,24 +19,35 @@ exports.login = asyncHandler(async (req, res) => {
             ...tokens
         });
     } catch (err) {
-        return helperFunc.handleServiceError(res, err);
+        return res.status(401).json({
+            message: err.message
+        });
     }
 });
 
-exports.token = asyncHandler(async (req, res) => {
+exports.refreshToken = asyncHandler(async (req, res) => {
     try {
         const { accessToken } = await authServices.refreshAccessToken(req.body.token);
-        return res.json({ accessToken });
+        return res.json({
+            success: true,
+            message: 'Token refreshed', 
+            accessToken 
+        });
     } catch (err) {
         return helperFunc.handleServiceError(res, err);
     }
 });
 
 exports.logout = asyncHandler(async (req, res) => {
-    authServices.logout(req.body.token);
-    return res.status(204).json({
-        message: 'Logout successful'
-    })
+    try {
+        authServices.logout(req.user._id);
+        return res.json({
+            success: true,
+            message: 'Logout successful'
+        });
+    } catch (error) {
+        return helperFunc.handleServiceError(res, error);
+    }
 });
 
 exports.posts = asyncHandler(async (req, res) => {
