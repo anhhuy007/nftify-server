@@ -10,6 +10,12 @@ collectionRouter.get("/:collectionId", collectionController.getCollectionById);
 collectionRouter.get("/:collectionId/detail", collectionController.getCollectionDetails);
 collectionRouter.get("/:collectionId/stamp", collectionController.getCollectionStamps);
 
+//collection detail page 
+//collection page
+collectionRouter.get("/list/collections/:id/about", collectionController.getCollectionAbout);
+collectionRouter.get("/list/collections/:id/items", collectionController.getCollectionItems);
+
+
 // authenticated-required routes
 collectionRouter.use(authenticateToken);
 collectionRouter.get("/increment-view/:collectionId", collectionController.increaseViewCount);
