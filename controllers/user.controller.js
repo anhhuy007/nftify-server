@@ -192,3 +192,13 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+// setting page
+exports.getUserSettings = asyncHandler(async (req, res) => {
+  try {
+
+    const userSettings = await userService.getUserSettings(req.params.id);
+    res.json(userSettings);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
