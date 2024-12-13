@@ -324,13 +324,39 @@ class UserService {
                 data: newUserAccount,
             };
         } else {
-            const oldUserAccount = await userModel.findById(userId);
+            const oldUserAccount = await accountModel.findById(userId);
             return {
                 status: "fail",
                 data: oldUserAccount,
             };
         }
     }
+    async changeEmail(accountId, body) {
+        const update = {
+            email: body.email,
+        };
+
+        const filter = { _id: accountId };
+        const newAccount = await accountModel.findOneAndUpdate(
+            filter,
+            update,
+            { new: true }
+        );
+
+        if (newAccount) {
+            return {
+                status: "success",
+                data: newAccount,
+            };
+        } else {
+            const oldAccount = await accountModel.findById(accountId);
+            return {
+                status: "fail",
+                data: oldAccount,
+            };
+        }
+    }
 }
+
 
 module.exports = new UserService();

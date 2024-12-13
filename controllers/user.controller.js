@@ -267,3 +267,12 @@ exports.changePassword = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+exports.changeEmail = asyncHandler(async (req, res) => {
+  try {
+    const result = await userService.changeEmail(req.user._id, req.body);
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

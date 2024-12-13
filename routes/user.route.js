@@ -30,7 +30,7 @@ userRouter.get("/settings", userController.getUserSettings);
 userRouter.post("/settings/upload", userController.changeUserProfile);
 userRouter.post("/settings/check-password", userController.checkPassword);
 userRouter.post("/settings/change-password", userController.changePassword);
-
+userRouter.post("/settings/change-email", userController.changeEmail);
 
 module.exports = userRouter;
 
