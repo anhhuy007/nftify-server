@@ -67,7 +67,7 @@ class StampService {
       color: "Red",
       imgUrl: "https://example.com/image.jpg",
     }
-    */
+    */       
         // imgURL = (await ipfsService.uploadStampImage(itemImg, item.title)).IpfsHash;
         tokenURL = (await ipfsService.uploadStampMetadata(item)).IpfsHash;
 

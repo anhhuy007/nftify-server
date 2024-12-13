@@ -207,40 +207,39 @@ class UserService {
 
     async getUserOnSaleItems(userId, options = {}) {
       try {
-          // Extract pagination from options with defaults
-          const page = options.page || 1;
-          const limit = options.limit || 10;
+        // Extract pagination from options with defaults
+        const page = options.page || 1;
+        const limit = options.limit || 10;
       
-          // Build filters correctly
-          const filters = {
-            status: 'selling',
-              ...options
-          };
+        // Build filters correctly
+        const filters = {
+          ownerId: userId,
+          status: 'selling',
+          ...options.filters
+        };
       
-          const response = await marketplaceService.getStampsWithFilter({
-              page,
-              limit,
-              filters
-          });
+        const response = await marketplaceService.getStampsWithFilter({
+          page,
+          limit,
+          filters
+        });
       
-          // Handle response structure (assuming response has data property)
-          const stamps = response.data || response;
-          
-          // Ensure we have an array to work with
-          if (!Array.isArray(stamps)) {
-              console.error('Expected array of stamps but got:', typeof stamps);
-              return [];
-          }
+        // Handle response structure (assuming response has items property)
+        const stamps = response.items;
+        
+        // Ensure we have an array to work with
+        if (!Array.isArray(stamps)) {
+          console.error('Expected array of stamps but got:', typeof stamps);
+          return [];
+        }
       
-          // Filter stamps owned by user
-          const userStamps = stamps.filter(stamp => stamp.ownerId === userId);
-          return userStamps;
-          
+        return stamps;
+        
       } catch (error) {
-          console.error('Error in getUserOnSaleItems:', error);
-          throw error;
+        console.error('Error in getUserOnSaleItems:', error);
+        throw error;
       }
-  }
+    }
     async connectWallet(userId, walletAddress) {
       const user = await userModel.findOne({ _id: userId });
       if (!user) {

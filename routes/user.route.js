@@ -5,8 +5,13 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 
 // guest routes
 userRouter.get("list", userController.getUsers);
-userRouter.get("/profile/:userId", userController.getUserByID);
+
 userRouter.get("/find", userController.getUsers);
+
+// @route   GET /api/v1/user/profile/:userId
+// @desc    get user profile
+// http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b
+userRouter.get("/profile/:userId", userController.getUserByID);
 
 
 // @route   GET /api/v1/user/profile/:userId/collections
@@ -14,6 +19,9 @@ userRouter.get("/find", userController.getUsers);
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/collections
 userRouter.get("/profile/:userId/collections", userController.getUserCollections);
 
+// @route   GET /api/v1/user/profile/:userId/onSale
+// @desc    get user items on sale
+// http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/onSale
 userRouter.get("/profile/:userId/onSale", userController.getItemsOnSale);
 
 
@@ -22,7 +30,15 @@ userRouter.get("/profile/:userId/onSale", userController.getItemsOnSale);
 // http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/created
 // http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/created?minDenom=70&maxDenom=&color=multicolored&function=&page=1&limit=10&sortBy=denom&sortOrder=-55
 userRouter.get("/display/:userId/created", userController.getCreatedStamps);
+
+// @route   GET /api/v1/user/display/:userId/owned
+// @desc    get owned stamps by user
+// http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/owned
 userRouter.get("/display/:userId/owned", userController.getOwnedStamps);
+
+// @route   GET /api/v1/user/display/:userId/favourite
+// @desc    get favourite stamps by user
+// http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/favourite
 userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
 
 // authenticated-required routes

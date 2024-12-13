@@ -10,9 +10,10 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.GATEWAY_URL
 })
 
-const StampImgGroup = pinata.groups.list().name("StampImage");
-const AvatarImgGroup = pinata.groups.list().name("Avatar");
-const BgImgGroup = pinata.groups.list().name("Bg");
+let StampImgGroup = pinata.groups.list().name("StampImage");
+let StampMetadataGroup = pinata.groups.list().name("StampMetadata");
+let AvatarImgGroup = pinata.groups.list().name("AvatarImage");
+let BgImgGroup = pinata.groups.list().name("BgImage");
 
 
 class IpfsService {
@@ -41,35 +42,58 @@ class IpfsService {
     }
 }
 
-async uploadAvatarImage(avatarImgObj) {
-  try {
-    const upload = await pinata.upload.file(avatarImgObj)
-      .group(AvatarImgGroup[0].id)
-    return upload;
-  }
-  catch (error) {
-    console.log(error);
-    throw new Error("Failed to upload avatar image to IPFS: " + error.message);
-  }
-}
+  async uploadAvatarImage(avatarImgObj) {
+    try {
+        // Validate input
+        if (!avatarImgObj) {
+            throw new Error('Avatar image object is required');
+        }
 
-async  uploadBgImage(bgImgObj) {
-  try {
-    const upload = await pinata.upload.file(bgImgObj)
-      .group(BgImgGroup[0].id)
-    return upload;
+        // Ensure AvatarImgGroup is initialized
+        if (!AvatarImgGroup || !AvatarImgGroup[0]) {
+            const group = await pinata.groups.create({ name: 'AvatarImage' });
+            AvatarImgGroup = [group];
+        }
+
+        // Upload file to IPFS through Pinata
+        const options = {
+            pinataMetadata: {
+                name: `Avatar-${Date.now()}`,
+                groupId: AvatarImgGroup[0].id
+            }
+        };
+
+        const upload = await pinata.upload.file(avatarImgObj, options);
+        
+        return {
+            ipfsHash: upload.IpfsHash,
+            pinSize: upload.PinSize,
+            timestamp: upload.Timestamp
+        };
+
+    } catch (error) {
+        console.error('IPFS Upload Error:', error);
+        throw new Error(`Failed to upload avatar image to IPFS: ${error.message}`);
+    }
   }
-  catch (error) {
-    console.log(error);
-    throw new Error("Failed to upload background image to IPFS: " + error.message);
+
+  async  uploadBgImage(bgImgObj) {
+    try {
+      const upload = await pinata.upload.file(bgImgObj)
+        .group(BgImgGroup[0].id)
+      return upload;
+    }
+    catch (error) {
+      console.log(error);
+      throw new Error("Failed to upload background image to IPFS: " + error.message);
+    }
   }
-}
     
 
   // upload stamp metadata to Stamp group on pinata
   async uploadStampMetadata(stamp) {
     try {
-      const StampMetadata = await pinata.groups.list().name("StampMetadata")
+      
       const metadata = {
         _id: stamp._id,
         creatorId: stamp.creatorId,
@@ -86,7 +110,7 @@ async  uploadBgImage(bgImgObj) {
       const upload = await pinata.upload.json(metadata, { 
         pinataMetadata: { 
           name: `${stamp._id}.json`, 
-        }}).group(StampMetadata[0].id);
+        }}).group(StampMetadataGroup[0].id);
       console.log("Uploaded metadata with id: ", stamp._id);
       // log the id and cid into log file
       fs.appendFileSync("../logs/metadata.log", `${stamp._id}: ${upload.IpfsHash}\n`);

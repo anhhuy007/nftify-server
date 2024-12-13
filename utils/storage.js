@@ -13,8 +13,30 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.GATEWAY_URL
 })
 
-object = URL.createObjectURL(fs.readFileSync("../datajson/123.jpg"));
-console.log(typeof object);
+// const StampImgGroup = pinata.groups.list().name("StampImage");
+// const AvatarImgGroup = pinata.groups.list().name("Avatar");
+// const BgImgGroup = pinata.groups.list().name("Bg");
+
+
+// async function uploadAvatar(folderPath) {
+  
+//   for (const file of fs.readdirSync(folderPath)){
+//     try {
+//       console.log(file);
+//       image = fs.readFileSync(folderPath + "/" + file);
+//       image = new Blob([image]);
+//       ipfsService.uploadAvatarImage(image);
+//     }
+//     catch (error){
+//       console.log(error);
+//     }  
+//   }
+// }
+
+// // const folder = "../Avatar";
+// uploadAvatar("../Avatar");
+
+
 // // Setup IPFS Storage
 // StampImg = createGroup("StampImage", true);
 // StampMetadata = createGroup("StampMetadata", true);
