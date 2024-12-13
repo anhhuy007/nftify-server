@@ -57,6 +57,7 @@ const handleServiceError = (res, error) => {
   const statusCode = Object.entries(errorMap)
     .find(([key]) => error.message.includes(key))?.[1] || 500;
 
+  const message = error.message.
   res.status(statusCode).json({
     message: error.message,
     ...(process.env.NODE_ENV === 'development' && { 
