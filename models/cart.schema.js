@@ -14,7 +14,7 @@ const { Schema, model } = mongoose;
 
 const CartSchema = new Schema(
   {
-    consumerId: {
+    userId: {
       type: String,
       required: true,
     },

@@ -22,5 +22,10 @@ userRouter.post("/connect-wallet", userController.connectWallet);
 userRouter.post("/create/nft", userController.createNewStamp);
 userRouter.get("/myNfts", userController.getMyNFTs);
 
+// Cart routes
+userRouter.get("/cart", userController.getCart);
+userRouter.post("/cart", userController.addToCart);
+userRouter.delete("/cart", userController.removeFromCart);
+
 module.exports = userRouter;
 
