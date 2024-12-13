@@ -6,7 +6,15 @@ const { on } = require("../models/user.schema");
 
 exports.createUser = asyncHandler(async (req, res) => {
   try {
-    const newUser = await userService.createUser(req.body);
+    if (!req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const newUser = await userService.createUser(
+      req.user._id,
+      req.body
+    );
+    
     res.json({
       success: true,
       message: "Created user successfully",
@@ -163,7 +171,10 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
     //   return res.status(401).json({ message: "User not authenticated" });
     // }
     // const newStamp = await userService.createNewStamp(req.user._id, req.body);
-    const newStamp = await userService.createNewStamp("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body);
+    const newStamp = await userService.createNewStamp(
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      req.body
+    );
 
     res.status(201).json({
       success: true,
@@ -277,3 +288,24 @@ catch(error)
 );
 
 
+
+exports.connectWallet = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    const updatedUser = await userService.connectWallet(
+      req.user._id,
+      req.body.walletAddress
+    );
+    // const updatedUser = await userService.connectWallet("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.walletAddress);
+
+    res.json({
+      success: true,
+      message: "Connected wallet successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
