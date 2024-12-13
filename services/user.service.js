@@ -9,6 +9,7 @@ const ownershipModel = require("../models/ownership.schema");
 const favouriteModel = require("../models/favouriteItem.schema");
 const collectionModel = require("../models/collection.schema");
 const marketplaceService = require("./marketplace.service");
+const { LogDescription } = require("ethers");
 
 class UserService {
   validateUserInput(user) {
@@ -20,20 +21,20 @@ class UserService {
     const requiredFields = ["name"];
     for (const field of requiredFields) {
       if (!user[field]) {
-        throw new Error(`Missing required field: ${field}`);
+        throw new Error(`[Error][Missing] Missing required field: ${field}`);
       }
     }
 
     // Validate status
     const validStatus = ["pending", "verified", "rejected"];
     if (!validStatus.includes(user.status)) {
-      throw new Error("Invalid status value");
+      throw new Error("[Error][Invalid] Invalid status value");
     }
 
     // Validate gender
     const validGender = ["male", "female"];
     if (!validGender.includes(user.gender)) {
-      throw new Error("Invalid gender value");
+      throw new Error("[Error][Invalid] Invalid gender value");
     }
 
     // check if username already exists
@@ -55,91 +56,89 @@ class UserService {
       _id: userId,
     };
 
-    const newUser = await userModel.create(preparedUser);
-    return newUser;
-  }
-
-  async getUsesById(userId) {
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid userId format");
-    }
-    const user = await userModel.findOne({ _id: userId });
-    return user;
-  }
-
-
-  async getUsers(options = {}) {
-    const { page = 1, limit = 10, filters = {} } = options;
-    const mongoFilter = {};
-
-    // Filter by name
-    if (filters.name) {
-      mongoFilter.name = { $regex: new RegExp(filters.name, "i") };
+        const newUser = await userModel.create(preparedUser);
+        return newUser;
     }
 
-    const parsedPage = Math.max(1, parseInt(page));
-    const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
-    const skip = (parsedPage - 1) * parsedLimit;
-
-    const [total, users] = await Promise.all([
-      userModel.countDocuments(mongoFilter),
-      userModel
-        .find(mongoFilter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(parsedLimit),
-    ]);
-
-    return {
-      total,
-      page: parsedPage,
-      limit: parsedLimit,
-      totalPages: Math.ceil(total / parsedLimit),
-      items: users,
-    };
-  }
-
-  async updateUser(userId, update) {
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid userId format");
+    async getUsesById(userId) {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new Error("[Error][Invalid] Invalid userId format");
+        }
+        const user = await userModel.findOne({ _id: userId });
+        return user;
     }
 
-    if (!update) {
-      throw new Error("Update data is required");
+    async getUsers(options = {}) {
+        const { page = 1, limit = 10, filters = {} } = options;
+        const mongoFilter = {};
+
+        // Filter by name
+        if (filters.name) {
+            mongoFilter.name = { $regex: new RegExp(filters.name, "i") };
+        }
+
+        const parsedPage = Math.max(1, parseInt(page));
+        const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        const [total, users] = await Promise.all([
+            userModel.countDocuments(mongoFilter),
+            userModel
+                .find(mongoFilter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parsedLimit),
+        ]);
+
+        return {
+            total,
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(total / parsedLimit),
+            items: users,
+        };
     }
 
-    // Validate update fields
-    const allowedFields = [
-      "name",
-      "description",
-      "avatarUrl",
-      "gender",
-      "status",
-    ];
-    for (const field in update) {
-      if (!allowedFields.includes(field)) {
-        throw new Error(`Field not allowed: ${field}`);
-      }
-    }
-    // Update updatedAt field
-    update.updatedAt = new Date();
-    const updatedUser = await userModel.findOneAndUpdate(
-      { _id: userId },
-      { $set: update },
-      { new: true }
-    );
-    return updatedUser;
-  }
+    async updateUser(userId, update) {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new Error("[Error][Invalid] Invalid userId format");
+        }
 
-  async deleteUser(userId) {
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid userId format");
+        if (!update) {
+            throw new Error("[Error][Missing] Update data is required");
+        }
+
+        // Validate update fields
+        const allowedFields = [
+            "name",
+            "description",
+            "avatarUrl",
+            "gender",
+            "status",
+        ];
+        for (const field in update) {
+            if (!allowedFields.includes(field)) {
+                throw new Error(`[Error][Other] Field not allowed: ${field}`);
+            }
+        }
+        // Update updatedAt field
+        update.updatedAt = new Date();
+        const updatedUser = await userModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: update },
+            { new: true }
+        );
+        return updatedUser;
     }
+
+    async deleteUser(userId) {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new Error("[Error][Invalid] Invalid userId format");
+        }
 
         await userModel.deleteOne({ _id: userId });
     }
 
-    
     async getCreatedStamps(userId, options = {}) {
         const createdStamp = await stampModel.find({
             creatorId: userId,
@@ -175,7 +174,9 @@ class UserService {
         return result;
     }
     async getFavoriteStamps(userId, options = {}) {
-        const favouriteStamps = await favouriteModel.findOne({ userId: userId });
+        const favouriteStamps = await favouriteModel.findOne({
+            userId: userId,
+        });
         const stampIds = favouriteStamps?.itemId || [];
         const result = await stampService.filterStamps(stampIds, options);
         return result;
@@ -189,7 +190,7 @@ class UserService {
     async createNewStamp(userId, stamp) {
         // Validate input
         if (!stamp) {
-            throw new Error("Stamp data is required");
+            throw new Error("[Error][Missing] data is required");
         }
         // Prepare stamp for saving
         const preparedStamp = {
@@ -223,17 +224,62 @@ class UserService {
       });
     }
     async connectWallet(userId, walletAddress) {
-        const user = await userModel.findOne({ _id: userId });
-        if (!user) {
-            throw new Error("User not found");
-        }
-        const updatedUser = await userModel.findOneAndUpdate(
-            { _id: userId },
-            { $set: { walletAddress } },
-            { new: true }
-        );
-        return updatedUser;
-    }
+      const user = await userModel.findOne({ _id: userId });
+      if (!user) {
+          throw new Error("User not found");
+      }
+      const updatedUser = await userModel.findOneAndUpdate(
+          { _id: userId },
+          { $set: { walletAddress } },
+          { new: true }
+      );
+      return updatedUser;
+  }
+
+  async getUserSettings(userId) {
+    const pipeline = [
+        {
+            $addFields: {
+              userId: { $toObjectId: "$_id" },
+            },
+        },
+        {
+            $match: {
+                userId: new mongoose.Types.ObjectId(userId),
+            },
+        },
+        {
+            $lookup: {
+                from: "Account",
+                localField: "_id",
+                foreignField: "_id",
+                as: "account",
+            },
+        },
+        {
+            $unwind: {
+                path: "$account",
+                preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+            $project: {
+                _id: 0,
+                userId: 1,
+                name: 1,
+                description: 1,
+                avatarUrl: 1,
+                gender: 1,
+                status: 1,
+                email: "$account.email",
+                password: "$account.password",
+                username: "$account.username",
+            },
+        },
+    ];
+    const user = await userModel.aggregate(pipeline);
+    return user;
+}
 }
 
 module.exports = new UserService();

@@ -22,7 +22,7 @@ class IpfsService {
         return upload;
       } catch (error) {
         console.log(error);
-        throw new Error("Failed to upload file to IPFS: " + error.message);
+        throw new Error("[Error][Fail] Failed to upload file to IPFS: " + error.message);
       }
   }
 

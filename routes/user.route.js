@@ -26,15 +26,22 @@ userRouter.get("/display/:userId/owned", userController.getOwnedStamps);
 userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
 
 // authenticated-required routes
+
 userRouter.use(authenticateToken);
-userRouter.put("/profile/:userId", userController.updateUser);
+userRouter.put("/profile/", userController.updateUser);
 userRouter.post("/create", userController.createUser);
-userRouter.delete("/delete/:userId", userController.deleteUser);
-userRouter.post("/connect-wallet", userController.connectWallet);
+userRouter.delete("/delete/", userController.deleteUser);
+
+
 
 // NFTs routes
 userRouter.post("/create/nft", userController.createNewStamp);
 userRouter.get("/myNfts", userController.getMyNFTs);
+userRouter.post("/connect-wallet", userController.connectWallet);
+
+//setting page
+
+userRouter.get("/settings", userController.getUserSettings);
 
 module.exports = userRouter;
 
