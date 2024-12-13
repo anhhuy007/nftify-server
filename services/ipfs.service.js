@@ -63,8 +63,9 @@ class IpfsService {
             }
         };
 
-        const upload = await pinata.upload.file(avatarImgObj, options);
-        
+        const upload = await pinata.upload.file(avatarImgObj, options).group(AvatarImgGroup[0].id);
+
+        console.log('Uploaded avatar image to IPFS:', upload.IpfsHash);
         return {
             ipfsHash: upload.IpfsHash,
             pinSize: upload.PinSize,
@@ -79,6 +80,12 @@ class IpfsService {
 
   async  uploadBgImage(bgImgObj) {
     try {
+
+      if (!BgImgGroup || !BgImgGroup[0]) {
+        const group = await pinata.groups.create({ name: 'BgImage' });
+        BgImgGroup = [group];
+      }
+      
       const upload = await pinata.upload.file(bgImgObj)
         .group(BgImgGroup[0].id)
       return upload;

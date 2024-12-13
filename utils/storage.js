@@ -18,23 +18,23 @@ const pinata = new PinataSDK({
 // const BgImgGroup = pinata.groups.list().name("Bg");
 
 
-// async function uploadAvatar(folderPath) {
+async function uploadAvatar(folderPath) {
   
-//   for (const file of fs.readdirSync(folderPath)){
-//     try {
-//       console.log(file);
-//       image = fs.readFileSync(folderPath + "/" + file);
-//       image = new Blob([image]);
-//       ipfsService.uploadAvatarImage(image);
-//     }
-//     catch (error){
-//       console.log(error);
-//     }  
-//   }
-// }
+  for (const file of fs.readdirSync(folderPath)){
+    try {
+      console.log(file);
+      image = fs.readFileSync(folderPath + "/" + file);
+      image = new Blob([image]);
+      ipfsService.uploadAvatarImage(image);
+    }
+    catch (error){
+      console.log(error);
+    }  
+  }
+}
 
-// // const folder = "../Avatar";
-// uploadAvatar("../Avatar");
+// const folder = "../Avatar";
+uploadAvatar("../Avatar");
 
 
 // // Setup IPFS Storage
