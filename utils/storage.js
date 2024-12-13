@@ -13,6 +13,8 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.GATEWAY_URL
 })
 
+object = URL.createObjectURL(fs.readFileSync("../datajson/123.jpg"));
+console.log(typeof object);
 // // Setup IPFS Storage
 // StampImg = createGroup("StampImage", true);
 // StampMetadata = createGroup("StampMetadata", true);
@@ -23,7 +25,7 @@ const pinata = new PinataSDK({
 // Read file from local storage
 // stamp = fs.readFileSync("../datajson/123.jpg");
 
-// ipfsService.uploadStampImage(stamp, "123");
+// ipfsService.uploadAvatarImage(object);
 
 // stamps = JSON.parse(fs.readFileSync("../datajson/Items.json"));
 
@@ -40,4 +42,5 @@ const pinata = new PinataSDK({
 // }
 
 // uploadAllMetadata(stamps);
+
 

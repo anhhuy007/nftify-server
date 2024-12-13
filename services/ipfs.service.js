@@ -15,7 +15,6 @@ const AvatarImgGroup = pinata.groups.list().name("Avatar");
 const BgImgGroup = pinata.groups.list().name("Bg");
 
 
-
 class IpfsService {
   async uploadFile(fileData, filename) {
     try {
