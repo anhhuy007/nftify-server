@@ -172,7 +172,7 @@ class StampService {
         if (filters.sortBy) {
             sortField = filters.sortBy;
         }
-        if (filters.sortOrder || filters.sortOrder.toLowerCase() === "asc") {
+        if (filters.sortOrder || filters.sortOrder === "asc") {
             sortOrder = 1; // Ascending
         }
 

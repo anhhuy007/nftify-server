@@ -8,6 +8,7 @@ const helperFunc = require("../utils/helperFunc");
 const ownershipModel = require("../models/ownership.schema");
 const favouriteModel = require("../models/favouriteItem.schema");
 const collectionModel = require("../models/collection.schema");
+const marketplaceService = require("./marketplace.service");
 
 class UserService {
   validateUserInput(user) {
@@ -174,7 +175,7 @@ class UserService {
         return result;
     }
 
-    async getUserCollections(userId, options = {}) {
+    async getUserCollections(userId) {
       const collections = await collectionModel.find({ ownerId: userId });
       return collections;
     }
@@ -198,48 +199,23 @@ class UserService {
     }
 
     async getUserOnSaleItems(userId, options = {}) {
-      const onSaleItems = await ownershipModel.aggregate([
-          // Match user's owned items
-          {
-              $match: {
-                  ownerId: userId
-              }
-          },
-          // Join with itemInsight collection
-          {
-              $lookup: {
-                  from: 'ItemInsight', // collection name in MongoDB
-                  localField: 'itemId',
-                  foreignField: 'itemId',
-                  as: 'saleInfo'
-              }
-          },
-          // Unwind the saleInfo array
-          {
-              $unwind: '$saleInfo'
-          },
-          // Match only items that are on sale
-          {
-              $match: {
-                  'saleInfo.verifyStatus': 'selling',
-              }
-          },
-          // Project final shape
-          // {
-          //     $project: {
-          //         _id: 1,
-          //         itemId: 1,
-          //         ownerId: 1,
-          //         salePrice: '$saleInfo.price',
-          //         listedAt: '$saleInfo.listedAt'
-          //     }
-          // }
-      ]);
-  
-      return onSaleItems;
-  }
+      const filters = {
+        options,
+        verifyStatus: 'selling',
+      };
 
+      const page = params.page || 1;
+      const limit = params.limit||10;
 
+      const stamps = await marketplaceService.getStampsWithFilter({page:1, limit:1000, filters})
+
+      let arr = [];
+      stamps.forEach(stamp => {
+        if(stamp.ownerId === userId){
+          arr.push(stamp);
+        }
+      });
+    }
 }
 
 module.exports = new UserService();
