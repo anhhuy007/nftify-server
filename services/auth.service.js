@@ -33,15 +33,15 @@ class AuthService {
         
         // validate input
         if (!username || !email || !password) {
-            throw new Error('Missing required fields');
+            throw new Error('[Error][Missing] Required fields are missing');
         }
 
         // check for existing account
-        const existingAccount = await AccountsModel.findOne({ 
+        const existingAccount = await AccountModel.findOne({ 
             $or: [{ username: username }, { email: email }] 
         });
         if (existingAccount) {
-            throw new Error('Account already exists');
+            throw new Error('[Error][Exist] Account already exists');
         }
 
         // create new account
@@ -60,12 +60,12 @@ class AuthService {
         const account = await AccountModel.findOne({ username: username });
 
         if (!account) {
-            throw new Error('Account not found');
+            throw new Error('[Error][NoneExist] Account not found');
         }
 
         const isPasswordValid = await bcrypt.compare(password, account.password);
         if (!isPasswordValid) {
-            throw new Error('Invalid password');
+            throw new Error('[Error][Unvalid] Incorrect password');
         }
 
         const accessToken = this.generateAccessToken(account);
@@ -88,19 +88,19 @@ class AuthService {
 
     async refreshAccessToken(userId) {
         if (!userId) {
-            throw new Error('No refresh token provided');
+            throw new Error('[Error][Missing] No refresh token provided');
         }
 
         const savedToken = await TokenModel.findOne({ userId });
 
         if (!savedToken) {
-            throw new Error('Invalid refresh token');
+            throw new Error('[Error][Invalid] Invalid refresh token');
         }
 
         // check expired refresh token
         if (savedToken.expiresAt < Date.now()) {
             await TokenModel.deleteOne({ userId });
-            throw new Error('Refresh token expired');
+            throw new Error('[Error][Other] Refresh token expired');
         }
 
         try {
@@ -108,12 +108,12 @@ class AuthService {
 
             // check account id match
             if (decoded.id !== userId) {
-                throw new Error('Invalid refresh token');
+                throw new Error('[Error][Invalid] Refresh token does not match user');
             }
 
             const account = await AccountModel.findById(decoded.id);
             if (!account) {
-                throw new Error('Account not found');
+                throw new Error('[Error][NonExist] Account not found');
             }   
 
             const accessToken = this.generateAccessToken(account);
@@ -121,11 +121,11 @@ class AuthService {
         }
         catch (error) {
             if (error.name === 'TokenExpiredError') {
-                throw new Error('Refresh token expired');
+                throw new Error('[Error][Expire] Refresh token expired');
             }
 
             if (error.name === 'JsonWebTokenError') {
-                throw new Error('Invalid refresh token');
+                throw new Error('[Error][Invalid] Invalid refresh token');
             }
 
             throw error;
@@ -134,7 +134,7 @@ class AuthService {
 
     async logout(userId) {
         if (!userId) {
-            throw new Error('No user id provided');
+            throw new Error('[Error][Missing] No user ID provided');
         }
 
         try {
@@ -142,7 +142,7 @@ class AuthService {
             return true;
         }
         catch (error) {
-            throw new Error('Failed to logout');
+            throw new Error('[Error][Other] Failed to logout');
         }
     }
 }

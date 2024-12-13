@@ -9,7 +9,7 @@ class StampService {
     // Validate input data
     validateItemInput(item) {
         if (!item) {
-            throw new Error("Item data is required");
+            throw new Error("[Error][Missing] Item data is required");
         }
 
         // Validate required fields
@@ -25,19 +25,19 @@ class StampService {
         ];
         for (const field of requiredFields) {
             if (!item[field]) {
-                throw new Error(`Missing required field: ${field}`);
+                throw new Error(`[Error][Missing] Missing required field: ${field}`);
             }
         }
 
         // Validate date format (DD/MM/YYYY)
         const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dateRegex.test(item.date)) {
-            throw new Error("Invalid date format. Use DD/MM/YYYY");
+            throw new Error("[Error][Invalid] Invalid date format. Use DD/MM/YYYY");
         }
 
         // Validate denomination
         if (isNaN(parseFloat(item.denom))) {
-            throw new Error("Denomination must be a valid number");
+            throw new Error("[Error][Invalid] Denomination must be a valid number");
         }
 
         // Optional: Validate URL if imgUrl is present
@@ -45,7 +45,7 @@ class StampService {
             try {
                 new URL(item.imgUrl);
             } catch {
-                throw new Error("Invalid image URL format");
+                throw new Error("[Error][Invalid] Invalid image URL format");
             }
         }
     }

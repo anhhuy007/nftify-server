@@ -21,26 +21,26 @@ Table Collection {
 class CollectionService {
     validateCollectionInput(collection) {
         if (!collection) {
-            throw new Error("Collection data is required");
+            throw new Error("[Error][Missing] Collection data is required");
         }
 
         // Validate required fields
         const requiredFields = ["name", "description", "ownerId", "status"];
         for (const field of requiredFields) {
             if (!collection[field]) {
-                throw new Error(`Missing required field: ${field}`);
+                throw new Error(`[Error][Missing] Missing required field: ${field}`);
             }
         }
 
         // Validate ownerId format
         if (!mongoose.Types.ObjectId.isValid(collection.ownerId)) {
-            throw new Error("Invalid ownerId format");
+            throw new Error("[Error][Invalid] Invalid ownerId format");
         }
 
         // Validate status
         const validStatus = ["selling", "sold", "displaying", "favourite"];
         if (!validStatus.includes(collection.status)) {
-            throw new Error("Invalid status value");
+            throw new Error("[Error][Invalid] Invalid status value");
         }
     }
 
@@ -64,7 +64,7 @@ class CollectionService {
 
     async getCollectionById(collectionId) {
         if (!mongoose.Types.ObjectId.isValid(collectionId)) {
-            throw new Error("Invalid collectionId format");
+            throw new Error("[Error][Invalid] Invalid collectionId format");
         }
 
         const collection = await collectionModel.findOne({ _id: collectionId });
@@ -164,18 +164,18 @@ class CollectionService {
 
     async updateCollection(collectionId, update) {
         if (!mongoose.Types.ObjectId.isValid(collectionId)) {
-            throw new Error("Invalid collectionId format");
+            throw new Error("[Error][Invalid] Invalid collectionId format");
         }
 
         if (!update) {
-            throw new Error("Update data is required");
+            throw new Error("[Error][Missing] Update data is required");
         }
 
         // Validate update fields
         const allowedFields = ["name", "description", "items", "status"];
         for (const field in update) {
             if (!allowedFields.includes(field)) {
-                throw new Error(`Field not allowed: ${field}`);
+                throw new Error(`[Error][Other] Field not allowed: ${field}`);
             }
         }
 
@@ -218,7 +218,7 @@ class CollectionService {
 
     async increaseViewCount(collectionId) {
         if (!mongoose.Types.ObjectId.isValid(collectionId)) {
-            throw new Error("Invalid collectionId format");
+            throw new Error("[Error][Invalid] Invalid collectionId format");
         }
 
         const updatedCollection = await collectionModel.findOneAndUpdate(
@@ -232,7 +232,7 @@ class CollectionService {
 
     async increaseFavouriteCount(collectionId) {
         if (!mongoose.Types.ObjectId.isValid(collectionId)) {
-            throw new Error("Invalid collectionId format");
+            throw new Error("[Error][Invalid] Invalid collectionId format");
         }
 
         const updatedCollection = await collectionModel.findOneAndUpdate(
@@ -246,7 +246,7 @@ class CollectionService {
 
     async deleteCollection(collectionId) {
         if (!mongoose.Types.ObjectId.isValid(collectionId)) {
-            throw new Error("Invalid collectionId format");
+            throw new Error("[Error][Invalid] Invalid collectionId format");
         }
 
         await collectionModel.deleteOne({ _id: collectionId });

@@ -47,12 +47,13 @@ exports.getUsers = asyncHandler(async (req, res) => {
 exports.updateUser = asyncHandler(async (req, res) => {
   try {
     const updatedUser = await userService.updateUser(
-      req.params.userId,
+      req.user._id,
       req.body
     );
     res.json({
       success: true,
       message: "Updated user successfully",
+      data: updatedUser
     });
   } catch (error) {
     handleServiceError(res, error);
@@ -60,7 +61,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
 });
 exports.deleteUser = asyncHandler(async (req, res) => {
   try {
-    await userService.deleteUser(req.params.userId);
+    await userService.deleteUser(req.user._id);
     res.json({
       success: true,
       message: "Deleted user successfully",
@@ -196,7 +197,7 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
 exports.getUserSettings = asyncHandler(async (req, res) => {
   try {
 
-    const userSettings = await userService.getUserSettings(req.params.id);
+    const userSettings = await userService.getUserSettings(req.user._id);
     res.json(userSettings);
   } catch (error) {
     handleServiceError(res, error);

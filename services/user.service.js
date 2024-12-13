@@ -12,30 +12,30 @@ const { LogDescription } = require("ethers");
 class UserService {
     validateUserInput(user) {
         if (!user) {
-            throw new Error("User data is required");
+            throw new Error("[Error][Missing] user data is required");
         }
         // Validate required fields
         const requiredFields = ["name", "gender", "status"];
         for (const field of requiredFields) {
             if (!user[field]) {
-                throw new Error(`Missing required field: ${field}`);
+                throw new Error(`[Error][Missing] required field: ${field}`);
             }
         }
         // Validate status
         const validStatus = ["pending", "verified", "rejected"];
         if (!validStatus.includes(user.status)) {
-            throw new Error("Invalid status value");
+            throw new Error("[Error][Invalid] status value");
         }
         // Validate gender
         const validGender = ["male", "female"];
         if (!validGender.includes(user.gender)) {
-            throw new Error("Invalid gender value");
+            throw new Error("[Error][Invalid] gender value");
         }
         // check if username already exists
         const existingUser = userModel.find({
             name: user.name,
         });
-        if (existingUser) throw new Error("Username already exists");
+        if (existingUser) throw new Error("[Error][Exist] username already exists");
     }
 
     async createUser(user) {
@@ -54,7 +54,7 @@ class UserService {
 
     async getUsesById(userId) {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new Error("Invalid userId format");
+            throw new Error("[Error][Invalid] Invalid userId format");
         }
         const user = await userModel.findOne({ _id: userId });
         return user;
@@ -93,11 +93,11 @@ class UserService {
 
     async updateUser(userId, update) {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new Error("Invalid userId format");
+            throw new Error("[Error][Invalid] Invalid userId format");
         }
 
         if (!update) {
-            throw new Error("Update data is required");
+            throw new Error("[Error][Missing] Update data is required");
         }
 
         // Validate update fields
@@ -110,7 +110,7 @@ class UserService {
         ];
         for (const field in update) {
             if (!allowedFields.includes(field)) {
-                throw new Error(`Field not allowed: ${field}`);
+                throw new Error(`[Error][Other] Field not allowed: ${field}`);
             }
         }
         // Update updatedAt field
@@ -125,7 +125,7 @@ class UserService {
 
     async deleteUser(userId) {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new Error("Invalid userId format");
+            throw new Error("[Error][Invalid] Invalid userId format");
         }
 
         await userModel.deleteOne({ _id: userId });
@@ -177,7 +177,7 @@ class UserService {
     async createNewStamp(userId, stamp) {
         // Validate input
         if (!stamp) {
-            throw new Error("Stamp data is required");
+            throw new Error("[Error][Missing] data is required");
         }
         // Prepare stamp for saving
         const preparedStamp = {
