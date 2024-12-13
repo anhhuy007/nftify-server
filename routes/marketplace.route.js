@@ -13,8 +13,7 @@ router.get("/list/stamps", marketplaceController.getStampsWithFilter); // search
 
 //collection page
 router.get("/list/collections", marketplaceController.getCollections);
-router.get("/list/collections/:id/about", marketplaceController.getCollectionAbout);
-router.get("/list/collections/:id/items", marketplaceController.getCollectionItems);
+
 
 
 router.get("/list/creators", marketplaceController.getCreators);

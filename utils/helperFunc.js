@@ -31,12 +31,21 @@ const handleServiceError = (res, error) => {
   console.error('Service Error:', error);
 
   const errorMap = {
-    'not provided': 400,   // Bad Request
-    'already exists': 409, // Conflict
-    'Invalid': 400,        // Bad Request
-    'Missing': 400,        // Bad Request
-    'Validation failed': 422, // Unprocessable Entity
+    'not provided': 400,          // Bad Request
+    'Invalid': 400,               // Bad Request
+    'Missing': 400,               // Bad Request
+    'Fail': 400,
+    'Validation failed': 422,     // Unprocessable Entity
+
+    'Exist': 409,                 // Conflict
+    'NoneExist': 404,              // Not Found
+    'Unvalid': 401,                // Unauthorized
+    'Unauthorized': 401,          // Unauthorized
+    'Expire': 400,
+    'Other': 417,                 // Internal Server Error
+
   };
+  
 
   const statusCode = Object.entries(errorMap)
     .find(([key]) => error.message.includes(key))?.[1] || 500;

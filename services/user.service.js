@@ -5,6 +5,9 @@ const stampService = require("./stamp.service");
 const nftService = require("./nft.service");
 const ownershipModel = require("../models/ownership.schema");
 const favouriteModel = require("../models/favouriteItem.schema");
+const { LogDescription } = require("ethers");
+const accountModel = require("../models/account.schema");
+const bcrypt = require("bcrypt");
 const cartModel = require("../models/cart.schema");
 
 class UserService {
@@ -17,20 +20,20 @@ class UserService {
     const requiredFields = ["name"];
     for (const field of requiredFields) {
       if (!user[field]) {
-        throw new Error(`Missing required field: ${field}`);
+        throw new Error(`[Error][Missing] Missing required field: ${field}`);
       }
     }
 
     // Validate status
     const validStatus = ["pending", "verified", "rejected"];
     if (!validStatus.includes(user.status)) {
-      throw new Error("Invalid status value");
+      throw new Error("[Error][Invalid] Invalid status value");
     }
 
     // Validate gender
     const validGender = ["male", "female"];
     if (!validGender.includes(user.gender)) {
-      throw new Error("Invalid gender value");
+      throw new Error("[Error][Invalid] Invalid gender value");
     }
 
     // check if username already exists
@@ -58,7 +61,7 @@ class UserService {
 
   async getUsesById(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid userId format");
+      throw new Error("[Error][Invalid] Invalid userId format");
     }
     const user = await userModel.findOne({ _id: userId });
     return user;
@@ -97,11 +100,11 @@ class UserService {
 
   async updateUser(userId, update) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid userId format");
+      throw new Error("[Error][Invalid] Invalid userId format");
     }
 
     if (!update) {
-      throw new Error("Update data is required");
+      throw new Error("[Error][Missing] Update data is required");
     }
 
     // Validate update fields
@@ -114,7 +117,7 @@ class UserService {
     ];
     for (const field in update) {
       if (!allowedFields.includes(field)) {
-        throw new Error(`Field not allowed: ${field}`);
+        throw new Error(`[Error][Other] Field not allowed: ${field}`);
       }
     }
     // Update updatedAt field
@@ -129,7 +132,7 @@ class UserService {
 
   async deleteUser(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid userId format");
+      throw new Error("[Error][Invalid] Invalid userId format");
     }
 
     await userModel.deleteOne({ _id: userId });
@@ -170,7 +173,9 @@ class UserService {
     return result;
   }
   async getFavoriteStamps(userId, options = {}) {
-    const favouriteStamps = await favouriteModel.findOne({ userId: userId });
+    const favouriteStamps = await favouriteModel.findOne({
+      userId: userId,
+    });
     const stampIds = favouriteStamps?.itemId || [];
     const result = await stampService.filterStamps(stampIds, options);
     return result;
@@ -179,7 +184,7 @@ class UserService {
   async createNewStamp(userId, stamp) {
     // Validate input
     if (!stamp) {
-      throw new Error("Stamp data is required");
+      throw new Error("[Error][Missing] data is required");
     }
     // Prepare stamp for saving
     const preparedStamp = {
@@ -336,6 +341,124 @@ class UserService {
       totalPrice: cart.totalPrice,
       items,
     };
+  }
+
+  async getUserSettings(userId) {
+    const pipeline = [
+      {
+        $addFields: {
+          userId: { $toObjectId: "$_id" },
+        },
+      },
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "Account",
+          localField: "_id",
+          foreignField: "_id",
+          as: "account",
+        },
+      },
+      {
+        $unwind: {
+          path: "$account",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: 1,
+          name: 1,
+          description: 1,
+          avatarUrl: 1,
+          gender: 1,
+          status: 1,
+          email: "$account.email",
+          password: "$account.password",
+          username: "$account.username",
+        },
+      },
+    ];
+    const user = await userModel.aggregate(pipeline);
+    return user;
+  }
+
+  async changeUserProfile(userId, user) {
+    const update = {
+      name: user.name,
+      description: user.description,
+      avatarUrl: user.avatarUrl,
+    };
+
+    const filter = { _id: userId };
+    const newUserProfile = await userModel.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    if (newUserProfile) {
+      return {
+        status: "success",
+        data: newUserProfile,
+      };
+    } else {
+      const oldUserProfile = await userModel.findById(userId);
+      return {
+        status: "fail",
+        data: oldUserProfile,
+      };
+    }
+  }
+  // changeUserPassword
+  async checkPassword(userId, body) {
+    const currentPassword = await accountModel
+      .findById(userId)
+      .select("password");
+    console.log("Current password", currentPassword);
+    console.log("new password", body.password);
+    const isMatch = await bcrypt.compare(
+      body.password,
+      currentPassword.password
+    );
+
+    if (isMatch) {
+      return {
+        status: "success",
+        message: "Password is correct",
+      };
+    }
+    return {
+      status: "fail",
+      message: "Password is incorrect",
+    };
+  }
+  async changePassword(userId, body) {
+    const newPassword = await bcrypt.hash(body.password, 10);
+    const update = {
+      password: newPassword,
+    };
+
+    const filter = { _id: userId };
+    const newUserAccount = await accountModel.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    if (newUserAccount) {
+      return {
+        status: "success",
+        data: newUserAccount,
+      };
+    } else {
+      const oldUserAccount = await userModel.findById(userId);
+      return {
+        status: "fail",
+        data: oldUserAccount,
+      };
+    }
   }
 }
 
