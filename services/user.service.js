@@ -206,23 +206,41 @@ class UserService {
     }
 
     async getUserOnSaleItems(userId, options = {}) {
-      const filters = {
-        options,
-        verifyStatus: 'selling',
-      };
-
-      const page = params.page || 1;
-      const limit = params.limit||10;
-
-      const stamps = await marketplaceService.getStampsWithFilter({page:1, limit:1000, filters})
-
-      let arr = [];
-      stamps.forEach(stamp => {
-        if(stamp.ownerId === userId){
-          arr.push(stamp);
-        }
-      });
-    }
+      try {
+          // Extract pagination from options with defaults
+          const page = options.page || 1;
+          const limit = options.limit || 10;
+      
+          // Build filters correctly
+          const filters = {
+            status: 'selling',
+              ...options
+          };
+      
+          const response = await marketplaceService.getStampsWithFilter({
+              page,
+              limit,
+              filters
+          });
+      
+          // Handle response structure (assuming response has data property)
+          const stamps = response.data || response;
+          
+          // Ensure we have an array to work with
+          if (!Array.isArray(stamps)) {
+              console.error('Expected array of stamps but got:', typeof stamps);
+              return [];
+          }
+      
+          // Filter stamps owned by user
+          const userStamps = stamps.filter(stamp => stamp.ownerId === userId);
+          return userStamps;
+          
+      } catch (error) {
+          console.error('Error in getUserOnSaleItems:', error);
+          throw error;
+      }
+  }
     async connectWallet(userId, walletAddress) {
       const user = await userModel.findOne({ _id: userId });
       if (!user) {

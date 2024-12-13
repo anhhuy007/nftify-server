@@ -13,11 +13,14 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.GATEWAY_URL
 })
 
-// Setup IPFS Storage
+// // Setup IPFS Storage
 // StampImg = createGroup("StampImage", true);
 // StampMetadata = createGroup("StampMetadata", true);
 
-// // Read file from local storage
+// Avatar = ipfsService.createGroup("Avatar", true);
+// Bg = ipfsService.createGroup("Bg", true);
+
+// Read file from local storage
 // stamp = fs.readFileSync("../datajson/123.jpg");
 
 // ipfsService.uploadStampImage(stamp, "123");

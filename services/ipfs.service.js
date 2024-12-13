@@ -4,11 +4,15 @@ const { Blob } = require("buffer");
 const { title } = require("process");
 require("dotenv").config({ path: "../.env" });
 
+
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
   pinataGateway: process.env.GATEWAY_URL
 })
 
+const StampImgGroup = pinata.groups.list().name("StampImage");
+const AvatarImgGroup = pinata.groups.list().name("Avatar");
+const BgImgGroup = pinata.groups.list().name("Bg");
 
 
 
@@ -26,14 +30,9 @@ class IpfsService {
       }
   }
 
-  async uploadStampImage(stampImg, stampTitle) {
+  async uploadStampImage(stampImgObj) {
     try {
-      const StampImgGroup = await pinata.groups.list().name("StampImage");
-      const blob = new Blob([stampImg]);
-      const file = new File([blob], {stampTitle}, { type: "image/jpeg" });
-      
-    
-      const upload = await pinata.upload.file(file)
+      const upload = await pinata.upload.file(stampImgObj)
         .group(StampImgGroup[0].id)
       return upload;
     }
@@ -41,6 +40,30 @@ class IpfsService {
       console.log(error);
       throw new Error("Failed to upload stamp image to IPFS: " + error.message);
     }
+}
+
+async uploadAvatarImage(avatarImgObj) {
+  try {
+    const upload = await pinata.upload.file(avatarImgObj)
+      .group(AvatarImgGroup[0].id)
+    return upload;
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("Failed to upload avatar image to IPFS: " + error.message);
+  }
+}
+
+async  uploadBgImage(bgImgObj) {
+  try {
+    const upload = await pinata.upload.file(bgImgObj)
+      .group(BgImgGroup[0].id)
+    return upload;
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("Failed to upload background image to IPFS: " + error.message);
+  }
 }
     
 
