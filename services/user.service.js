@@ -10,49 +10,51 @@ const favouriteModel = require("../models/favouriteItem.schema");
 const { LogDescription } = require("ethers");
 
 class UserService {
-  validateUserInput(user) {
-    if (!user) {
-      throw new Error("User data is required");
+    validateUserInput(user) {
+        if (!user) {
+            throw new Error("User data is required");
+        }
+
+        // Validate required fields
+        const requiredFields = ["name"];
+        for (const field of requiredFields) {
+            if (!user[field]) {
+                throw new Error(
+                    `[Error][Missing] Missing required field: ${field}`
+                );
+            }
+        }
+
+        // Validate status
+        const validStatus = ["pending", "verified", "rejected"];
+        if (!validStatus.includes(user.status)) {
+            throw new Error("[Error][Invalid] Invalid status value");
+        }
+
+        // Validate gender
+        const validGender = ["male", "female"];
+        if (!validGender.includes(user.gender)) {
+            throw new Error("[Error][Invalid] Invalid gender value");
+        }
+
+        // check if username already exists
+        // const existingUser = userModel.find({
+        //   name: user.name,
+        // });
+        // console.log("Existing user", existingUser);
+        // if (existingUser) throw new Error("Username already exists");
     }
 
-    // Validate required fields
-    const requiredFields = ["name"];
-    for (const field of requiredFields) {
-      if (!user[field]) {
-        throw new Error(`[Error][Missing] Missing required field: ${field}`);
-      }
-    }
+    async createUser(userId, user) {
+        console.log("Create new user", user);
 
-    // Validate status
-    const validStatus = ["pending", "verified", "rejected"];
-    if (!validStatus.includes(user.status)) {
-      throw new Error("[Error][Invalid] Invalid status value");
-    }
-
-    // Validate gender
-    const validGender = ["male", "female"];
-    if (!validGender.includes(user.gender)) {
-      throw new Error("[Error][Invalid] Invalid gender value");
-    }
-
-    // check if username already exists
-    // const existingUser = userModel.find({
-    //   name: user.name,
-    // });
-    // console.log("Existing user", existingUser);
-    // if (existingUser) throw new Error("Username already exists");
-  }
-
-  async createUser(userId, user) {
-    console.log("Create new user", user);
-
-    // Validate input
-    this.validateUserInput(user);
-    // Prepare user for saving
-    const preparedUser = {
-      ...user,
-      _id: userId,
-    };
+        // Validate input
+        this.validateUserInput(user);
+        // Prepare user for saving
+        const preparedUser = {
+            ...user,
+            _id: userId,
+        };
 
         const newUser = await userModel.create(preparedUser);
         return newUser;
@@ -198,64 +200,91 @@ class UserService {
         return result;
     }
 
-
     async connectWallet(userId, walletAddress) {
-      const user = await userModel.findOne({ _id: userId });
-      if (!user) {
-          throw new Error("User not found");
-      }
-      const updatedUser = await userModel.findOneAndUpdate(
-          { _id: userId },
-          { $set: { walletAddress } },
-          { new: true }
-      );
-      return updatedUser;
-  }
+        const user = await userModel.findOne({ _id: userId });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        const updatedUser = await userModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: { walletAddress } },
+            { new: true }
+        );
+        return updatedUser;
+    }
 
-  async getUserSettings(userId) {
-    const pipeline = [
-        {
-            $addFields: {
-              userId: { $toObjectId: "$_id" },
+    async getUserSettings(userId) {
+        const pipeline = [
+            {
+                $addFields: {
+                    userId: { $toObjectId: "$_id" },
+                },
             },
-        },
-        {
-            $match: {
-                userId: new mongoose.Types.ObjectId(userId),
+            {
+                $match: {
+                    userId: new mongoose.Types.ObjectId(userId),
+                },
             },
-        },
-        {
-            $lookup: {
-                from: "Account",
-                localField: "_id",
-                foreignField: "_id",
-                as: "account",
+            {
+                $lookup: {
+                    from: "Account",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "account",
+                },
             },
-        },
-        {
-            $unwind: {
-                path: "$account",
-                preserveNullAndEmptyArrays: true,
+            {
+                $unwind: {
+                    path: "$account",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
-        },
-        {
-            $project: {
-                _id: 0,
-                userId: 1,
-                name: 1,
-                description: 1,
-                avatarUrl: 1,
-                gender: 1,
-                status: 1,
-                email: "$account.email",
-                password: "$account.password",
-                username: "$account.username",
+            {
+                $project: {
+                    _id: 0,
+                    userId: 1,
+                    name: 1,
+                    description: 1,
+                    avatarUrl: 1,
+                    gender: 1,
+                    status: 1,
+                    email: "$account.email",
+                    password: "$account.password",
+                    username: "$account.username",
+                },
             },
-        },
-    ];
-    const user = await userModel.aggregate(pipeline);
-    return user;
-}
+        ];
+        const user = await userModel.aggregate(pipeline);
+        return user;
+    }
+
+    async changeUserProfile(userId, user) {
+        const update = {
+            name: user.name,
+            description: user.description,
+            avatarUrl: user.avatarUrl,
+        };
+
+        const filter = { _id: userId };
+        const newUserProfile = await userModel.findOneAndUpdate(
+            filter,
+            update,
+            { new: true }
+        );
+
+        if (newUserProfile) {
+            return {
+                status: "success",
+                data: newUserProfile,
+            };
+        } else {
+            const oldUserProfile = await userModel.findById(userId);
+            return {
+                status: "fail",
+                data: oldUserProfile,
+            };
+        }
+    }
 }
 
 module.exports = new UserService();

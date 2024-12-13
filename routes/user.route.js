@@ -26,8 +26,9 @@ userRouter.get("/myNfts", userController.getMyNFTs);
 userRouter.post("/connect-wallet", userController.connectWallet);
 
 //setting page
-
 userRouter.get("/settings", userController.getUserSettings);
+userRouter.post("/settings/upload", userController.changeUserProfile);
+
 
 module.exports = userRouter;
 

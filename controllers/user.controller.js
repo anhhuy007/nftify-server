@@ -235,3 +235,16 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+exports.changeUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const updatedUser = await userService.changeUserProfile(
+      req.user._id,
+      req.body
+    );
+    res.json(updatedUser);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+});
