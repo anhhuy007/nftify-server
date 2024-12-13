@@ -248,3 +248,22 @@ exports.changeUserProfile = asyncHandler(async (req, res) => {
   }
 
 });
+
+exports.checkPassword = asyncHandler(async (req, res) => { 
+  try {
+    const result = await userService.checkPassword(req.user._id, req.body);
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+});
+// change password
+exports.changePassword = asyncHandler(async (req, res) => {
+  try {
+    const result = await userService.changePassword(req.user._id, req.body);
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

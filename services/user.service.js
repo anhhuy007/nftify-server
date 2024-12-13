@@ -8,6 +8,8 @@ const helperFunc = require("../utils/helperFunc");
 const ownershipModel = require("../models/ownership.schema");
 const favouriteModel = require("../models/favouriteItem.schema");
 const { LogDescription } = require("ethers");
+const accountModel = require("../models/account.schema");
+const bcrypt = require("bcrypt");
 
 class UserService {
     validateUserInput(user) {
@@ -282,6 +284,50 @@ class UserService {
             return {
                 status: "fail",
                 data: oldUserProfile,
+            };
+        }
+    }
+    // changeUserPassword
+    async checkPassword(userId, body) {
+        const currentPassword = await accountModel.findById(userId).select("password");
+        console.log("Current password", currentPassword);
+        console.log("new password", body.password);
+        const isMatch = await bcrypt.compare(body.password, currentPassword.password);
+
+        if (isMatch) {
+            return {
+                status: "success",
+                message: "Password is correct",
+            };
+        }
+        return {
+            status: "fail",
+            message: "Password is incorrect",
+        };
+    }
+    async changePassword(userId, body) {
+        const newPassword = await bcrypt.hash(body.password, 10)
+        const update = {
+            password: newPassword,
+        };
+
+        const filter = { _id: userId };
+        const newUserAccount = await accountModel.findOneAndUpdate(
+            filter,
+            update,
+            { new: true }
+        );
+
+        if (newUserAccount) {
+            return {
+                status: "success",
+                data: newUserAccount,
+            };
+        } else {
+            const oldUserAccount = await userModel.findById(userId);
+            return {
+                status: "fail",
+                data: oldUserAccount,
             };
         }
     }
