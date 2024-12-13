@@ -32,5 +32,10 @@ userRouter.post("/settings/check-password", userController.checkPassword);
 userRouter.post("/settings/change-password", userController.changePassword);
 userRouter.post("/settings/change-email", userController.changeEmail);
 
+// Cart routes
+userRouter.get("/cart", userController.getCart);
+userRouter.post("/cart", userController.addToCart);
+userRouter.delete("/cart", userController.removeFromCart);
+
 module.exports = userRouter;
 

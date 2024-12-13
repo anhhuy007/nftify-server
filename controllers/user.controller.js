@@ -9,11 +9,8 @@ exports.createUser = asyncHandler(async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
-    const newUser = await userService.createUser(
-      req.user._id,
-      req.body
-    );
-    
+    const newUser = await userService.createUser(req.user._id, req.body);
+
     res.json({
       success: true,
       message: "Created user successfully",
@@ -268,6 +265,65 @@ exports.changePassword = asyncHandler(async (req, res) => {
   }
 });
 
+exports.addToCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.addToCart(req.user._id, req.body.itemId);
+    // const result = await userService.addToCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
+
+    res.json({
+      success: true,
+      message: "Added item to cart successfully",
+      data: result,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.removeFromCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.removeFromCart(
+      req.user._id,
+      req.body.itemId
+    );
+    // const result = await userService.removeFromCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
+
+    res.json({
+      success: true,
+      message: "Removed item from cart successfully",
+      data: result,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.getCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.getCart(req.user._id);
+    // const result = await userService.getCartItems("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+
+    res.json({
+      success: true,
+      message: "Fetched cart items successfully",
+      data: result,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
 exports.changeEmail = asyncHandler(async (req, res) => {
   try {
     const result = await userService.changeEmail(req.user._id, req.body);
