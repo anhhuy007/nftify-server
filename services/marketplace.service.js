@@ -424,6 +424,7 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
+        // console.log("filter in stamp filter = ", filters);
 
         // Prepare dynamic filter
         const mongoFilter = {};
@@ -881,7 +882,7 @@ class MarketplaceService {
         };
     }
 
-    async getCollectionAbout(collectionId) {
+    async getCollectionById(collectionId) {
         const pipeline = [
             {
                 $match: {
@@ -953,7 +954,7 @@ class MarketplaceService {
                     description: { $first: "$description" },
                     ownerDetails: { $first: "$ownerDetails" }, // Maintain ownerDetails
                     totalPrice: { $sum: "$itemPrices.price" },
-                    stampPicture: { $first: "$stamp.imgUrl" } 
+                    stampPicture: { $first: "$stamp.imgUrl" },
                 },
             },
             {
@@ -968,15 +969,70 @@ class MarketplaceService {
                         description: "$ownerDetails.description",
                     },
                     totalPrice: 1,
-                    backgroundPicture: "$stampPicture"
-                }
-            }
+                    backgroundPicture: "$stampPicture", //change to thumbUrl
+                },
+            },
         ];
-    
+
         // Execute the aggregation pipeline
         const result = await collectionModel.aggregate(pipeline);
         return result;
     }
+
+    async getCollectionItems(params = {}) {
+        const collectionId = params.collectionId;
+        const filters = params.filters;
+
+        // Set default values for page and limit, and merge with existing options
+        const page = params.page || 1;
+        const limit = params.limit||10;
+
+        // console.log(filters);
+
+
+        const stamps = await this.getStampsWithFilter({page:1, limit:1000,filters});// maybe lack of data
+        // console.log("id = ", collectionId);
+        // console.log("options = ", options);
+        
+        // Fetch the collection from the database by ID
+        const collection = await collectionModel.findById(collectionId);
+        
+        // Get the collection's item IDs
+        const collectionItemIds = collection.items;
+        const collectionItemIdsStrings = collectionItemIds.map(id => id.toString());  // Convert to string for easy comparison
+    
+        // console.log("Collection item IDs:", collectionItemIdsStrings);
+        // console.log("----------- Stamps data --------");
+        // console.log(stamps.items);
+        let arr = [];
+        for (let i =  0 ; i < stamps.items.length ; i++) {
+            // console.log(stamps.items[i]._id)
+            if (collectionItemIdsStrings.includes(stamps.items[i]._id.toString())) {
+                arr.push(stamps.items[i]);
+            }
+        }
+        // console.log(arr);
+        // add pagination
+
+        // const parsedPage = Math.max(1, parseInt(page));
+        // const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
+        // const skip = (parsedPage - 1) * parsedLimit;
+        const total = arr.length;
+        const endpage = total;
+        if (limit * page <= total - 1){
+            endpage = limit * page;
+        }
+        const items = arr.slice(limit*(page-1),  endpage); // as page start = 1
+        
+        return {
+            total: total,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(total / limit),
+            items : items
+        };
+    }
+    
 }
 
 module.exports = new MarketplaceService();

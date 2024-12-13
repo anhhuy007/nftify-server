@@ -1,103 +1,148 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const AccountsModel = require('../models/account.schema');
-const UserModel = require('../models/user.schema');
+const AccountModel = require('../models/account.schema');
+const TokenModel = require('../models/token.schema');
 
-const refreshTokens = [];
-
-const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '15m'
-    });
-};
-
-const registerUser = async (userData) => {
-    const { userName, password, email } = userData;
-
-    const existingAccount = await AccountsModel.findOne({ username: userName });
-    if (existingAccount) {
-        throw new Error('Username already exists');
+class AuthService {
+    generateAccessToken(user) {
+        return jwt.sign(
+            {
+                id: user._id, 
+                username: user.username,
+                email: user.email
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '15m' }
+        );
     }
 
-    const existingEmail = await AccountsModel.findOne({ email: email });
-    if (existingEmail) {
-        throw new Error('Email already exists');
+    generateRefreshToken(user) {
+        return jwt.sign(
+            {
+                id: user._id, 
+                username: user.username,
+                email: user.email
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: '7d' }
+        );
     }
 
-    // const lastAccount = await AccountsModel.findOne().sort({ id: -1 }).exec();
-    // const newId = lastAccount ? parseInt(lastAccount.id) + 1 : 1;
+    async registerUser(userData) {
+        const { username, password, email } = userData;
+        
+        // validate input
+        if (!username || !email || !password) {
+            throw new Error('Missing required fields');
+        }
 
-    const account = new AccountsModel({
-        // id: newId,
-        username: userName,
-        password: await bcrypt.hash(password, 10),
-        email: email,
-        createdAt: new Date()
-    });
-
-    const user = new UserModel({
-        _id: account._id,
-        name: userName,
-        description: "default description",
-        avatarUrl: "default avatar",
-        gender: "Others",
-        status: "pending",
-        wallet_address: "default wallet address",
-    });
-    account.save(), user.save()
-
-    return { account, user };
-};
-
-const loginUser = async (userData) => {
-    const { userName, password } = userData;
-
-    const account = await AccountsModel.findOne({ username: userName });
-    if (!account) {
-        throw new Error('Account not found');
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, account.password);
-    if (!isPasswordValid) {
-        throw new Error('Invalid login credentials');
-    }
-
-    const user = { userName };
-    const accessToken = generateAccessToken(user);
-    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-    
-    refreshTokens.push(refreshToken);
-
-    // remove password from account object
-    account.password = "";
-
-    return { account, accessToken, refreshToken };
-};
-
-const refreshAccessToken = (token) => {
-    if (!token) throw new Error('No token provided');
-    if (!refreshTokens.includes(token)) throw new Error('Invalid refresh token');
-
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-            if (err) reject(err);
-            const accessToken = generateAccessToken({ userName: user.userName });
-            resolve({ accessToken });
+        // check for existing account
+        const existingAccount = await AccountsModel.findOne({ 
+            $or: [{ username: userName }, { email: email }] 
         });
-    });
-};
+        if (existingAccount) {
+            throw new Error('Account already exists');
+        }
 
-const logout = (token) => {
-    const index = refreshTokens.indexOf(token);
-    if (index > -1) {
-        refreshTokens.splice(index, 1);
+        // create new account
+        const newUser = new AccountModel({
+            username: username,
+            email: email,
+            password: await bcrypt.hash(password, 10)
+        });
+
+        return newUser.save();
     }
-};
 
-module.exports = {
-    registerUser,
-    loginUser,
-    refreshAccessToken,
-    logout,
-    generateAccessToken
-};
+    async login(userData) { 
+        const { username, password } = userData;
+
+        const account = await AccountModel.findOne({ username: username });
+
+        if (!account) {
+            throw new Error('Account not found');
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, account.password);
+        if (!isPasswordValid) {
+            throw new Error('Invalid password');
+        }
+
+        const accessToken = this.generateAccessToken(account);
+        const refreshToken = this.generateRefreshToken(account);
+
+        // save refresh token to database
+        const newToken = new TokenModel({
+            token: refreshToken
+        });
+        await newToken.save();
+
+        return {
+            account, 
+            accessToken, 
+            refreshToken 
+        };
+    }
+
+    async refreshAccessToken(userId) {
+        if (!userId) {
+            throw new Error('No refresh token provided');
+        }
+
+        const savedToken = await TokenModel.findOne({ userId });
+
+        if (!savedToken) {
+            throw new Error('Invalid refresh token');
+        }
+
+        // check expired refresh token
+        if (savedToken.expiresAt < Date.now()) {
+            await TokenModel.deleteOne({ userId });
+            throw new Error('Refresh token expired');
+        }
+
+        try {
+            const decoded = jwt.verify(savedToken.token, process.env.REFRESH_TOKEN_SECRET);
+
+            // check account id match
+            if (decoded.id !== userId) {
+                throw new Error('Invalid refresh token');
+            }
+
+            const account = await AccountModel.findById(decoded.id);
+            if (!account) {
+                throw new Error('Account not found');
+            }   
+
+            const accessToken = this.generateAccessToken(account);
+            return { accessToken };
+        }
+        catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                throw new Error('Refresh token expired');
+            }
+
+            if (error.name === 'JsonWebTokenError') {
+                throw new Error('Invalid refresh token');
+            }
+
+            throw error;
+        }
+    }
+
+    async logout(userId) {
+        if (!userId) {
+            throw new Error('No user id provided');
+        }
+
+        try {
+            await TokenModel.deleteMany({ userId });
+            return true;
+        }
+        catch (error) {
+            throw new Error('Failed to logout');
+        }
+    }
+}
+
+module.exports = new AuthService();
