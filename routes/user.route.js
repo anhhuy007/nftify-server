@@ -44,11 +44,10 @@ userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
 // authenticated-required routes
 
 userRouter.use(authenticateToken);
+userRouter.get("/", userController.getUser);
 userRouter.put("/profile/", userController.updateUser);
 userRouter.post("/create", userController.createUser);
 userRouter.delete("/delete/", userController.deleteUser);
-
-
 
 // NFTs routes
 userRouter.post("/create/nft", userController.createNewStamp);
@@ -56,8 +55,16 @@ userRouter.get("/myNfts", userController.getMyNFTs);
 userRouter.post("/connect-wallet", userController.connectWallet);
 
 //setting page
-
 userRouter.get("/settings", userController.getUserSettings);
+userRouter.post("/settings/upload", userController.changeUserProfile);
+userRouter.post("/settings/check-password", userController.checkPassword);
+userRouter.post("/settings/change-password", userController.changePassword);
+userRouter.post("/settings/change-email", userController.changeEmail);
+
+// Cart routes
+userRouter.get("/cart", userController.getCart);
+userRouter.post("/cart", userController.addToCart);
+userRouter.delete("/cart", userController.removeFromCart);
 
 module.exports = userRouter;
 

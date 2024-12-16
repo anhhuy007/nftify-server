@@ -352,6 +352,7 @@ class CollectionService {
                     name: { $first: "$name" },
                     ownerId: { $first: "$ownerId" },
                     description: { $first: "$description" },
+                    thumbUrl: { $first: "$thumbUrl" },
                     ownerDetails: { $first: "$ownerDetails" }, // Maintain ownerDetails
                     totalPrice: { $sum: "$itemPrices.price" },
                     stampPicture: { $first: "$stamp.imgUrl" },
@@ -369,14 +370,14 @@ class CollectionService {
                         description: "$ownerDetails.description",
                     },
                     totalPrice: 1,
-                    backgroundPicture: "$stampPicture", //change to thumbUrl
+                    thumbUrl: "$thumbUrl", //change to thumbUrl
                 },
             },
         ];
 
         // Execute the aggregation pipeline
         const result = await collectionModel.aggregate(pipeline);
-        return result;
+        return result[0] ?? null;
     }
 
     async getCollectionItems(params = {}) {
