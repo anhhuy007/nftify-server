@@ -729,6 +729,43 @@ async function saveGeneratedCollections(){
   }
 }
 
+async function addUserBGColumn() {
+  try {
+    const users = await userModel.find({});
+    console.log(`Found ${users.length} users to update`);
+
+    for (const user of users) {
+      await userModel.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            bgUrl: "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafybeicr3a52vtv56ft6aec2qoxalk3ozi47qyufiwnbroacsw5upxrlha",
+          },
+        }
+      );
+      console.log(`Updated item ${user._id}`);
+    }
+  } catch (error) {
+    console.error('An error occurred during the addBGColumn process:', error);
+  }
+}
+
+async function getOwnedStamps(userID) {
+  try {
+    const ownedStamps = await ownershipModel.find({ ownerId: userID });
+    console.log(`Found ${ownedStamps.length} stamps owned by user ${userID}`);
+    return ownedStamps;
+  }
+  catch (error) {
+    console.error('An error occurred during the getOwnedStamps process:', error);
+    throw error;
+  }
+  
+}
+// connectDB()
+// getOwnedStamps("673876c24af03358be502d87")
+// connectDB();
+// addUserBGColumn();
 
 // connectDB();
 // saveGeneratedCollections();

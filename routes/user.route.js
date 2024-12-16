@@ -27,19 +27,19 @@ userRouter.get("/profile/:userId/onSale", userController.getItemsOnSale);
 
 // @route   GET /api/v1/user/display/:userId/created
 // @desc    get created stamps by user
-// http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/created
-// http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/created?minDenom=70&maxDenom=&color=multicolored&function=&page=1&limit=10&sortBy=denom&sortOrder=-55
-userRouter.get("/display/:userId/created", userController.getCreatedStamps);
+// http://localhost:3000/api/v1/user/profile/67387693db2193ef3c0c6b46/created
+// http://localhost:3000/api/v1/user/profile/67387693db2193ef3c0c6b46/created?minDenom=70&maxDenom=&color=multicolored&function=&page=1&limit=10&sortBy=denom&sortOrder=-55
+userRouter.get("/profile/:userId/created", userController.getCreatedStamps);
 
-// @route   GET /api/v1/user/display/:userId/owned
+// @route   GET /api/v1/user/profile/:userId/owned
 // @desc    get owned stamps by user
-// http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/owned
-userRouter.get("/display/:userId/owned", userController.getOwnedStamps);
+// http://localhost:3000/api/v1/user/profile/67387693db2193ef3c0c6b46/owned
+userRouter.get("/profile/:userId/owned", userController.getOwnedStamps);
 
-// @route   GET /api/v1/user/display/:userId/favourite
+// @route   GET /api/v1/user/profile/:userId/favourite
 // @desc    get favourite stamps by user
 // http://localhost:3000/api/v1/user/display/67387693db2193ef3c0c6b46/favourite
-userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
+userRouter.get("/profile/:userId/favourite", userController.getFavouriteStamps);
 
 // authenticated-required routes
 

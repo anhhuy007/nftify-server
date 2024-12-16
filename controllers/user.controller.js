@@ -133,6 +133,7 @@ exports.getOwnedStamps = asyncHandler(async (req, res) => {
       function: req.query.function,
       sortBy: req.query.sortBy,
       sortOrder: req.query.sortOrder,
+      sort: req.query.sort,
     };
 
     const result = await userService.getOwnedStamps(req.params.userId, {
