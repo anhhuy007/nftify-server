@@ -220,30 +220,42 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
 
 exports.getUserCollections = asyncHandler(async (req, res) => {
   try{
-    const userCollection = await userService.getUserCollections(req.params.userId);
-    collections = [];
-    for (collection of userCollection)
-    {
-      collections.push({
-        name: collection.name,
-        imgURL: collection.thumbUrl,
-        //bgURL: collection.bgURL,
-      });
+    const filters = {
+      name: req.query.name,
+      // description: req.query.description,
+      ownerId: req.query.ownerId,
+      status: req.query.status,
+      // minDate: req.query.minDate,
+      // maxDate: req.query.maxDate,
+      minViewCount: req.query.minViewCount,
+      maxViewCount: req.query.maxViewCount,
+      minFavouriteCount: req.query.minFavouriteCount,
+      maxFavouriteCount: req.query.maxFavouriteCount,
+      // sortBy: req.query.sortBy,
+      // sortOrder: req.query.sortOrder
+  };
+    const userCollection = await userService.getUserCollections(
+      userId = req.params.userId,
+      {
+        page: req.query.page,
+        limit: req.query.limit,
+        filters: Object.fromEntries(
+          Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+        )
+      }
+    );
 
-    }
-
-    if (collections.length === 0) {
+    if (userCollection.length === 0) {
       return res.status(404).json({ 
         success: false,
         message: "User collections not found" });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Get user collection successfully",
-      data: collections,
+      data: userCollection,
     });
-
 
   }
   catch(error)
