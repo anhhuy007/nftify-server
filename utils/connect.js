@@ -750,6 +750,20 @@ async function addUserBGColumn() {
   }
 }
 
+async function getOwnedStamps(userID) {
+  try {
+    const ownedStamps = await ownershipModel.find({ ownerId: userID });
+    console.log(`Found ${ownedStamps.length} stamps owned by user ${userID}`);
+    return ownedStamps;
+  }
+  catch (error) {
+    console.error('An error occurred during the getOwnedStamps process:', error);
+    throw error;
+  }
+  
+}
+// connectDB()
+// getOwnedStamps("673876c24af03358be502d87")
 // connectDB();
 // addUserBGColumn();
 

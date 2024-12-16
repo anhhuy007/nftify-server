@@ -437,6 +437,11 @@ class MarketplaceService {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
 
+        // if (filters.ownerId) {
+        //     mongoFilter["ownership.ownerId"] = new mongoose.Types.ObjectId(filters.ownerId);
+        // }
+        
+
         // Handle price filter
         const priceFilter = {};
         if (filters.minPrice || filters.maxPrice) {
@@ -451,6 +456,7 @@ class MarketplaceService {
                 );
             }
         }
+        
 
         // Handle sorting
         const { sortField, sortOrder } = this.handleSortOption(filters.sort);
@@ -510,7 +516,19 @@ class MarketplaceService {
                     from: "OwnerShip",
                     localField: "itemIdString",
                     foreignField: "itemId",
-                    pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
+                    pipeline: [
+                        { $sort: { createdAt: -1 } },
+                        { $limit: 1 },
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: [
+                                        "$ownerId", filters.ownerId
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "ownership",
                 },
             },
@@ -543,6 +561,15 @@ class MarketplaceService {
                 },
             },
         ];
+        
+        // Find any ownerDetails that null, remove them
+        if(filters.ownerId){
+        pipeline.push({
+            $match: {
+                ownerDetails: { $ne: null },
+            },
+        });
+        }
 
         // Apply price filter if exists
         if (Object.keys(priceFilter).length > 0) {
@@ -641,6 +668,7 @@ class MarketplaceService {
         };
     }
 
+    
     handleSortOption(sortOption) {
         // Sorting
         let sortField = "createdAt";

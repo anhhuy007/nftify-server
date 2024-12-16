@@ -151,44 +151,19 @@ class UserService {
   }
 
   async getOwnedStamps(userId, options = {}) {
-    // // Fetch all stamps that were ever owned by the user
-    // const onceOwnedStamps = await ownershipModel.find({ ownerId: userId });
-
-    // // Extract the itemIds of stamps once owned by the user
-    // const itemIds = onceOwnedStamps.map((ownership) => ownership.itemId);
-
-    // // Fetch the latest ownership record for each of these stamps
-    // const subTable = await ownershipModel.aggregate([
-    //   { $match: { itemId: { $in: itemIds } } }, // Filter to relevant stamps
-    //   { $sort: { createdAt: -1 } }, // Sort by createdAt in descending order
-    //   {
-    //     $group: {
-    //       // Group by itemId
-    //       _id: "$itemId",
-    //       latestOwnerId: { $first: "$ownerId" }, // Keep only the latest ownerId
-    //     },
-    //   },
-    //   { $match: { latestOwnerId: userId } }, // Filter to stamps where the latest owner is the user
-    // ]);
-    // // Return the list of currently owned stamps (extracting itemId)
-    // const ownedStampsId = subTable.map((record) => record._id);
-    // const result = await stampService.filterStamps(ownedStampsId, options);
     try {
       // Extract pagination from options with defaults
-      const page = options.page || 1;
-      const limit = options.limit || 10;
+      const { page = 1, limit = 10, filters = {} } = options;
     
-      // Build filters correctly
-      const filters = {
-        ownerId: userId,
-        ...options.filters
-      };
+      filters.ownerId = userId;
+      console.log('getOwnedStamps filters:', filters);
     
       const response = await marketplaceService.getStampsWithFilter({
         page,
         limit,
         filters
       });
+
 
       return response;
       
@@ -250,17 +225,9 @@ class UserService {
     
       // Handle response structure
       //console.log('getUserOnSaleItems response:', response);
-      stamps = response.items;
+      // stamps = response.items;
     
-      
-      
-      // Ensure we have an array to work with
-      if (!Array.isArray(stamps)) {
-        console.error('Expected array of stamps but got:', typeof stamps);
-        return [];
-      }
-    
-      return stamps;
+      return response;
       
     } catch (error) {
       console.error('Error in getUserOnSaleItems:', error);
