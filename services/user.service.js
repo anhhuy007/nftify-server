@@ -188,19 +188,8 @@ class UserService {
         limit,
         filters
       });
-    
-      // Handle response structure
-      console.log('getOwnedStamps response:', response);
-      let stamps = response.items;
-    
-      
-      // Ensure we have an array to work with
-      if (!Array.isArray(stamps)) {
-        console.error('Expected array of stamps but got:', typeof stamps);
-        return [];
-      }
-    
-      return stamps;
+
+      return response;
       
     } catch (error) {
       console.error('Error in getOwnedStamps:', error);
