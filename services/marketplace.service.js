@@ -437,10 +437,6 @@ class MarketplaceService {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
 
-        // if (filters.ownerId) {
-        //     mongoFilter["ownership.ownerId"] = new mongoose.Types.ObjectId(filters.ownerId);
-        // }
-        
 
         // Handle price filter
         const priceFilter = {};
@@ -538,6 +534,15 @@ class MarketplaceService {
                     preserveNullAndEmptyArrays: true,
                 },
             },
+            ...(filters.ownerId
+                ? [
+                      {
+                          $match: {
+                              "ownership.ownerId": filters.ownerId,
+                          },
+                      },
+                  ]
+                : []),
             {
                 $lookup: {
                     from: "User",
@@ -643,28 +648,21 @@ class MarketplaceService {
                 },
             },
             { $sort: { [sortField]: sortOrder } },
-            { $skip: skip },
-            { $limit: parsedLimit }
+            // { $skip: skip },
+            // { $limit: parsedLimit }
         );
 
         // Get total count of unique items and execute pipeline
-        const [totalUnique, items] = await Promise.all([
-            stampModel
-                .aggregate([
-                    { $match: mongoFilter },
-                    { $group: { _id: "$_id" } },
-                    { $count: "total" },
-                ])
-                .then((result) => result[0]?.total || 0),
-            stampModel.aggregate(pipeline),
-        ]);
+        const items = await stampModel.aggregate(pipeline);
+        const totalUnique = items.length;
+        const itemsPaginated = items.slice(skip, skip + parsedLimit);
 
         return {
             total: totalUnique,
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(totalUnique / parsedLimit),
-            items,
+            items: itemsPaginated,
         };
     }
 

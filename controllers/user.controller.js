@@ -250,7 +250,7 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
         success: false,
         message: "User collections not found" });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Get user collection successfully",
