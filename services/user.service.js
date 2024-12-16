@@ -9,6 +9,7 @@ const { LogDescription } = require("ethers");
 const accountModel = require("../models/account.schema");
 const bcrypt = require("bcrypt");
 const cartModel = require("../models/cart.schema");
+const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 
 class UserService {
   validateUserInput(user) {
@@ -399,7 +400,7 @@ class UserService {
     const filter = { _id: userId };
     const newUserProfile = await userModel.findOneAndUpdate(filter, update, {
       new: true,
-    });
+    }); 
 
     if (newUserProfile) {
       return {
@@ -419,8 +420,8 @@ class UserService {
     const currentPassword = await accountModel
       .findById(userId)
       .select("password");
-    console.log("Current password", currentPassword);
-    console.log("new password", body.password);
+    // console.log("Current password", currentPassword);
+    // console.log("new password", body.password);
     const isMatch = await bcrypt.compare(
       body.password,
       currentPassword.password
