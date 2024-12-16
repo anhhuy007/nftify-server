@@ -14,11 +14,10 @@ userRouter.get("/display/:userId/favourite", userController.getFavouriteStamps);
 // authenticated-required routes
 
 userRouter.use(authenticateToken);
+userRouter.get("/", userController.getUser);
 userRouter.put("/profile/", userController.updateUser);
 userRouter.post("/create", userController.createUser);
 userRouter.delete("/delete/", userController.deleteUser);
-
-
 
 // NFTs routes
 userRouter.post("/create/nft", userController.createNewStamp);
