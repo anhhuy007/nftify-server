@@ -729,6 +729,29 @@ async function saveGeneratedCollections(){
   }
 }
 
+async function addUserBGColumn() {
+  try {
+    const users = await userModel.find({});
+    console.log(`Found ${users.length} users to update`);
+
+    for (const user of users) {
+      await userModel.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            bgUrl: "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafybeicr3a52vtv56ft6aec2qoxalk3ozi47qyufiwnbroacsw5upxrlha",
+          },
+        }
+      );
+      console.log(`Updated item ${user._id}`);
+    }
+  } catch (error) {
+    console.error('An error occurred during the addBGColumn process:', error);
+  }
+}
+
+// connectDB();
+// addUserBGColumn();
 
 // connectDB();
 // saveGeneratedCollections();
