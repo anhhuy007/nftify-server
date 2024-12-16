@@ -763,6 +763,7 @@ class MarketplaceService {
                 {
                     $project: {
                         name: 1,
+                        ownerId: 1,
                         description: 1,
                         status: 1,
                         items: 1,
