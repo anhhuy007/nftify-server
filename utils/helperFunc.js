@@ -36,23 +36,21 @@ const handleServiceError = (res, error) => {
     'Missing': 400,               // Bad Request
     'Fail': 400,
     'Validation failed': 422,     // Unprocessable Entity
-
     'Exist': 409,                 // Conflict
     'NoneExist': 404,              // Not Found
     'Unvalid': 401,                // Unauthorized
     'Unauthorized': 401,          // Unauthorized
     'Expire': 400,
     'Other': 417,                 // Internal Server Error
-
   };
   
 
   const statusCode = Object.entries(errorMap)
     .find(([key]) => error.message.includes(key))?.[1] || 500;
 
-  const message = error.message.
+  const message = error.message.includes('Validation failed') ? error.errors : error.message;
   res.status(statusCode).json({
-    message: error.message,
+    message: message,
     ...(process.env.NODE_ENV === 'development' && { 
       stack: error.stack 
     })
