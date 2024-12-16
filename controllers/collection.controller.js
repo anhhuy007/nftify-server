@@ -5,9 +5,9 @@ const collectionService = require("../services/collection.service");
 exports.createCollection = asyncHandler(async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: 'User not authenticated' });
+      return res.status(401).json({ message: "User not authenticated" });
     }
-    
+
     console.log("Create new collection for user: ", req.user._id);
 
     const newCollection = await collectionService.createCollection(
@@ -51,7 +51,7 @@ exports.getCollections = asyncHandler(async (req, res) => {
       minFavouriteCount: req.query.minFavouriteCount,
       maxFavouriteCount: req.query.maxFavouriteCount,
       sortBy: req.query.sortBy,
-      sortOrder: req.query.sortOrder
+      sortOrder: req.query.sortOrder,
     };
 
     const result = await collectionService.filterCollections({
@@ -147,7 +147,7 @@ exports.getCollectionStamps = asyncHandler(async (req, res) => {
       color: req.query.color,
       function: req.query.function,
       sortBy: req.query.sortBy,
-      sortOrder: req.query.sortOrder
+      sortOrder: req.query.sortOrder,
     };
     const result = await collectionService.getCollectionStamps({
       collectionId: req.params.collectionId,
@@ -155,58 +155,55 @@ exports.getCollectionStamps = asyncHandler(async (req, res) => {
       limit: req.query.limit,
       filters: Object.fromEntries(
         Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
-      )
+      ),
     });
     res.json(result);
   } catch (error) {
     handleServiceError(res, error);
   }
-
-
 });
 
-exports.getCollectionItems = asyncHandler(async (req, res)=> {
+exports.getCollectionItems = asyncHandler(async (req, res) => {
   try {
-      const filters = {
-          title: req.query.title,
-          creatorId: req.query.creatorId,
-          // issuedBy: req.query.issuedBy,
-          // startDate: req.query.startDate,
-          // endDate: req.query.endDate,
-          minPrice: req.query.minPrice,
-          maxPrice: req.query.maxPrice,
-          // color: req.query.color,
-          // function: req.query.function,
-          collectionName: req.query.collectionName,
-          ownerName: req.query.ownerName,
-          sortBy: req.query.sortBy,
-          sortOrder: req.query.sortOrder,
-          status: req.query.status,
-          sort: req.query.sort
-      };
-      const result = await collectionService.getCollectionItems({
-          collectionId : req.params.id,
-          page: req.query.page,
-          limit: req.query.limit,
-          filters: Object.fromEntries(
-              Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
-          )
-      });
+    const filters = {
+      title: req.query.title,
+      creatorId: req.query.creatorId,
+      // issuedBy: req.query.issuedBy,
+      // startDate: req.query.startDate,
+      // endDate: req.query.endDate,
+      minPrice: req.query.minPrice,
+      maxPrice: req.query.maxPrice,
+      // color: req.query.color,
+      // function: req.query.function,
+      collectionName: req.query.collectionName,
+      ownerName: req.query.ownerName,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder,
+      status: req.query.status,
+      sort: req.query.sort,
+    };
+    const result = await collectionService.getCollectionItems({
+      collectionId: req.params.id,
+      page: req.query.page,
+      limit: req.query.limit,
+      filters: Object.fromEntries(
+        Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+      ),
+    });
 
-      res.json(result);
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
   }
-  catch (error) {
-      handleServiceError(res, error);
-  }
-
-
-})
+});
 
 exports.getCollectionAbout = asyncHandler(async (req, res) => {
   try {
-      const collection = await collectionService.getCollectionAbout(req.params.id);
-      res.json(collection);
+    const collection = await collectionService.getCollectionAbout(
+      req.params.id
+    );
+    res.json(collection);
   } catch (error) {
-      handleServiceError(res, error);
+    handleServiceError(res, error);
   }
 });

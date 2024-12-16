@@ -99,7 +99,6 @@ exports.getStampsWithFilter = asyncHandler(async (req, res) => {
 
         // example api 
         // /list/stamps?page=1&limit=10&title=abc&creatorId=123&issuedBy=xyz&startDate=2021-01-01&endDate=2021-12-31&minDenom=1&maxDenom=100&color=red&function=abc&sortBy=createdAt&sortOrder=asc
-
         const result = await MarketplaceService.getStampsWithFilter({
             page: req.query.page,
             limit: req.query.limit,

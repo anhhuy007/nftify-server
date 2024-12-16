@@ -11,7 +11,6 @@ exports.getUser = asyncHandler(async (req, res) => {
     }
     const user = await userService.getUserById(req.user._id);
     res.json(user);
-
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -65,14 +64,11 @@ exports.getUsers = asyncHandler(async (req, res) => {
 
 exports.updateUser = asyncHandler(async (req, res) => {
   try {
-    const updatedUser = await userService.updateUser(
-      req.user._id,
-      req.body
-    );
+    const updatedUser = await userService.updateUser(req.user._id, req.body);
     res.json({
       success: true,
       message: "Updated user successfully",
-      data: updatedUser
+      data: updatedUser,
     });
   } catch (error) {
     handleServiceError(res, error);
@@ -217,88 +213,82 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
   }
 });
 
-
 exports.getUserCollections = asyncHandler(async (req, res) => {
-  try{
-    const userCollection = await userService.getUserCollections(req.params.userId);
-    collections = [];
-    for (collection of userCollection)
-    {
-      collections.push({
-        name: collection.name,
-        imgURL: collection.thumbUrl,
-        //bgURL: collection.bgURL,
-      });
+  try {
+    const userCollection = await userService.getUserCollections(
+      req.params.userId
+    );
 
+    collections = [];
+    for (collection of userCollection) {
+      collections.push({
+        _id: collection._id,
+        name: collection.name,
+        thumbUrl: collection.thumbUrl,
+        // bgURL: collection.bgUrl,
+      });
     }
 
     if (collections.length === 0) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: "User collections not found" });
+        message: "User collections not found",
+      });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Get user collection successfully",
-      data: collections,
+      items: collections,
     });
-
-
-  }
-  catch(error)
-  {
+  } catch (error) {
     handleServiceError(res, error);
   }
 });
 
 exports.getUserActivity = asyncHandler(async (req, res) => {
-  try{
+  try {
     const userActivity = await userService.getUserActivity(req.params.userId);
     activities = [];
-    for (activity of userActivity)
-    {
+    for (activity of userActivity) {
       activities.push({
         name: activity.name,
         imgURL: activity.thumbUrl,
         //bgURL: collection.bgURL,
       });
-
     }
 
     if (activities.length === 0) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: "User activities not found" });
+        message: "User activities not found",
+      });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Get user activities successfully",
       data: activities,
     });
-}
-catch(error)
-{
-  handleServiceError(res, error);
-}
+  } catch (error) {
+    handleServiceError(res, error);
+  }
 });
 
 exports.getItemsOnSale = asyncHandler(async (req, res) => {
   try {
-    const itemsOnSale = await userService.getUserOnSaleItems(req.params.userId);
+    const itemsOnSale = await userService.getUserOnSaleItems(
+      req.params.userId,
+      req.query
+    );
     if (itemsOnSale.length === 0) {
       return res.status(404).json({ message: "Items on sale not found" });
     }
     res.json(itemsOnSale);
+  } catch (error) {
+    handleServiceError(res, error);
   }
-catch(error)
-{
-  handleServiceError(res, error);
-}
-}
-);
-
+});
 
 exports.connectWallet = asyncHandler(async (req, res) => {
   try {
@@ -324,7 +314,6 @@ exports.connectWallet = asyncHandler(async (req, res) => {
 // setting page
 exports.getUserSettings = asyncHandler(async (req, res) => {
   try {
-
     const userSettings = await userService.getUserSettings(req.user._id);
     res.json(userSettings);
   } catch (error) {
@@ -333,8 +322,6 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
 });
 
 exports.changeUserProfile = asyncHandler(async (req, res) => {
-  console.log(req.user._id);
-  console.log(req.body);
   try {
     const updatedUser = await userService.changeUserProfile(
       req.user._id,
@@ -344,17 +331,15 @@ exports.changeUserProfile = asyncHandler(async (req, res) => {
   } catch (error) {
     handleServiceError(res, error);
   }
-
 });
 
-exports.checkPassword = asyncHandler(async (req, res) => { 
+exports.checkPassword = asyncHandler(async (req, res) => {
   try {
     const result = await userService.checkPassword(req.user._id, req.body);
     res.json(result);
   } catch (error) {
     handleServiceError(res, error);
   }
-
 });
 // change password
 exports.changePassword = asyncHandler(async (req, res) => {

@@ -43,13 +43,10 @@ class UserService {
     // const existingUser = userModel.find({
     //   name: user.name,
     // });
-    // console.log("Existing user", existingUser);
     // if (existingUser) throw new Error("Username already exists");
   }
 
   async createUser(userId, user) {
-    console.log("Create new user", user);
-
     // Validate input
     this.validateUserInput(user);
     // Prepare user for saving
@@ -154,24 +151,20 @@ class UserService {
     try {
       // Extract pagination from options with defaults
       const { page = 1, limit = 10, filters = {} } = options;
-    
+
       filters.ownerId = userId;
-      console.log('getOwnedStamps filters:', filters);
-    
+
       const response = await marketplaceService.getStampsWithFilter({
         page,
         limit,
-        filters
+        filters,
       });
 
-
       return response;
-      
     } catch (error) {
-      console.error('Error in getOwnedStamps:', error);
+      console.error("Error in getOwnedStamps:", error);
       throw error;
     }
-
   }
   async getFavoriteStamps(userId, options = {}) {
     const favouriteStamps = await favouriteModel.findOne({
@@ -182,10 +175,10 @@ class UserService {
     return result;
   }
 
-    async getUserCollections(userId) {
-      const collections = await collectionModel.find({ ownerId: userId });
-      return collections;
-    }
+  async getUserCollections(userId) {
+    const collections = await collectionModel.find({ ownerId: userId });
+    return collections;
+  }
 
   async createNewStamp(userId, stamp) {
     // Validate input
@@ -209,28 +202,23 @@ class UserService {
       // Extract pagination from options with defaults
       const page = options.page || 1;
       const limit = options.limit || 10;
-    
+
       // Build filters correctly
       const filters = {
         ownerId: userId,
-        status: 'selling',
-        ...options.filters
+        status: "selling",
+        ...options.filters,
       };
-    
+
       const response = await marketplaceService.getStampsWithFilter({
         page,
         limit,
-        filters
+        filters,
       });
-    
-      // Handle response structure
-      //console.log('getUserOnSaleItems response:', response);
-      // stamps = response.items;
-    
+
       return response;
-      
     } catch (error) {
-      console.error('Error in getUserOnSaleItems:', error);
+      console.error("Error in getUserOnSaleItems:", error);
       throw error;
     }
   }
@@ -287,7 +275,6 @@ class UserService {
   async addToCart(userId, itemId) {
     // Check if item exists
     const item = await this.getCartItemById(itemId);
-    console.log("Item found", item);
 
     // Check if item is already in cart
     const existingItem = await cartModel.findOne({
@@ -413,7 +400,7 @@ class UserService {
           avatarUrl: 1,
           gender: 1,
           status: 1,
-          bgUrl: 1, 
+          bgUrl: 1,
           email: "$account.email",
           password: "$account.password",
           username: "$account.username",
@@ -425,20 +412,17 @@ class UserService {
   }
 
   async changeUserProfile(userId, user) {
-    // console.log("Change user profile", user);
     const update = {
       name: user.name,
       description: user.description,
       avatarUrl: user.avatarUrl,
-      bgUrl: user.bgUrl
+      bgUrl: user.bgUrl,
     };
-    // console.log("Update", update);
 
     const filter = { _id: userId };
     const newUserProfile = await userModel.findOneAndUpdate(filter, update, {
       new: true,
-    }); 
-    // console.log("New user profile", newUserProfile);
+    });
 
     if (newUserProfile) {
       return {
@@ -458,8 +442,6 @@ class UserService {
     const currentPassword = await accountModel
       .findById(userId)
       .select("password");
-    // console.log("Current password", currentPassword);
-    // console.log("new password", body.password);
     const isMatch = await bcrypt.compare(
       body.password,
       currentPassword.password
@@ -487,45 +469,42 @@ class UserService {
       new: true,
     });
 
-        if (newUserAccount) {
-            return {
-                status: "success",
-                data: newUserAccount,
-            };
-        } else {
-            const oldUserAccount = await accountModel.findById(userId);
-            return {
-                status: "fail",
-                data: oldUserAccount,
-            };
-        }
+    if (newUserAccount) {
+      return {
+        status: "success",
+        data: newUserAccount,
+      };
+    } else {
+      const oldUserAccount = await accountModel.findById(userId);
+      return {
+        status: "fail",
+        data: oldUserAccount,
+      };
     }
-    async changeEmail(accountId, body) {
-        const update = {
-            email: body.email,
-        };
+  }
+  async changeEmail(accountId, body) {
+    const update = {
+      email: body.email,
+    };
 
-        const filter = { _id: accountId };
-        const newAccount = await accountModel.findOneAndUpdate(
-            filter,
-            update,
-            { new: true }
-        );
+    const filter = { _id: accountId };
+    const newAccount = await accountModel.findOneAndUpdate(filter, update, {
+      new: true,
+    });
 
-        if (newAccount) {
-            return {
-                status: "success",
-                data: newAccount,
-            };
-        } else {
-            const oldAccount = await accountModel.findById(accountId);
-            return {
-                status: "fail",
-                data: oldAccount,
-            };
-        }
+    if (newAccount) {
+      return {
+        status: "success",
+        data: newAccount,
+      };
+    } else {
+      const oldAccount = await accountModel.findById(accountId);
+      return {
+        status: "fail",
+        data: oldAccount,
+      };
     }
+  }
 }
-
 
 module.exports = new UserService();

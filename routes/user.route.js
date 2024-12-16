@@ -13,7 +13,6 @@ userRouter.get("/find", userController.getUsers);
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b
 userRouter.get("/profile/:userId", userController.getUserByID);
 
-
 // @route   GET /api/v1/user/profile/:userId/collections
 // @desc    get user collections
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/collections
@@ -22,8 +21,7 @@ userRouter.get("/profile/:userId/collections", userController.getUserCollections
 // @route   GET /api/v1/user/profile/:userId/onSale
 // @desc    get user items on sale
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/onSale
-userRouter.get("/profile/:userId/onSale", userController.getItemsOnSale);
-
+userRouter.get("/profile/:userId/on-sale", userController.getItemsOnSale);
 
 // @route   GET /api/v1/user/display/:userId/created
 // @desc    get created stamps by user
