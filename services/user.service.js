@@ -59,7 +59,7 @@ class UserService {
     return newUser;
   }
 
-  async getUsesById(userId) {
+  async getUserById(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new Error("[Error][Invalid] Invalid userId format");
     }
@@ -378,6 +378,7 @@ class UserService {
           avatarUrl: 1,
           gender: 1,
           status: 1,
+          bgUrl: 1, 
           email: "$account.email",
           password: "$account.password",
           username: "$account.username",
