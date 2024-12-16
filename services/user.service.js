@@ -9,6 +9,7 @@ const { LogDescription } = require("ethers");
 const accountModel = require("../models/account.schema");
 const bcrypt = require("bcrypt");
 const cartModel = require("../models/cart.schema");
+const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 
 class UserService {
   validateUserInput(user) {
@@ -378,6 +379,7 @@ class UserService {
           avatarUrl: 1,
           gender: 1,
           status: 1,
+          bgUrl:1,
           email: "$account.email",
           password: "$account.password",
           username: "$account.username",
