@@ -395,6 +395,7 @@ class UserService {
       name: user.name,
       description: user.description,
       avatarUrl: user.avatarUrl,
+      bgUrl: user.bgUrl,
     };
 
     const filter = { _id: userId };
