@@ -247,8 +247,8 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
 });
 
 exports.changeUserProfile = asyncHandler(async (req, res) => {
-  console.log(req.user._id);
-  console.log(req.body);
+  // console.log(req.user._id);
+  // console.log(req.body);
   try {
     const updatedUser = await userService.changeUserProfile(
       req.user._id,
