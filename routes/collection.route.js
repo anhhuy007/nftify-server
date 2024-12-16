@@ -8,7 +8,7 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 collectionRouter.get("/list", collectionController.getCollections);
 collectionRouter.get("/list/trending", collectionController.getTrendingCollections);
 collectionRouter.get("/:collectionId", collectionController.getCollectionById);
-collectionRouter.get("/:collectionId/detail", collectionController.getCollectionDetails);
+// collectionRouter.get("/:collectionId/detail", collectionController.getColectionDetails);
 collectionRouter.get("/:collectionId/stamp", collectionController.getCollectionStamps);
 
 
