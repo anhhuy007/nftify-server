@@ -4,6 +4,19 @@ const userService = require("../services/user.service");
 const nftService = require("../services/nft.service");
 const { on } = require("../models/user.schema");
 
+exports.getUser = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    const user = await userService.getUserById(req.user._id);
+    res.json(user);
+
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
 exports.createUser = asyncHandler(async (req, res) => {
   try {
     if (!req.user._id) {
@@ -23,7 +36,7 @@ exports.createUser = asyncHandler(async (req, res) => {
 });
 exports.getUserByID = asyncHandler(async (req, res) => {
   try {
-    const user = await userService.getUsesById(req.params.userId);
+    const user = await userService.getUserById(req.params.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -320,6 +333,8 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
 });
 
 exports.changeUserProfile = asyncHandler(async (req, res) => {
+  console.log(req.user._id);
+  console.log(req.body);
   try {
     const updatedUser = await userService.changeUserProfile(
       req.user._id,

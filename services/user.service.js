@@ -11,6 +11,7 @@ const { LogDescription } = require("ethers");
 const accountModel = require("../models/account.schema");
 const bcrypt = require("bcrypt");
 const cartModel = require("../models/cart.schema");
+const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 
 class UserService {
   validateUserInput(user) {
@@ -61,7 +62,7 @@ class UserService {
     return newUser;
   }
 
-  async getUsesById(userId) {
+  async getUserById(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new Error("[Error][Invalid] Invalid userId format");
     }
@@ -412,6 +413,7 @@ class UserService {
           avatarUrl: 1,
           gender: 1,
           status: 1,
+          bgUrl: 1, 
           email: "$account.email",
           password: "$account.password",
           username: "$account.username",
@@ -423,16 +425,20 @@ class UserService {
   }
 
   async changeUserProfile(userId, user) {
+    // console.log("Change user profile", user);
     const update = {
       name: user.name,
       description: user.description,
       avatarUrl: user.avatarUrl,
+      bgUrl: user.bgUrl
     };
+    // console.log("Update", update);
 
     const filter = { _id: userId };
     const newUserProfile = await userModel.findOneAndUpdate(filter, update, {
       new: true,
-    });
+    }); 
+    // console.log("New user profile", newUserProfile);
 
     if (newUserProfile) {
       return {
@@ -452,8 +458,8 @@ class UserService {
     const currentPassword = await accountModel
       .findById(userId)
       .select("password");
-    console.log("Current password", currentPassword);
-    console.log("new password", body.password);
+    // console.log("Current password", currentPassword);
+    // console.log("new password", body.password);
     const isMatch = await bcrypt.compare(
       body.password,
       currentPassword.password

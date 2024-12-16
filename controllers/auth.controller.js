@@ -19,9 +19,10 @@ exports.login = asyncHandler(async (req, res) => {
             ...tokens
         });
     } catch (err) {
-        return res.status(401).json({
-            message: err.message
-        });
+        // return res.status(401).json({
+        //     message: err.message
+        // });
+        return helperFunc.handleServiceError(res, err);
     }
 });
 

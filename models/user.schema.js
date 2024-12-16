@@ -45,6 +45,10 @@ const UserSchema = new Schema(
       type: String,
       default: null,
     },
+    bgUrl:{
+      type: String,
+      default: null,
+    }
   },
   {
     versionKey: false,
