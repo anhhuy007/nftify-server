@@ -4,17 +4,27 @@ const userService = require("../services/user.service");
 const nftService = require("../services/nft.service");
 const { on } = require("../models/user.schema");
 
+exports.getUser = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    const user = await userService.getUserById(req.user._id);
+    res.json(user);
+
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
 exports.createUser = asyncHandler(async (req, res) => {
   try {
     if (!req.user._id) {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
-    const newUser = await userService.createUser(
-      req.user._id,
-      req.body
-    );
-    
+    const newUser = await userService.createUser(req.user._id, req.body);
+
     res.json({
       success: true,
       message: "Created user successfully",
@@ -26,7 +36,7 @@ exports.createUser = asyncHandler(async (req, res) => {
 });
 exports.getUserByID = asyncHandler(async (req, res) => {
   try {
-    const user = await userService.getUsesById(req.params.userId);
+    const user = await userService.getUserById(req.params.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -354,6 +364,108 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
 
     const userSettings = await userService.getUserSettings(req.user._id);
     res.json(userSettings);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.changeUserProfile = asyncHandler(async (req, res) => {
+  // console.log(req.user._id);
+  // console.log(req.body);
+  try {
+    const updatedUser = await userService.changeUserProfile(
+      req.user._id,
+      req.body
+    );
+    res.json(updatedUser);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+});
+
+exports.checkPassword = asyncHandler(async (req, res) => { 
+  try {
+    const result = await userService.checkPassword(req.user._id, req.body);
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+});
+// change password
+exports.changePassword = asyncHandler(async (req, res) => {
+  try {
+    const result = await userService.changePassword(req.user._id, req.body);
+    res.json(result);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.addToCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.addToCart(req.user._id, req.body.itemId);
+    // const result = await userService.addToCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
+
+    res.json({
+      success: true,
+      message: "Added item to cart successfully",
+      data: result,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.removeFromCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.removeFromCart(
+      req.user._id,
+      req.body.itemId
+    );
+    // const result = await userService.removeFromCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
+
+    res.json({
+      success: true,
+      message: "Removed item from cart successfully",
+      data: result,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.getCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.getCart(req.user._id);
+    // const result = await userService.getCartItems("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+
+    res.json({
+      success: true,
+      message: "Fetched cart items successfully",
+      data: result,
+    });
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+exports.changeEmail = asyncHandler(async (req, res) => {
+  try {
+    const result = await userService.changeEmail(req.user._id, req.body);
+    res.json(result);
   } catch (error) {
     handleServiceError(res, error);
   }
