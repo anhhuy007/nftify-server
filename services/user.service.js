@@ -398,7 +398,7 @@ class UserService {
     const filter = { _id: userId };
     const newUserProfile = await userModel.findOneAndUpdate(filter, update, {
       new: true,
-    });
+    }); 
 
     if (newUserProfile) {
       return {
@@ -418,8 +418,8 @@ class UserService {
     const currentPassword = await accountModel
       .findById(userId)
       .select("password");
-    console.log("Current password", currentPassword);
-    console.log("new password", body.password);
+    // console.log("Current password", currentPassword);
+    // console.log("new password", body.password);
     const isMatch = await bcrypt.compare(
       body.password,
       currentPassword.password
