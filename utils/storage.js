@@ -34,7 +34,7 @@ async function uploadAvatar(folderPath) {
 }
 
 // const folder = "../Avatar";
-uploadAvatar("../Avatar");
+// uploadAvatar("../Avatar");
 
 
 // // Setup IPFS Storage

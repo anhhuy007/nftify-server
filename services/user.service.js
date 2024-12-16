@@ -151,38 +151,72 @@ class UserService {
   }
 
   async getOwnedStamps(userId, options = {}) {
-    // Fetch all stamps that were ever owned by the user
-    const onceOwnedStamps = await ownershipModel.find({ ownerId: userId });
+    // // Fetch all stamps that were ever owned by the user
+    // const onceOwnedStamps = await ownershipModel.find({ ownerId: userId });
 
-    // Extract the itemIds of stamps once owned by the user
-    const itemIds = onceOwnedStamps.map((ownership) => ownership.itemId);
+    // // Extract the itemIds of stamps once owned by the user
+    // const itemIds = onceOwnedStamps.map((ownership) => ownership.itemId);
 
-        // Fetch the latest ownership record for each of these stamps
-        const subTable = await ownershipModel.aggregate([
-            { $match: { itemId: { $in: itemIds } } }, // Filter to relevant stamps
-            { $sort: { createdAt: -1 } }, // Sort by createdAt in descending order
-            {
-                $group: {
-                    // Group by itemId
-                    _id: "$itemId",
-                    latestOwnerId: { $first: "$ownerId" }, // Keep only the latest ownerId
-                },
-            },
-            { $match: { latestOwnerId: userId } }, // Filter to stamps where the latest owner is the user
-        ]);
-        // Return the list of currently owned stamps (extracting itemId)
-        const ownedStampsId = subTable.map((record) => record._id);
-        const result = await stampService.filterStamps(ownedStampsId, options);
-        return result;
+    // // Fetch the latest ownership record for each of these stamps
+    // const subTable = await ownershipModel.aggregate([
+    //   { $match: { itemId: { $in: itemIds } } }, // Filter to relevant stamps
+    //   { $sort: { createdAt: -1 } }, // Sort by createdAt in descending order
+    //   {
+    //     $group: {
+    //       // Group by itemId
+    //       _id: "$itemId",
+    //       latestOwnerId: { $first: "$ownerId" }, // Keep only the latest ownerId
+    //     },
+    //   },
+    //   { $match: { latestOwnerId: userId } }, // Filter to stamps where the latest owner is the user
+    // ]);
+    // // Return the list of currently owned stamps (extracting itemId)
+    // const ownedStampsId = subTable.map((record) => record._id);
+    // const result = await stampService.filterStamps(ownedStampsId, options);
+    try {
+      // Extract pagination from options with defaults
+      const page = options.page || 1;
+      const limit = options.limit || 10;
+    
+      // Build filters correctly
+      const filters = {
+        ownerId: userId,
+        ...options.filters
+      };
+    
+      const response = await marketplaceService.getStampsWithFilter({
+        page,
+        limit,
+        filters
+      });
+    
+      // Handle response structure
+      console.log('getOwnedStamps response:', response);
+      let stamps = response.items;
+    
+      
+      // Ensure we have an array to work with
+      if (!Array.isArray(stamps)) {
+        console.error('Expected array of stamps but got:', typeof stamps);
+        return [];
+      }
+    
+      return stamps;
+      
+    } catch (error) {
+      console.error('Error in getOwnedStamps:', error);
+      throw error;
     }
-    async getFavoriteStamps(userId, options = {}) {
-        const favouriteStamps = await favouriteModel.findOne({
-            userId: userId,
-        });
-        const stampIds = favouriteStamps?.itemId || [];
-        const result = await stampService.filterStamps(stampIds, options);
-        return result;
-    }
+
+  }
+  async getFavoriteStamps(userId, options = {}) {
+    const favouriteStamps = await favouriteModel.findOne({
+      userId: userId,
+    });
+    const stampIds = favouriteStamps?.itemId || [];
+    const result = await stampService.filterStamps(stampIds, options);
+    return result;
+  }
 
     async getUserCollections(userId) {
       const collections = await collectionModel.find({ ownerId: userId });
@@ -204,55 +238,57 @@ class UserService {
     // Create stamp
     const result = await nftService.mintNFT(preparedStamp, 1.2, true);
 
-        return result;
-    }
-
-    async getUserOnSaleItems(userId, options = {}) {
-      try {
-        // Extract pagination from options with defaults
-        const page = options.page || 1;
-        const limit = options.limit || 10;
+    return result;
+  }
+  async getUserOnSaleItems(userId, options = {}) {
+    try {
+      // Extract pagination from options with defaults
+      const page = options.page || 1;
+      const limit = options.limit || 10;
+    
+      // Build filters correctly
+      const filters = {
+        ownerId: userId,
+        status: 'selling',
+        ...options.filters
+      };
+    
+      const response = await marketplaceService.getStampsWithFilter({
+        page,
+        limit,
+        filters
+      });
+    
+      // Handle response structure
+      //console.log('getUserOnSaleItems response:', response);
+      stamps = response.items;
+    
       
-        // Build filters correctly
-        const filters = {
-          ownerId: userId,
-          status: 'selling',
-          ...options.filters
-        };
       
-        const response = await marketplaceService.getStampsWithFilter({
-          page,
-          limit,
-          filters
-        });
-      
-        // Handle response structure (assuming response has items property)
-        const stamps = response.items;
-        
-        // Ensure we have an array to work with
-        if (!Array.isArray(stamps)) {
-          console.error('Expected array of stamps but got:', typeof stamps);
-          return [];
-        }
-      
-        return stamps;
-        
-      } catch (error) {
-        console.error('Error in getUserOnSaleItems:', error);
-        throw error;
+      // Ensure we have an array to work with
+      if (!Array.isArray(stamps)) {
+        console.error('Expected array of stamps but got:', typeof stamps);
+        return [];
       }
+    
+      return stamps;
+      
+    } catch (error) {
+      console.error('Error in getUserOnSaleItems:', error);
+      throw error;
     }
-    async connectWallet(userId, walletAddress) {
-      const user = await userModel.findOne({ _id: userId });
-      if (!user) {
-          throw new Error("User not found");
-      }
-      const updatedUser = await userModel.findOneAndUpdate(
-          { _id: userId },
-          { $set: { walletAddress } },
-          { new: true }
-      );
-      return updatedUser;
+  }
+  async connectWallet(userId, walletAddress) {
+    const user = await userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: { walletAddress } },
+      { new: true }
+    );
+    return updatedUser;
   }
 
   async getCartItemById(itemId) {
