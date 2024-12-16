@@ -391,17 +391,20 @@ class UserService {
   }
 
   async changeUserProfile(userId, user) {
+    // console.log("Change user profile", user);
     const update = {
       name: user.name,
       description: user.description,
       avatarUrl: user.avatarUrl,
-      bgUrl: user.bgUrl,
+      bgUrl: user.bgUrl
     };
+    // console.log("Update", update);
 
     const filter = { _id: userId };
     const newUserProfile = await userModel.findOneAndUpdate(filter, update, {
       new: true,
     }); 
+    // console.log("New user profile", newUserProfile);
 
     if (newUserProfile) {
       return {
