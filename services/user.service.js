@@ -14,46 +14,51 @@ const cartModel = require("../models/cart.schema");
 const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 
 class UserService {
-  validateUserInput(user) {
-    if (!user) {
-      throw new Error("User data is required");
+    validateUserInput(user) {
+        if (!user) {
+            throw new Error("User data is required");
+        }
+
+        // Validate required fields
+        const requiredFields = ["name"];
+        for (const field of requiredFields) {
+            if (!user[field]) {
+                throw new Error(
+                    `[Error][Missing] Missing required field: ${field}`
+                );
+            }
+        }
+
+        // Validate status
+        const validStatus = ["pending", "verified", "rejected"];
+        if (!validStatus.includes(user.status)) {
+            throw new Error("[Error][Invalid] Invalid status value");
+        }
+
+        // Validate gender
+        const validGender = ["male", "female"];
+        if (!validGender.includes(user.gender)) {
+            throw new Error("[Error][Invalid] Invalid gender value");
+        }
+
+        // check if username already exists
+        // const existingUser = userModel.find({
+        //   name: user.name,
+        // });
+        // console.log("Existing user", existingUser);
+        // if (existingUser) throw new Error("Username already exists");
     }
 
-    // Validate required fields
-    const requiredFields = ["name"];
-    for (const field of requiredFields) {
-      if (!user[field]) {
-        throw new Error(`[Error][Missing] Missing required field: ${field}`);
-      }
-    }
+    async createUser(userId, user) {
+        console.log("Create new user", user);
 
-    // Validate status
-    const validStatus = ["pending", "verified", "rejected"];
-    if (!validStatus.includes(user.status)) {
-      throw new Error("[Error][Invalid] Invalid status value");
-    }
-
-    // Validate gender
-    const validGender = ["male", "female"];
-    if (!validGender.includes(user.gender)) {
-      throw new Error("[Error][Invalid] Invalid gender value");
-    }
-
-    // check if username already exists
-    // const existingUser = userModel.find({
-    //   name: user.name,
-    // });
-    // if (existingUser) throw new Error("Username already exists");
-  }
-
-  async createUser(userId, user) {
-    // Validate input
-    this.validateUserInput(user);
-    // Prepare user for saving
-    const preparedUser = {
-      ...user,
-      _id: userId,
-    };
+        // Validate input
+        this.validateUserInput(user);
+        // Prepare user for saving
+        const preparedUser = {
+            ...user,
+            _id: userId,
+        };
 
     const newUser = await userModel.create(preparedUser);
     return newUser;
@@ -243,43 +248,46 @@ class UserService {
 
     return result;
   }
-  async getUserOnSaleItems(userId, options = {}) {
-    try {
-      // Extract pagination from options with defaults
-      const page = options.page || 1;
-      const limit = options.limit || 10;
+    async getUserOnSaleItems(userId, options = {}) {
+        const page = options.page || 1;
+        const limit = options.limit || 10;
 
-      // Build filters correctly
-      const filters = {
-        ownerId: userId,
-        status: "selling",
-        ...options.filters,
-      };
+        // Build filters correctly
+        const filters = {
+            // ownerId: userId,
+            status: "selling",
+            ...options.filters,
+        };
+        console.log("Filters", filters);
+        const response = await marketplaceService.getStampsWithFilter({
+            page,
+            limit,
+            filters,
+        });
 
-      const response = await marketplaceService.getStampsWithFilter({
-        page,
-        limit,
-        filters,
-      });
+        // Handle response structure (assuming response has items property)
+        const stamps = response.items;
 
-      return response;
-    } catch (error) {
-      console.error("Error in getUserOnSaleItems:", error);
-      throw error;
+        // Ensure we have an array to work with
+        if (!Array.isArray(stamps)) {
+            console.error("Expected array of stamps but got:", typeof stamps);
+            return [];
+        }
+
+        return stamps;
     }
-  }
   async connectWallet(userId, walletAddress) {
-    const user = await userModel.findOne({ _id: userId });
-    if (!user) {
-      throw new Error("User not found");
+      const user = await userModel.findOne({ _id: userId });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const updatedUser = await userModel.findOneAndUpdate(
+        { _id: userId },
+        { $set: { walletAddress } },
+        { new: true }
+      );
+      return updatedUser;
     }
-    const updatedUser = await userModel.findOneAndUpdate(
-      { _id: userId },
-      { $set: { walletAddress } },
-      { new: true }
-    );
-    return updatedUser;
-  }
 
   async getCartItemById(itemId) {
     const item = await stampModel.aggregate([

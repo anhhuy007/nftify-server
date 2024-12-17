@@ -218,7 +218,7 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
     const filters = {
       name: req.query.name,
       // description: req.query.description,
-      ownerId: req.query.ownerId,
+      // ownerId: req.query.ownerId,
       status: req.query.status,
       // minDate: req.query.minDate,
       // maxDate: req.query.maxDate,
@@ -288,9 +288,32 @@ exports.getUserActivity = asyncHandler(async (req, res) => {
 
 exports.getItemsOnSale = asyncHandler(async (req, res) => {
   try {
+    const filters = {
+      title: req.query.title,
+      creatorId: req.query.creatorId,
+      // issuedBy: req.query.issuedBy,
+      // startDate: req.query.startDate,
+      // endDate: req.query.endDate,
+      minPrice: req.query.minPrice,
+      maxPrice: req.query.maxPrice,
+      // color: req.query.color,
+      // function: req.query.function,
+      collectionName: req.query.collectionName,
+      ownerName: req.query.ownerName,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder,
+      status: req.query.status,
+      sort: req.query.sort
+  };
     const itemsOnSale = await userService.getUserOnSaleItems(
-      req.params.userId,
-      req.query
+      userId = req.params.userId,
+      {
+        page: req.query.page,
+        limit: req.query.limit,
+        filters: Object.fromEntries(
+          Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+        )
+      }
     );
     if (itemsOnSale.length === 0) {
       return res.status(404).json({ message: "Items on sale not found" });
@@ -333,6 +356,8 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
 });
 
 exports.changeUserProfile = asyncHandler(async (req, res) => {
+  // console.log(req.user._id);
+  // console.log(req.body);
   try {
     const updatedUser = await userService.changeUserProfile(
       req.user._id,

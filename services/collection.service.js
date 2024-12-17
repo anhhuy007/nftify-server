@@ -28,7 +28,9 @@ class CollectionService {
         const requiredFields = ["name", "description", "ownerId", "status"];
         for (const field of requiredFields) {
             if (!collection[field]) {
-                throw new Error(`[Error][Missing] Missing required field: ${field}`);
+                throw new Error(
+                    `[Error][Missing] Missing required field: ${field}`
+                );
             }
         }
 
