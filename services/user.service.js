@@ -148,24 +148,41 @@ class UserService {
   }
 
   async getOwnedStamps(userId, options = {}) {
-    try {
       // Extract pagination from options with defaults
       const { page = 1, limit = 10, filters = {} } = options;
-
+  
+      const stampIDs = await this.getStampsIDsByOwner(userId);
       filters.ownerId = userId;
 
+    
       const response = await marketplaceService.getStampsWithFilter({
         page,
         limit,
         filters,
       });
-
       return response;
-    } catch (error) {
-      console.error("Error in getOwnedStamps:", error);
-      throw error;
-    }
+
   }
+
+  async getStampsIDsByOwner(userId) {
+     // Fetch all ownership records for the user
+     const ownerships = await ownershipModel.find({ ownerId: userId });
+
+     // If ownerships are stored with a timestamp to indicate the most recent ownership
+     const latestOwnerships = ownerships.reduce((acc, ownership) => {
+         const existingOwnership = acc[ownership.itemId];
+         if (!existingOwnership || new Date(ownership.timestamp) > new Date(existingOwnership.timestamp)) {
+             acc[ownership.itemId] = ownership; // Keep the most recent ownership
+         }
+         return acc;
+     }, {});
+ 
+     // Extract only the unique and latest stamp IDs
+     const stampIds = Object.keys(latestOwnerships);
+     return stampIds;
+  }
+
+
   async getFavoriteStamps(userId, options = {}) {
     const favouriteStamps = await favouriteModel.findOne({
       userId: userId,
@@ -175,9 +192,38 @@ class UserService {
     return result;
   }
 
-  async getUserCollections(userId) {
-    const collections = await collectionModel.find({ ownerId: userId });
-    return collections;
+  async getUserCollections(userId, options = {}) {
+    console.log("userId", userId);
+    const page = options.page || 1;
+    const limit = options.limit  ||  10;
+    const filters = options.filters || {};
+
+    // console.log("Filters", filters);
+    const collection = await marketplaceService.getCollectionsWithFilter({page:1, limit: 1000, filters});
+    // console.log("Collection", collection);
+    console.log("Collection", collection.items);
+    let arr = [];
+    for (let i = 0; i < collection.items.length; i++) {
+      if (collection.items[i].ownerId.toString() == userId) {
+        arr.push(collection.items[i]);
+      }
+    }
+    // console.log("Arr", arr);
+    const total = arr.length;
+    const endpage = total;
+    if (limit * page <= total - 1) {
+        endpage = limit * page;
+    }
+    const items = arr.slice(limit * (page - 1), endpage); // as page start = 1
+
+    return {
+        total: total,
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil(total / limit),
+        items: items,
+    };
+
   }
 
   async createNewStamp(userId, stamp) {

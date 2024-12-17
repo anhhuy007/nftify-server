@@ -214,23 +214,34 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
 });
 
 exports.getUserCollections = asyncHandler(async (req, res) => {
-  try {
+  try{
+    const filters = {
+      name: req.query.name,
+      // description: req.query.description,
+      ownerId: req.query.ownerId,
+      status: req.query.status,
+      // minDate: req.query.minDate,
+      // maxDate: req.query.maxDate,
+      minViewCount: req.query.minViewCount,
+      maxViewCount: req.query.maxViewCount,
+      minFavouriteCount: req.query.minFavouriteCount,
+      maxFavouriteCount: req.query.maxFavouriteCount,
+      // sortBy: req.query.sortBy,
+      // sortOrder: req.query.sortOrder
+  };
     const userCollection = await userService.getUserCollections(
-      req.params.userId
+      userId = req.params.userId,
+      {
+        page: req.query.page,
+        limit: req.query.limit,
+        filters: Object.fromEntries(
+          Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+        )
+      }
     );
 
-    collections = [];
-    for (collection of userCollection) {
-      collections.push({
-        _id: collection._id,
-        name: collection.name,
-        thumbUrl: collection.thumbUrl,
-        // bgURL: collection.bgUrl,
-      });
-    }
-
-    if (collections.length === 0) {
-      return res.status(404).json({
+    if (userCollection.length === 0) {
+      return res.status(404).json({ 
         success: false,
         message: "User collections not found",
       });
