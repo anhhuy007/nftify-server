@@ -801,7 +801,7 @@ class MarketplaceService {
         const items = await collectionModel.aggregate(pipeline);
         const total = items.length;
         const itemsPaginated = items.slice(skip, skip + parsedLimit);
-
+        
         return {
             total: total,
             page: parsedPage,
