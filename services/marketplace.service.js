@@ -682,7 +682,7 @@ class MarketplaceService {
                     sortOrder = -1; // Descending
                     break;
                 default:
-                    sortField = "";
+                    sortField = "createdAt";
                     sortOrder = -1; // Descending
                     break;
             }

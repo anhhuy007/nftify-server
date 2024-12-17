@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const { handleServiceError } = require("../utils/helperFunc");
+const { handleServiceError, handleResponse } = require("../utils/helperFunc");
 const collectionService = require("../services/collection.service");
 
 exports.createCollection = asyncHandler(async (req, res) => {
@@ -193,7 +193,10 @@ exports.getCollectionItems = asyncHandler(async (req, res)=> {
           )
       });
 
-      res.json(result);
+      if (result.items.length === 0) {
+          return res.status(404).json(handleResponse(false, "Collection not found"), result);
+      }
+      return res.status(200).json(handleResponse(true, "Collection found", result), result);
   }
   catch (error) {
       handleServiceError(res, error);
@@ -205,7 +208,10 @@ exports.getCollectionItems = asyncHandler(async (req, res)=> {
 exports.getCollectionAbout = asyncHandler(async (req, res) => {
   try {
       const collection = await collectionService.getCollectionAbout(req.params.id);
-      res.json(collection);
+      if (collection.items.length === 0) {
+          return res.status(404).json(handleResponse(false, "Collection not found"), collection);
+      }
+      return res.status(200).json(handleResponse(true, "Collection found", collection), collection);
   } catch (error) {
       handleServiceError(res, error);
   }
