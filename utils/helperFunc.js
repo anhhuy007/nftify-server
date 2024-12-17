@@ -95,7 +95,7 @@ function getPinataUrl(pinataUrl) {
 }
 
 function handleResponse(success, msg, data){
-    if (data.total && data.limit){
+  if (data && typeof data === 'object' && 'total' in data && 'limit' in data) {
         pagination  = {
             total: data.total,
             limit: data.limit,
