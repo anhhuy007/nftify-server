@@ -13,10 +13,11 @@ exports.register = asyncHandler(async (req, res) => {
 
 exports.login = asyncHandler(async (req, res) => {
     try {
-        const tokens = await authServices.login(req.body);
+        const response = await authServices.login(req.body);
+        response.account.password = undefined;
         return res.json({
             message: 'Login successful',
-            ...tokens
+            ...response
         });
     } catch (err) {
         // return res.status(401).json({

@@ -61,6 +61,10 @@ class UserService {
         };
 
     const newUser = await userModel.create(preparedUser);
+
+    // remove password field
+    newUser.password = undefined;
+
     return newUser;
   }
 
