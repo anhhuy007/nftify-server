@@ -97,6 +97,35 @@ function getPinataUrl(pinataUrl) {
     return "https://" + pinataUrl;
 }
 
+function handleResponse(success, msg, data, pagination = {}){
+    if (data.total && data.limit){
+        pagination  = {
+            total: data.total,
+            limit: data.limit,
+            page: data.page,
+            totalPages: data.totalPages,
+        }
+        const dataRes = {
+            pagination: pagination,
+            items: data.items
+        }
+        return {
+            success: success,
+            message: msg,
+            data: dataRes
+        }
+    }
+    return {
+        success: success,
+        message: msg,
+        data: data
+    }
+
+
+}
+
+
+
 module.exports = {
     randomDates,
     respondPOSTItem,
@@ -105,4 +134,5 @@ module.exports = {
     convertStampToNFTMeta,
     getIPFSUrl,
     getPinataUrl,
+    handleResponse
 };
