@@ -813,77 +813,54 @@ class MarketplaceService {
 
     async getCreatorsWithFilter(options = {}) {
         const { page = 1, limit = 10, name = "" } = options;
-
+    
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
-
+    
         // Base pipeline stages
         const pipeline = [
             {
-                $group: {
-                    _id: "$creatorId",
-                    total: { $sum: 1 },
+                $match: {
+                    name: { $regex: new RegExp(name, "i") },
                 },
             },
             {
                 $addFields: {
-                    creatorId: { $toObjectId: "$_id" },
+                    userId: { $toString: "$_id" },
                 },
             },
-            {
-                $lookup: {
-                    from: "User",
-                    localField: "creatorId",
-                    foreignField: "_id",
-                    as: "creatorDetails",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$creatorDetails",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-        ];
-
-        // Add name filter if provided
-        if (name) {
-            pipeline.push({
-                $match: {
-                    "creatorDetails.name": {
-                        $regex: name,
-                        $options: "i",
-                    },
-                },
-            });
-        }
-
-        // Add pagination
-        pipeline.push(
-            { $skip: skip },
-            { $limit: parsedLimit },
             {
                 $project: {
-                    _id: 1,
-                    total: 1,
-                    name: "$creatorDetails.name",
-                    avatar: "$creatorDetails.avatarUrl",
+                    name: 1,
+                    avatarUrl: 1,
+                    bgUrl: 1,
                 },
-            }
-        );
-
-        const creators = await stampModel.aggregate(pipeline);
-        const total = creators.length;
-
+            },
+            {
+                $skip: skip,
+            },
+            {
+                $limit: parsedLimit,
+            },
+        ];
+    
+        const creators = await userModel.aggregate(pipeline);
+    
+        // Count total matching documents
+        const total = await userModel.countDocuments({
+            name: { $regex: new RegExp(name, "i") },
+        });
+    
         return {
             total,
             page: parsedPage,
-            limit: parsedLimit > total ? total : parsedLimit,
+            limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
             items: creators,
         };
     }
+    
 
     async getAllNFTs() {
         const nfts = await nftService.getAllNFTs();
