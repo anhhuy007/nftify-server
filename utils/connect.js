@@ -785,6 +785,39 @@ async function setOwnerSameAsCreator() {
   }
 }
 
+async function generateFavorite(params, min = 5, max = 35) {
+  try {
+    const favouriteModel = require("../models/favouriteItem.schema");
+    const userIds = await getDocumentsId(userModel);
+    const stampIds = await getDocumentsId(itemModel);
+
+    console.log('Found', userIds.length, 'users and', stampIds.length, 'stamps');
+
+    for (const user of userIds) {
+      const itemCount = Math.floor(Math.random() * (max - min + 1)) + min;
+      const items = stampIds.sort(() => 0.5 - Math.random()).slice(0, itemCount);
+
+      const favourite = await favouriteModel.findOne({ userId: user });
+      if (favourite) {
+        favourite.itemId.push(...items);
+        await favourite.save();
+      } else {
+        const newFavourite = new favouriteModel({
+          userId: user,
+          itemId: items,
+        });
+        await newFavourite.save();
+      }
+      console.log('Generated favourite items for user', user);
+    }
+  } catch (error) {
+    console.error('An error occurred during the generateFavorite process:', error);
+    throw error;
+  }
+}
+
+// connectDB();
+// generateFavorite();
 // connectDB();
 // setOwnerSameAsCreator();
 
