@@ -209,4 +209,4 @@ exports.getCollectionAbout = asyncHandler(async (req, res) => {
   } catch (error) {
       handleServiceError(res, error);
   }
-});
+})

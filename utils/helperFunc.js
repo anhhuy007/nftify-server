@@ -97,7 +97,7 @@ function getPinataUrl(pinataUrl) {
     return "https://" + pinataUrl;
 }
 
-function handleResponse(success, msg, data, pagination = {}){
+function handleResponse(success, msg, data){
     if (data.total && data.limit){
         pagination  = {
             total: data.total,
