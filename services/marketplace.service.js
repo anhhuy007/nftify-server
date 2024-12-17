@@ -706,9 +706,9 @@ class MarketplaceService {
         // if (filters.description) {
         //     mongoFilter.description = { $regex: new RegExp(filters.description, "i") };
         // }
-        if (filters.ownerId) {
-            mongoFilter.ownerId = new mongoose.Types.ObjectId(filters.ownerId);
-        }
+        // if (filters.ownerId) {
+        //     mongoFilter.ownerId = new mongoose.Types.ObjectId(filters.ownerId);
+        // }
         if (filters.status) {
             mongoFilter.status = filters.status;
         }
