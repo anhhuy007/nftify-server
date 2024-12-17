@@ -16,8 +16,6 @@ router.get("/list/stamps", marketplaceController.getStampsWithFilter); // search
 // [trending][favourite][a-to-z][z-to-a]
 router.get("/list/collections", marketplaceController.getCollections);
 
-
-
 router.get("/list/creators", marketplaceController.getCreators);
 
 router.get("/stamp/:id", marketplaceController.getStampById);

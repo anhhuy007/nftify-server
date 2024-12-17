@@ -397,8 +397,6 @@ class CollectionService {
             limit: 1000,
             filters,
         }); // maybe lack of data
-        // console.log("id = ", collectionId);
-        // console.log("options = ", options);
 
         // Fetch the collection from the database by ID
         const collection = await collectionModel.findById(collectionId);

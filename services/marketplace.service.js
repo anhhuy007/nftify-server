@@ -5,7 +5,6 @@ const itemSellPriceModel = require("../models/itemPricing.schema");
 const ownershipModel = require("../models/ownership.schema");
 const collectionModel = require("../models/collection.schema");
 const StampService = require("./stamp.service");
-const collectionService = require("./collection.service");
 const nftService = require("./nft.service");
 const stampService = require("./stamp.service");
 const userModel = require("../models/user.schema");
@@ -425,6 +424,8 @@ class MarketplaceService {
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
         // console.log("filter in stamp filter = ", filters);
+
+        console.log(`Page: ${page}, Limit: ${limit}, Filters: ${JSON.stringify(filters)}`);
 
         // Prepare dynamic filter
         const mongoFilter = {};
