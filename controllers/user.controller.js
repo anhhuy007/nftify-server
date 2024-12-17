@@ -328,7 +328,7 @@ exports.getItemsOnSale = asyncHandler(async (req, res) => {
     if (itemsOnSale.length === 0) {
       return res.status(404).json({ message: "Items on sale not found" });
     }
-    res.json(itemsOnSale);
+    res.status(200).json(itemsOnSale);
   }
 catch(error)
 {

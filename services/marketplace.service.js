@@ -764,64 +764,61 @@ class MarketplaceService {
             sortOrder = 1; // Ascending
         }
 
+        if (filters.ownerId) {
+            mongoFilter.ownerId = filters.ownerId;
+        }
+
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
 
-        const [total, collections] = await Promise.all([
-            collectionModel.countDocuments(mongoFilter),
-            collectionModel.aggregate([
-                { $match: mongoFilter },
-                {
-                    $addFields: {
-                        ownerIdObj: { $toObjectId: "$ownerId" },
+        const pipeline = [
+            { $match: mongoFilter },
+            {
+                $addFields: {
+                    ownerIdObj: { $toObjectId: "$ownerId" },
+                },
+            },
+            {
+                $lookup: {
+                    from: "User",
+                    localField: "ownerIdObj",
+                    foreignField: "_id",
+                    as: "ownerDetails",
+                },
+            },
+            { $unwind: "$ownerDetails" },
+            {
+                $project: {
+                    name: 1,
+                    ownerId: 1,
+                    description: 1,
+                    status: 1,
+                    items: 1,
+                    viewCount: 1,
+                    favouriteCount: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    thumbUrl: 1,
+                    ownerDetails: {
+                        name: "$ownerDetails.name",
+                        avatarUrl: "$ownerDetails.avatarUrl",
+                        description: "$ownerDetails.description",
                     },
                 },
-                {
-                    $lookup: {
-                        from: "User",
-                        localField: "ownerIdObj",
-                        foreignField: "_id",
-                        as: "ownerDetails",
-                    },
-                },
-                { $unwind: "$ownerDetails" },
-                {
-                    $project: {
-                        name: 1,
-                        ownerId: 1,
-                        description: 1,
-                        status: 1,
-                        items: 1,
-                        viewCount: 1,
-                        favouriteCount: 1,
-                        createdAt: 1,
-                        updatedAt: 1,
-                        thumbUrl: 1,
-                        ownerDetails: {
-                            name: "$ownerDetails.name",
-                            avatarUrl: "$ownerDetails.avatarUrl",
-                            description: "$ownerDetails.description",
-                        },
-                    },
-                },
-                {
-                    $sort: {
-                        [filters.sortBy || "createdAt"]:
-                            sortOrder === 1 ? 1 : -1,
-                    },
-                },
-                { $skip: skip },
-                { $limit: parsedLimit },
-            ]),
-        ]);
+            },
+        ]
+            
+        const items = await collectionModel.aggregate(pipeline);
+        const total = items.length;
+        const itemsPaginated = items.slice(skip, skip + parsedLimit);
 
         return {
-            total,
+            total: total,
             page: parsedPage,
             limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
-            items: collections,
+            items: itemsPaginated,
         };
     }
 

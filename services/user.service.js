@@ -202,32 +202,35 @@ class UserService {
     const page = options.page || 1;
     const limit = options.limit  ||  10;
     const filters = options.filters || {};
+    filters.ownerId = userId;
 
     // console.log("Filters", filters);
     const collection = await marketplaceService.getCollectionsWithFilter({page:1, limit: 1000, filters});
     // console.log("Collection", collection);
-    console.log("Collection", collection.items);
-    let arr = [];
-    for (let i = 0; i < collection.items.length; i++) {
-      if (collection.items[i].ownerId.toString() == userId) {
-        arr.push(collection.items[i]);
-      }
-    }
-    // console.log("Arr", arr);
-    const total = arr.length;
-    const endpage = total;
-    if (limit * page <= total - 1) {
-        endpage = limit * page;
-    }
-    const items = arr.slice(limit * (page - 1), endpage); // as page start = 1
+    // console.log("Collection", collection.items);
+    // let arr = [];
+    // for (let i = 0; i < collection.items.length; i++) {
+    //   if (collection.items[i].ownerId.toString() == userId) {
+    //     arr.push(collection.items[i]);
+    //   }
+    // }
+    // // console.log("Arr", arr);
+    // const total = arr.length;
+    // const endpage = total;
+    // if (limit * page <= total - 1) {
+    //     endpage = limit * page;
+    // }
+    // const items = arr.slice(limit * (page - 1), endpage); // as page start = 1
 
-    return {
-        total: total,
-        page: page,
-        limit: limit,
-        totalPages: Math.ceil(total / limit),
-        items: items,
-    };
+    // return {
+    //     total: total,
+    //     page: page,
+    //     limit: limit,
+    //     totalPages: Math.ceil(total / limit),
+    //     items: items,
+    // };
+
+    return collection;
 
   }
 
@@ -254,7 +257,7 @@ class UserService {
 
         // Build filters correctly
         const filters = {
-            // ownerId: userId,
+            ownerId: userId,
             status: "selling",
             ...options.filters,
         };
@@ -265,16 +268,7 @@ class UserService {
             filters,
         });
 
-        // Handle response structure (assuming response has items property)
-        const stamps = response.items;
-
-        // Ensure we have an array to work with
-        if (!Array.isArray(stamps)) {
-            console.error("Expected array of stamps but got:", typeof stamps);
-            return [];
-        }
-
-        return stamps;
+        return response;
     }
   async connectWallet(userId, walletAddress) {
       const user = await userModel.findOne({ _id: userId });
