@@ -436,7 +436,6 @@ class MarketplaceService {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
         }
 
-
         // Handle price filter
         const priceFilter = {};
         if (filters.minPrice || filters.maxPrice) {
@@ -451,7 +450,6 @@ class MarketplaceService {
                 );
             }
         }
-        
 
         // Handle sorting
         const { sortField, sortOrder } = this.handleSortOption(filters.sort);
@@ -511,10 +509,7 @@ class MarketplaceService {
                     from: "OwnerShip",
                     localField: "itemIdString",
                     foreignField: "itemId",
-                    pipeline: [
-                        { $sort: { createdAt: -1 } },
-                        { $limit: 1 },
-                    ],
+                    pipeline: [{ $sort: { createdAt: -1 } }, { $limit: 1 }],
                     as: "ownership",
                 },
             },
@@ -556,14 +551,14 @@ class MarketplaceService {
                 },
             },
         ];
-        
+
         // Find any ownerDetails that null, remove them
-        if(filters.ownerId){
-        pipeline.push({
-            $match: {
-                ownerDetails: { $ne: null },
-            },
-        });
+        if (filters.ownerId) {
+            pipeline.push({
+                $match: {
+                    ownerDetails: { $ne: null },
+                },
+            });
         }
 
         // Apply price filter if exists
@@ -637,7 +632,7 @@ class MarketplaceService {
                     createdAt: { $first: "$createdAt" },
                 },
             },
-            { $sort: { [sortField]: sortOrder } },
+            { $sort: { [sortField]: sortOrder } }
             // { $skip: skip },
             // { $limit: parsedLimit }
         );
@@ -656,12 +651,11 @@ class MarketplaceService {
         };
     }
 
-    
-    handleSortOption(sortOption) {
+    handleSortOption(sortOption, name= "title") {
         // Sorting
         let sortField = "createdAt";
         let sortOrder = -1; // Descending
-
+        name
         if (sortOption) {
             switch (sortOption) {
                 case "price-up":
@@ -681,15 +675,15 @@ class MarketplaceService {
                     sortOrder = -1; // Descending
                     break;
                 case "a-to-z":
-                    sortField = "title";
+                    sortField = name;
                     sortOrder = 1; // Ascending
                     break;
                 case "z-to-a":
-                    sortField = "title";
+                    sortField = name;
                     sortOrder = -1; // Descending
                     break;
                 default:
-                    sortField = "createdAt";
+                    sortField = "";
                     sortOrder = -1; // Descending
                     break;
             }
@@ -738,22 +732,6 @@ class MarketplaceService {
             }
         }
 
-        // if (filters.startDate || filters.endDate) {
-        //     mongoFilter.createdAt = {};
-        //     if (filters.startDate) mongoFilter.createdAt.$gte = new Date(filters.startDate);
-        //     if (filters.endDate) mongoFilter.createdAt.$lte = new Date(filters.endDate);
-        // }
-
-        // Sorting
-        let sortField = "createdAt";
-        let sortOrder = -1; // Descending
-        if (filters.sortBy) {
-            sortField = filters.sortBy;
-        }
-        if (filters.sortOrder || filters.sortOrder === "asc") {
-            sortOrder = 1; // Ascending
-        }
-
         if (filters.ownerId) {
             mongoFilter.ownerId = filters.ownerId;
         }
@@ -762,6 +740,10 @@ class MarketplaceService {
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
         const skip = (parsedPage - 1) * parsedLimit;
 
+        const { sortField, sortOrder } = this.handleSortOption(filters.sort,"name");
+        // console.log("sortField = ", sortField);
+        // console.log("sortorder = ", sortOrder);
+        console.log("filter = ", mongoFilter);
         const pipeline = [
             { $match: mongoFilter },
             {
@@ -787,8 +769,6 @@ class MarketplaceService {
                     items: 1,
                     viewCount: 1,
                     favouriteCount: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
                     thumbUrl: 1,
                     ownerDetails: {
                         name: "$ownerDetails.name",
@@ -797,12 +777,17 @@ class MarketplaceService {
                     },
                 },
             },
-        ]
-            
+        ];
+        if (sortField != "") {
+            pipeline.push({
+                $sort: { [sortField]: sortOrder },
+            });
+        }
+
         const items = await collectionModel.aggregate(pipeline);
         const total = items.length;
         const itemsPaginated = items.slice(skip, skip + parsedLimit);
-
+        
         return {
             total: total,
             page: parsedPage,
@@ -822,65 +807,41 @@ class MarketplaceService {
         // Base pipeline stages
         const pipeline = [
             {
-                $group: {
-                    _id: "$creatorId",
-                    total: { $sum: 1 },
+                $match: {
+                    name: { $regex: new RegExp(name, "i") },
                 },
             },
             {
                 $addFields: {
-                    creatorId: { $toObjectId: "$_id" },
+                    userId: { $toString: "$_id" },
                 },
             },
             {
-                $lookup: {
-                    from: "User",
-                    localField: "creatorId",
-                    foreignField: "_id",
-                    as: "creatorDetails",
+                $project: {
+                    name: 1,
+                    avatarUrl: 1,
+                    bgUrl: 1,
                 },
             },
             {
-                $unwind: {
-                    path: "$creatorDetails",
-                    preserveNullAndEmptyArrays: true,
-                },
+                $skip: skip,
+            },
+            {
+                $limit: parsedLimit,
             },
         ];
 
-        // Add name filter if provided
-        if (name) {
-            pipeline.push({
-                $match: {
-                    "creatorDetails.name": {
-                        $regex: name,
-                        $options: "i",
-                    },
-                },
-            });
-        }
+        const creators = await userModel.aggregate(pipeline);
 
-        // Add pagination
-        pipeline.push(
-            { $skip: skip },
-            { $limit: parsedLimit },
-            {
-                $project: {
-                    _id: 1,
-                    total: 1,
-                    name: "$creatorDetails.name",
-                    avatar: "$creatorDetails.avatarUrl",
-                },
-            }
-        );
-
-        const creators = await stampModel.aggregate(pipeline);
-        const total = creators.length;
+        // Count total matching documents
+        const total = await userModel.countDocuments({
+            name: { $regex: new RegExp(name, "i") },
+        });
 
         return {
             total,
             page: parsedPage,
-            limit: parsedLimit > total ? total : parsedLimit,
+            limit: parsedLimit,
             totalPages: Math.ceil(total / parsedLimit),
             items: creators,
         };
@@ -999,29 +960,38 @@ class MarketplaceService {
 
         // Set default values for page and limit, and merge with existing options
         const page = params.page || 1;
-        const limit = params.limit||10;
+        const limit = params.limit || 10;
 
         // console.log(filters);
 
-
-        const stamps = await this.getStampsWithFilter({page:1, limit:1000,filters});// maybe lack of data
+        const stamps = await this.getStampsWithFilter({
+            page: 1,
+            limit: 1000,
+            filters,
+        }); // maybe lack of data
         // console.log("id = ", collectionId);
         // console.log("options = ", options);
-        
+
         // Fetch the collection from the database by ID
         const collection = await collectionModel.findById(collectionId);
-        
+
         // Get the collection's item IDs
         const collectionItemIds = collection.items;
-        const collectionItemIdsStrings = collectionItemIds.map(id => id.toString());  // Convert to string for easy comparison
-    
+        const collectionItemIdsStrings = collectionItemIds.map((id) =>
+            id.toString()
+        ); // Convert to string for easy comparison
+
         // console.log("Collection item IDs:", collectionItemIdsStrings);
         // console.log("----------- Stamps data --------");
         // console.log(stamps.items);
         let arr = [];
-        for (let i =  0 ; i < stamps.items.length ; i++) {
+        for (let i = 0; i < stamps.items.length; i++) {
             // console.log(stamps.items[i]._id)
-            if (collectionItemIdsStrings.includes(stamps.items[i]._id.toString())) {
+            if (
+                collectionItemIdsStrings.includes(
+                    stamps.items[i]._id.toString()
+                )
+            ) {
                 arr.push(stamps.items[i]);
             }
         }
@@ -1033,20 +1003,19 @@ class MarketplaceService {
         // const skip = (parsedPage - 1) * parsedLimit;
         const total = arr.length;
         const endpage = total;
-        if (limit * page <= total - 1){
+        if (limit * page <= total - 1) {
             endpage = limit * page;
         }
-        const items = arr.slice(limit*(page-1),  endpage); // as page start = 1
-        
+        const items = arr.slice(limit * (page - 1), endpage); // as page start = 1
+
         return {
             total: total,
             page: page,
             limit: limit,
             totalPages: Math.ceil(total / limit),
-            items : items
+            items: items,
         };
     }
-    
 }
 
 module.exports = new MarketplaceService();

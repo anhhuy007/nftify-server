@@ -5,13 +5,15 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 
 // guest routes
 router.get("/list/trending/stamps", marketplaceController.getTrendingStamps);
+// in use ????
 router.get("/list/trending/categories", marketplaceController.getTopCategories);
 router.get("/list/trending/creators", marketplaceController.getTopCreators);
 router.get("/list/trending/collections", marketplaceController.getTopCollections);
 
 router.get("/list/stamps", marketplaceController.getStampsWithFilter); // search stamps with filters (based on stamp features)
 
-//collection page
+//collection page !!!!!!!
+// [trending][favourite][a-to-z][z-to-a]
 router.get("/list/collections", marketplaceController.getCollections);
 
 router.get("/list/creators", marketplaceController.getCreators);

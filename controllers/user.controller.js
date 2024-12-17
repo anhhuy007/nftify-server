@@ -230,20 +230,19 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
   try{
     const filters = {
       name: req.query.name,
-      // description: req.query.description,
-      // ownerId: req.query.ownerId,
+      
+      ownerId: req.params.userId,
+
       status: req.query.status,
-      // minDate: req.query.minDate,
-      // maxDate: req.query.maxDate,
       minViewCount: req.query.minViewCount,
       maxViewCount: req.query.maxViewCount,
       minFavouriteCount: req.query.minFavouriteCount,
       maxFavouriteCount: req.query.maxFavouriteCount,
-      // sortBy: req.query.sortBy,
+      sortBy: req.query.sortBy,
+      sort: req.query.sort
       // sortOrder: req.query.sortOrder
   };
     const userCollection = await userService.getUserCollections(
-      userId = req.params.userId,
       {
         page: req.query.page,
         limit: req.query.limit,

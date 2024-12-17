@@ -206,38 +206,15 @@ class UserService {
     return result;
   }
 
-  async getUserCollections(userId, options = {}) {
-    console.log("userId", userId);
+  async getUserCollections(options = {}) {
+    // console.log("userId", userId);
     const page = options.page || 1;
     const limit = options.limit  ||  10;
     const filters = options.filters || {};
-    filters.ownerId = userId;
+    // filters.ownerId = userId;
 
     // console.log("Filters", filters);
-    const collection = await marketplaceService.getCollectionsWithFilter({page:1, limit: 1000, filters});
-    // console.log("Collection", collection);
-    // console.log("Collection", collection.items);
-    // let arr = [];
-    // for (let i = 0; i < collection.items.length; i++) {
-    //   if (collection.items[i].ownerId.toString() == userId) {
-    //     arr.push(collection.items[i]);
-    //   }
-    // }
-    // // console.log("Arr", arr);
-    // const total = arr.length;
-    // const endpage = total;
-    // if (limit * page <= total - 1) {
-    //     endpage = limit * page;
-    // }
-    // const items = arr.slice(limit * (page - 1), endpage); // as page start = 1
-
-    // return {
-    //     total: total,
-    //     page: page,
-    //     limit: limit,
-    //     totalPages: Math.ceil(total / limit),
-    //     items: items,
-    // };
+    const collection = await marketplaceService.getCollectionsWithFilter({page:page, limit: limit, filters});
 
     return collection;
 

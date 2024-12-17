@@ -1,6 +1,6 @@
 const MarketplaceService = require('../services/marketplace.service');
 const asyncHandler = require('express-async-handler');
-const { handleServiceError } = require('../utils/helperFunc');
+const { handleServiceError, handleResponse } = require('../utils/helperFunc');
 
 exports.getTrendingStamps = asyncHandler(async (req, res) => {
     try {
@@ -9,7 +9,10 @@ exports.getTrendingStamps = asyncHandler(async (req, res) => {
             limit: req.query.limit,
         });
 
-        res.json(result);
+        if (result.items.length === 0) {
+            return res.status(404).json(handleResponse(false, 'No trending stamps found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Trending stamps found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -18,7 +21,10 @@ exports.getTrendingStamps = asyncHandler(async (req, res) => {
 exports.getStampById = asyncHandler(async (req, res) => {
     try {
         const stamp = await MarketplaceService.getStampById(req.params.id);
-        res.json(stamp);
+        if (!stamp) {
+            return res.status(404).json(handleResponse(false, 'Stamp not found', stamp));
+        }
+        return res.status(200).json(handleResponse(true, 'Stamp found', stamp));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -39,8 +45,10 @@ exports.getTopCreators = asyncHandler(async (req, res) => {
             page: req.query.page,
             limit: req.query.limit,
         });
-
-        res.json(result);
+        if (result.items.length === 0) {
+            return res.status(404).json(handleResponse(false, 'No top creators found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Top creators found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -53,7 +61,10 @@ exports.getTopCollections = asyncHandler(async (req, res) => {
             limit: req.query.limit,
         });
 
-        res.json(result);
+        if (result.items.length === 0) {
+            return res.status(404).json(handleResponse(false, 'No top collections found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Top collections found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -62,7 +73,10 @@ exports.getTopCollections = asyncHandler(async (req, res) => {
 exports.getStampOwnerHistory = asyncHandler(async (req, res) => {
     try {
         const result = await MarketplaceService.getStampOwnerHistory(req.params.id);
-        res.json(result);
+        if(result.items.length === 0){
+            return res.status(404).json(handleResponse(false, 'No owner history found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Owner history found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -71,7 +85,10 @@ exports.getStampOwnerHistory = asyncHandler(async (req, res) => {
 exports.getStampPriceHistory = asyncHandler(async (req, res) => {
     try {
         const result = await MarketplaceService.getStampPriceHistory(req.params.id);
-        res.json(result);
+        if(result.items.length === 0){
+            return res.status(404).json(handleResponse(false, 'No price history found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Price history found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -107,7 +124,10 @@ exports.getStampsWithFilter = asyncHandler(async (req, res) => {
             )
         });
 
-        res.json(result);
+        if (result.items.length === 0) {
+            return res.status(404).json(handleResponse(false, 'No stamps found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Stamps found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -126,8 +146,7 @@ exports.getCollections = asyncHandler(async (req, res) => {
             maxViewCount: req.query.maxViewCount,
             minFavouriteCount: req.query.minFavouriteCount,
             maxFavouriteCount: req.query.maxFavouriteCount,
-            sortBy: req.query.sortBy,
-            sortOrder: req.query.sortOrder
+            sort: req.query.sort,
         };
 
         const result = await MarketplaceService.getCollectionsWithFilter({
@@ -137,8 +156,10 @@ exports.getCollections = asyncHandler(async (req, res) => {
                 Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
             ),
         });
-
-        res.json(result);
+        if (result.items.length === 0) {
+            return res.status(404).json(handleResponse(false, 'No collections found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Collections found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
@@ -153,8 +174,10 @@ exports.getCreators = asyncHandler(async (req, res) => {
             limit: req.query.limit,
             name: req.query.name
         });
-
-        res.json(result);
+        if (result.items.length === 0) {
+            return res.status(404).json(handleResponse(false, 'No creators found', result));
+        }
+        return res.status(200).json(handleResponse(true, 'Creators found', result));
     } catch (error) {
         handleServiceError(res, error);
     }
