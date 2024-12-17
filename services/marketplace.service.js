@@ -429,9 +429,7 @@ class MarketplaceService {
         // Prepare dynamic filter
         const mongoFilter = {};
         if (filters.creatorId) {
-            mongoFilter.creatorId = new mongoose.Types.ObjectId(
-                filters.creatorId
-            );
+            mongoFilter.creatorId = filters.creatorId;
         }
         if (filters.title) {
             mongoFilter.title = { $regex: filters.title, $options: "i" };
@@ -515,15 +513,6 @@ class MarketplaceService {
                     pipeline: [
                         { $sort: { createdAt: -1 } },
                         { $limit: 1 },
-                        {
-                            $match: {
-                                $expr: {
-                                    $eq: [
-                                        "$ownerId", filters.ownerId
-                                    ],
-                                },
-                            },
-                        },
                     ],
                     as: "ownership",
                 },

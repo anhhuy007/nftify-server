@@ -144,19 +144,24 @@ class UserService {
   }
 
   async getCreatedStamps(userId, options = {}) {
-    const createdStamp = await stampModel.find({
-      creatorId: userId,
+    // const createdStamp = await stampModel.find({
+    //   creatorId: userId,
+    // });
+    const { page = 1, limit = 10, filters = {} } = options;
+    filters.creatorId = userId;
+    // const stampIds = createdStamp.map((stamp) => stamp._id);
+    const result = await marketplaceService.getStampsWithFilter({
+      page,
+      limit,
+      filters
     });
-    const stampIds = createdStamp.map((stamp) => stamp._id);
-    const result = await stampService.filterStamps(stampIds, options);
     return result;
   }
 
   async getOwnedStamps(userId, options = {}) {
       // Extract pagination from options with defaults
       const { page = 1, limit = 10, filters = {} } = options;
-  
-      const stampIDs = await this.getStampsIDsByOwner(userId);
+
       filters.ownerId = userId;
 
     
