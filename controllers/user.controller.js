@@ -223,7 +223,7 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
     const filters = {
       name: req.query.name,
       // description: req.query.description,
-      ownerId: req.query.ownerId,
+      // ownerId: req.query.ownerId,
       status: req.query.status,
       // minDate: req.query.minDate,
       // maxDate: req.query.maxDate,
