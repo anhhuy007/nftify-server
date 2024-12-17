@@ -762,6 +762,32 @@ async function getOwnedStamps(userID) {
   }
   
 }
+
+async function setOwnerSameAsCreator() {
+  try {
+    const ownerships = await ownershipModel.find({});
+    console.log(`Found ${ownerships.length} ownership records to update`);
+
+    for (const own of ownerships) {
+      const item = await itemModel.findById(own.itemId).lean();
+      if (item) {
+        await ownershipModel.updateOne(
+          { _id: own._id },
+          { $set: { ownerId: item.creatorId } }
+        );
+        console.log(`Updated ownership record ${own._id} with ownerId ${item.creatorId}`);
+      } else {
+        console.log(`Item with ID ${own.itemId} not found`);
+      }
+    }
+  } catch (error) {
+    console.error('An error occurred during the setOwnerSameAsCreator process:', error);
+  }
+}
+
+// connectDB();
+// setOwnerSameAsCreator();
+
 // connectDB()
 // getOwnedStamps("673876c24af03358be502d87")
 // connectDB();
