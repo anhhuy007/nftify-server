@@ -539,6 +539,19 @@ class UserService {
       };
     }
   }
+  async getTotalOwnedStamps(userId) {
+    const totalOwnedStamps = await ownershipModel.countDocuments({
+      ownerId: userId,
+    });
+    return totalOwnedStamps;
+  }
+  async getTotalCreatedStamps(userId) {
+    const totalCreatedStamps = await stampModel.countDocuments({
+      creatorId: userId,
+    });
+    return totalCreatedStamps;
+  }
+
 }
 
 module.exports = new UserService();

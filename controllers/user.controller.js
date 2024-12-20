@@ -37,10 +37,19 @@ exports.createUser = asyncHandler(async (req, res) => {
 exports.getUserByID = asyncHandler(async (req, res) => {
   try {
     const user = await userService.getUserById(req.params.userId);
+
+    const totalOwnedStamps = await userService.getTotalOwnedStamps(req.params.userId);
+
+    const totalCreatedStamps = await userService.getTotalCreatedStamps(req.params.userId);
     if (!user) {
       return res.status(404).json(handleResponse(false, "User not found", user));
     }
-    res.status(200).json(handleResponse(true, "Find user success", user));
+    const response = {
+      user: user,
+      totalOwnedStamps: totalOwnedStamps,
+      totalCreatedStamps: totalCreatedStamps,
+    }
+    res.status(200).json(handleResponse(true, "Find user success", response));
   } catch (error) {
     handleServiceError(res, error);
   }
