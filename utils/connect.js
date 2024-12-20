@@ -663,6 +663,7 @@ async function deleteRecords() {
 
 
 const marketplaceService = require("../services/marketplace.service");
+const { connect } = require("http2");
 
 
 async function createTransactionJson() {
@@ -815,6 +816,65 @@ async function generateFavorite(params, min = 5, max = 35) {
     throw error;
   }
 }
+
+async function updateBalancedPrice(maxPrice = 10, minPrice = 0.1) {
+  try {
+    const items = await itemPricingModel.find({});
+    console.log(`Found ${items.length} items to update`);
+
+    for (const item of items) {
+      const price = minPrice + (maxPrice - minPrice) * Math.random();
+      await itemPricingModel.updateOne(
+        { _id: item._id },
+        { $set: { price: price.toFixed(2) } }
+      );
+      console.log(`Updated item ${item._id} with price: ${price.toFixed(2)}`);
+    }
+  } catch (error) {
+    console.error('An error occurred during the updateBalancedPrice process:', error);
+    throw error;
+  }
+}
+
+async function exportBlockData(){
+  try {
+    const items = await itemModel.find({});
+    const itemsPrice = await itemPricingModel.find({});
+    const itemsInsight = await itemInsightModel.find({});
+    const itemsOwnership = await ownershipModel.find({});
+    let itemsData = [];
+    console.log("Found", items.length, "items");
+
+    for (const item of items){
+      const itemPrice = itemsPrice.find((price) => price.itemId.toString() === item._id.toString());
+      const itemInsight = itemsInsight.find((insight) => insight.itemId.toString() === item._id.toString());
+      const itemOwnership = itemsOwnership.find((ownership) => ownership.itemId.toString() === item._id.toString());
+      const user = await userModel.findById(item.creatorId);
+
+      const itemData = {
+        cid: "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/"+ item.tokenUrl,
+        price: parseFloat(itemPrice.price),
+        sellingStatus: itemInsight.verifyStatus === "selling",
+        metamaskAddress: user.wallet_address,
+      };
+
+      itemsData.push(itemData);
+      console.log("Exported item with ID:", item._id);
+    }
+    console.log("Exported", itemsData.length, "items to BlockData.json");
+
+    fs.writeFileSync("../datajson/BlockData.json", JSON.stringify(itemsData, null, 2));
+
+  } catch (error) {
+    console.error("An error occurred during the exportBlockData process:", error);
+  }
+}
+
+connectDB();
+exportBlockData();
+
+// connectDB();
+// updateBalancedPrice();
 
 // connectDB();
 // generateFavorite();
