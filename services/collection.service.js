@@ -390,8 +390,6 @@ class CollectionService {
         const page = params.page || 1;
         const limit = params.limit || 10;
 
-        // console.log(filters);
-
         const stamps = await marketplaceService.getStampsWithFilter({
             page: 1,
             limit: 1000,
@@ -407,9 +405,6 @@ class CollectionService {
             id.toString()
         ); // Convert to string for easy comparison
 
-        // console.log("Collection item IDs:", collectionItemIdsStrings);
-        // console.log("----------- Stamps data --------");
-        // console.log(stamps.items);
         let arr = [];
         for (let i = 0; i < stamps.items.length; i++) {
             // console.log(stamps.items[i]._id)

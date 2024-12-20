@@ -177,8 +177,6 @@ exports.getCollectionItems = asyncHandler(async (req, res) => {
       // function: req.query.function,
       collectionName: req.query.collectionName,
       ownerName: req.query.ownerName,
-      sortBy: req.query.sortBy,
-      sortOrder: req.query.sortOrder,
       status: req.query.status,
       sort: req.query.sort,
     };
@@ -191,23 +189,34 @@ exports.getCollectionItems = asyncHandler(async (req, res) => {
       ),
     });
 
-      if (result.items.length === 0) {
-          return res.status(404).json(handleResponse(false, "Collection not found"), result);
-      }
-      return res.status(200).json(handleResponse(true, "Collection found", result), result);
-  }
-  catch (error) {
-      handleServiceError(res, error);
+    console.log("Result: ", result);  
+
+    if (result.items.length === 0) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Collection not found"), result);
+    }
+    return res
+      .status(200)
+      .json(handleResponse(true, "Collection found", result), result);
+  } catch (error) {
+    handleServiceError(res, error);
   }
 });
 
 exports.getCollectionAbout = asyncHandler(async (req, res) => {
   try {
-      const collection = await collectionService.getCollectionAbout(req.params.id);
-      if (collection.items.length === 0) {
-          return res.status(404).json(handleResponse(false, "Collection not found"), collection);
-      }
-      return res.status(200).json(handleResponse(true, "Collection found", collection), collection);
+    const collection = await collectionService.getCollectionAbout(
+      req.params.id
+    );
+    if (collection.items.length === 0) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Collection not found"), collection);
+    }
+    return res
+      .status(200)
+      .json(handleResponse(true, "Collection found", collection), collection);
   } catch (error) {
     handleServiceError(res, error);
   }
