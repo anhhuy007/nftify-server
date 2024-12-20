@@ -191,32 +191,24 @@ exports.getCollectionItems = asyncHandler(async (req, res) => {
 
     console.log("Result: ", result);  
 
-    if (result.items.length === 0) {
-      return res
-        .status(404)
-        .json(handleResponse(false, "Collection not found"), result);
-    }
-    return res
-      .status(200)
-      .json(handleResponse(true, "Collection found", result), result);
-  } catch (error) {
-    handleServiceError(res, error);
+      if (result.items.length === 0) {
+          return res.status(404).json(handleResponse(false, "Collection not found", result));
+      }
+      return res.status(200).json(handleResponse(true, "Collection found", result));
+  }
+  catch (error) {
+      handleServiceError(res, error);
   }
 });
 
 exports.getCollectionAbout = asyncHandler(async (req, res) => {
   try {
-    const collection = await collectionService.getCollectionAbout(
-      req.params.id
-    );
-    if (collection.items.length === 0) {
-      return res
-        .status(404)
-        .json(handleResponse(false, "Collection not found"), collection);
-    }
-    return res
-      .status(200)
-      .json(handleResponse(true, "Collection found", collection), collection);
+      const collection = await collectionService.getCollectionAbout(req.params.id);
+      // console.log(collection);
+      if (!collection) {
+          return res.status(404).json(handleResponse(false, "Collection not found", collection));
+      }
+      return res.status(200).json(handleResponse(true, "Collection found", collection));
   } catch (error) {
     handleServiceError(res, error);
   }
