@@ -42,7 +42,10 @@ const CollectionSchema = new Schema(
     favouriteCount: {
       type: Number,
       default: 0,
-    }
+    },
+    thumbUrl: {
+      type: String,
+    },
   },
   {
     versionKey: false,

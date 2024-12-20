@@ -41,7 +41,7 @@ class NFTService {
             const receipt = await tx.wait();
 
             if (!receipt.status) {
-                throw new Error("Transaction failed");
+                throw new Error("[Error][Fail] Transaction failed");
             }
 
             const tokenListedEvent = receipt.logs.find(log => {
@@ -54,7 +54,7 @@ class NFTService {
             });
     
             if (!tokenListedEvent) {
-                throw new Error("TokenListedSuccess event not found");
+                throw new Error("[Error][NoneExist] TokenListedSuccess event not found");
             }
 
             const parsedEvent = this.contract.interface.parseLog(tokenListedEvent);
@@ -69,7 +69,7 @@ class NFTService {
             };
         } catch(error) {
             console.log("Error: ", error);
-            throw new Error("Failed to mint NFT: ", error);
+            throw new Error("[Error][Fail] Failed to mint NFT: ", error);
         }
     }
 
@@ -83,7 +83,7 @@ class NFTService {
             const receipt = await tx.wait();
 
             if (!receipt.status) {
-                throw new Error("Transaction failed");
+                throw new Error("[Error][Fail] Transaction failed");
             }
 
             const tokenPurchasedEvent = receipt.logs.find(log => {
@@ -96,7 +96,7 @@ class NFTService {
             });
 
             if (!tokenPurchasedEvent) {
-                throw new Error("TokenPurchasedSuccess event not found");
+                throw new Error("[Error][NoneExist] TokenPurchasedSuccess event not found");
             }
 
             const parsedEvent = this.contract.interface.parseLog(tokenPurchasedEvent);
@@ -111,7 +111,7 @@ class NFTService {
             };
         } catch(error) {
             console.log("Error: ", error);
-            throw new Error("Failed to buy NFT: ", error);
+            throw new Error("[Error][Fail] Failed to buy NFT: ", error);
         }
     }
 
@@ -141,7 +141,7 @@ class NFTService {
                             metadata: metadata.data
                         };
                     } catch (error) {
-                        console.error(`Error processing NFT ${tokenId}:`, error);
+                        console.error(`[Error][Fail] Error processing NFT ${tokenId}:`, error);
                         return null;
                     }
                 })
@@ -152,7 +152,7 @@ class NFTService {
     
         } catch (error) {
             console.error("Error getting all NFTs:", error);
-            throw new Error(`Failed to get all NFTs: ${error.message}`);
+            throw new Error(`[Error][Fail] Failed to get all NFTs: ${error.message}`);
         }
     }
 
@@ -179,7 +179,7 @@ class NFTService {
                             metadata: metadata.data
                         };
                     } catch (error) {
-                        console.error(`Error processing NFT ${tokenId}:`, error);
+                        console.error(`[Error][Fail] Error processing NFT ${tokenId}:`, error);
                         return null;
                     }
                 })
@@ -188,7 +188,7 @@ class NFTService {
             return nfts.filter(nft => nft !== null);
         } catch (error) {
             console.error("Error getting NFTs by owner:", error);
-            throw new Error(`Failed to get NFTs by owner: ${error.message}`);
+            throw new Error(`[Error][Fail] Failed to get NFTs by owner: ${error.message}`);
         }
     }
 
@@ -208,7 +208,7 @@ class NFTService {
             };
         } catch (error) {
             console.error(`Error getting NFT ${tokenId}:`, error);
-            throw new Error(`Failed to get NFT ${tokenId}: ${error.message}`);
+            throw new Error(`[Error][Fail] Failed to get NFT ${tokenId}: ${error.message}`);
         }
     }
 }

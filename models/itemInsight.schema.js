@@ -22,7 +22,7 @@ const ItemInsightSchema = new Schema(
     },
     verifyStatus: {
       type: String,
-      enum: ["verified", "pending", "rejected"],
+      enum: ["verified", "selling","displaying", "unverified"],
       default: "pending",
     },
     favoriteCount: {

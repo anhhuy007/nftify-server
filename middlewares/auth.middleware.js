@@ -14,8 +14,7 @@ const authenticateToken = (async (req, res, next) => {
 
         try {
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-            console.log('decoded:', decoded);
-            const account = await accountModel.findOne({ username: decoded.userName });
+            const account = await accountModel.findOne({ username: decoded.username });
 
             if (!account) {
                 return res.status(401).json({ 

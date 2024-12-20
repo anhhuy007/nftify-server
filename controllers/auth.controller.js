@@ -5,7 +5,7 @@ const helperFunc = require('../utils/helperFunc');
 exports.register = asyncHandler(async (req, res) => {
     try {
         const newAccount = await authServices.registerUser(req.body);
-        return res.status(201).json(newAccount);
+        return res.status(201).json(helperFunc.handleResponse(true, 'Account created', newAccount));
     } catch (err) {
         return helperFunc.handleServiceError(res, err);
     }
@@ -13,26 +13,18 @@ exports.register = asyncHandler(async (req, res) => {
 
 exports.login = asyncHandler(async (req, res) => {
     try {
-        const tokens = await authServices.loginUser(req.body);
-        return res.json({
-            message: 'Login successful',
-            ...tokens
-        });
+        const result = await authServices.login(req.body);
+        result.account.password = undefined;
+        return res.status(201).json(helperFunc.handleResponse(true, 'Login successful', result));
     } catch (err) {
-        return res.status(401).json({
-            message: err.message
-        });
+        return helperFunc.handleServiceError(res, err);
     }
 });
 
 exports.refreshToken = asyncHandler(async (req, res) => {
     try {
         const { accessToken } = await authServices.refreshAccessToken(req.body.token);
-        return res.json({
-            success: true,
-            message: 'Token refreshed', 
-            accessToken 
-        });
+        return res.status(201).json(helperFunc.handleResponse(true, 'Token refreshed',  accessToken));
     } catch (err) {
         return helperFunc.handleServiceError(res, err);
     }
@@ -41,10 +33,8 @@ exports.refreshToken = asyncHandler(async (req, res) => {
 exports.logout = asyncHandler(async (req, res) => {
     try {
         authServices.logout(req.user._id);
-        return res.json({
-            success: true,
-            message: 'Logout successful'
-        });
+        return res.status(201).json(helperFunc.handleResponse(true, 'Logout successful', {} ));
+
     } catch (error) {
         return helperFunc.handleServiceError(res, error);
     }

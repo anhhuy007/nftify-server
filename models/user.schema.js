@@ -25,10 +25,16 @@ const UserSchema = new Schema(
     },
     avatarUrl: {
       type: String,
+      required: true,
     },
-    gender : {
+    bgUrl: {
       type: String,
       required: true,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "unknown"],
+      default: "unknown",
     },
     status: {
       type: String,
@@ -37,12 +43,16 @@ const UserSchema = new Schema(
     },
     wallet_address: {
       type: String,
-      required: true,
+      default: null,
     },
+    bgUrl:{
+      type: String,
+      default: null,
+    }
   },
   {
-    versionKey: false, 
-    timestamps: true, 
+    versionKey: false,
+    timestamps: true,
     collection: "User",
   }
 );
