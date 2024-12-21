@@ -870,8 +870,8 @@ async function exportBlockData(){
   }
 }
 
-connectDB();
-exportBlockData();
+// connectDB();
+// exportBlockData();
 
 // connectDB();
 // updateBalancedPrice();
