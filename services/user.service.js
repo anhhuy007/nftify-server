@@ -220,7 +220,7 @@ class UserService {
 
   }
 
-  async createNewStamp(userId, stamp) {
+  async createNewStamp(stamp) {
     // Validate input
     if (!stamp) {
       throw new Error("[Error][Missing] data is required");
@@ -228,14 +228,16 @@ class UserService {
     // Prepare stamp for saving
     const preparedStamp = {
       ...stamp,
-      creatorId: userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
-    // Create stamp
-    const result = await nftService.mintNFT(preparedStamp, 1.2, true);
+    
+    const newStamp = await stampModel.create(preparedStamp);
+    const newOwnership = await ownershipModel.create({
+      ownerId: stamp.creatorId,
+      itemId: newStamp._id,
+      createdAt: new Date(),
+    });
 
-    return result;
+    return {newStamp, newOwnership};
   }
     async getUserOnSaleItems(userId, options = {}) {
         const page = options.page || 1;

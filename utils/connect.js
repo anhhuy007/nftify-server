@@ -817,6 +817,8 @@ async function generateFavorite(params, min = 5, max = 35) {
 }
 
 // connectDB();
+// createTransactionJson();
+// connectDB();
 // generateFavorite();
 // connectDB();
 // setOwnerSameAsCreator();

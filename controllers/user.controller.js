@@ -201,15 +201,22 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
     //   return res.status(401).json({ message: "User not authenticated" });
     // }
     // const newStamp = await userService.createNewStamp(req.user._id, req.body);
-    const newStamp = await userService.createNewStamp(
-      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    const {newStamp, newOwnership} = await userService.createNewStamp(
       req.body
     );
 
+
+
+    if (!newStamp || !newOwnership) {
+      return res.status(404).json({
+        success: false,
+        message: "Cannot create new stamp",
+      });
+    }
     res.status(201).json({
       success: true,
-      message: "Created stamp and minted NFT successfully",
-      data: newStamp,
+      message: "save stamp into database successfully",
+      data: newStamp,  
     });
   } catch (error) {
     handleServiceError(res, error);
