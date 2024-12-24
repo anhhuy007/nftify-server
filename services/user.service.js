@@ -220,7 +220,7 @@ class UserService {
 
   }
 
-  async createNewStamp(userId, stamp) {
+  async createNewStamp(stamp) {
     // Validate input
     if (!stamp) {
       throw new Error("[Error][Missing] data is required");
@@ -228,14 +228,21 @@ class UserService {
     // Prepare stamp for saving
     const preparedStamp = {
       ...stamp,
-      creatorId: userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
-    // Create stamp
-    const result = await nftService.mintNFT(preparedStamp, 1.2, true);
+    
+    const newStamp = await stampModel.create(preparedStamp);
+    const newOwnership = await ownershipModel.create({
+      ownerId: stamp.creatorId,
+      itemId: newStamp._id,
+      createdAt: new Date(),
+    });
+    const newPrice = await nftService.createItemPricing({
+      itemId: newStamp._id,
+      price: preparedStamp.price,
+    }
+  );
 
-    return result;
+    return {newStamp, newOwnership, newPrice};
   }
     async getUserOnSaleItems(userId, options = {}) {
         const page = options.page || 1;
@@ -539,6 +546,19 @@ class UserService {
       };
     }
   }
+  async getTotalOwnedStamps(userId) {
+    const totalOwnedStamps = await ownershipModel.countDocuments({
+      ownerId: userId,
+    });
+    return totalOwnedStamps;
+  }
+  async getTotalCreatedStamps(userId) {
+    const totalCreatedStamps = await stampModel.countDocuments({
+      creatorId: userId,
+    });
+    return totalCreatedStamps;
+  }
+
 }
 
 module.exports = new UserService();
