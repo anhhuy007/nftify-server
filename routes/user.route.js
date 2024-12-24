@@ -17,7 +17,6 @@ userRouter.get("/profile/:userId", userController.getUserByID);
 // @desc    get user collections
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/collections
 userRouter.get("/profile/:userId/collections", userController.getUserCollections);
-
 // @route   GET /api/v1/user/profile/:userId/onSale
 // @desc    get user items on sale
 // http://localhost:3000/api/v1/user/profile/673876c24af03358be502d7b/onSale
@@ -63,6 +62,10 @@ userRouter.post("/settings/change-email", userController.changeEmail);
 userRouter.get("/cart", userController.getCart);
 userRouter.post("/cart", userController.addToCart);
 userRouter.delete("/cart", userController.removeFromCart);
+
+// create nft
+
+userRouter.get("/collectionList", userController.getCollectionList);
 
 module.exports = userRouter;
 

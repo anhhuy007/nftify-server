@@ -117,10 +117,20 @@ function handleResponse(success, msg, data){
         message: msg,
         data: data
     }
-
-
 }
+function formatPrice(price){
+  //if price > 1000, add comma
+  if(price >1000){
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+}
+function updateItemPrices(item, modifier = 3401) { // default 10% increase
+  const usdPrice = (item.price.price * modifier).toFixed(2);
+  item.price["usdPrice"] = formatPrice(usdPrice);
+  
 
+  return item;
+}
 module.exports = {
   randomDates,
   respondPOSTItem,
@@ -130,4 +140,5 @@ module.exports = {
   getIPFSUrl,
   getPinataUrl,
   handleResponse,
+  updateItemPrices,
 };
