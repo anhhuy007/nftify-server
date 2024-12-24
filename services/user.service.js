@@ -236,8 +236,13 @@ class UserService {
       itemId: newStamp._id,
       createdAt: new Date(),
     });
+    const newPrice = await nftService.createItemPricing({
+      itemId: newStamp._id,
+      price: preparedStamp.price,
+    }
+  );
 
-    return {newStamp, newOwnership};
+    return {newStamp, newOwnership, newPrice};
   }
     async getUserOnSaleItems(userId, options = {}) {
         const page = options.page || 1;
