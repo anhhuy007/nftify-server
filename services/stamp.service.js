@@ -467,7 +467,7 @@ class StampService {
     }
     async getStampPrice(itemId) {
         const priceDoc = await itemPricingModel
-            .find()
+            .find({itemId})
             .sort({ createdAt: -1 })
             .limit(1);
         const price = priceDoc[0].price;

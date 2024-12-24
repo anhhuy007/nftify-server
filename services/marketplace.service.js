@@ -8,6 +8,8 @@ const StampService = require("./stamp.service");
 const nftService = require("./nft.service");
 const stampService = require("./stamp.service");
 const userModel = require("../models/user.schema");
+const { updateItemPrices } = require("../utils/helperFunc");
+// const { hexlify } = require("ethers");
 class MarketplaceService {
     async getTrendingStamps(options = {}) {
         const { page = 1, limit = 10 } = options;
@@ -224,8 +226,9 @@ class MarketplaceService {
                 },
             },
         ]);
-
-        return stamp[0];
+        let temp = stamp[0];
+        temp = updateItemPrices(temp);
+        return temp;
     }
 
     async getStampPriceHistory(id) {

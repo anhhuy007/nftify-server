@@ -25,4 +25,5 @@ collectionRouter.post("/", collectionController.createCollection);
 collectionRouter.patch("/:collectionId", collectionController.updateCollection);
 collectionRouter.delete("/:collectionId", collectionController.deleteCollection);
 
+
 module.exports = collectionRouter;

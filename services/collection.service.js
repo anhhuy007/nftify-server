@@ -437,6 +437,30 @@ class CollectionService {
             items: items,
         };
     }
+
+    // getCollectionList
+    async getCollectionList(userId) {
+        // console.log(userId);    
+        const pipeline = [
+            {
+                $match: {
+                    ownerId: userId.toString()
+
+                },
+            },
+            {
+                $project: {
+                    id : "$_id",
+                    name: 1,
+                    ownerId: 1,
+                    thumbUrl: 1,
+                }
+            },
+        ]
+        const collections = await collectionModel.aggregate(pipeline);
+        // console.log(collections);
+        return collections;
+    }
 }
 
 module.exports = new CollectionService();

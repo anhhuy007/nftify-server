@@ -125,7 +125,7 @@ exports.getStampsWithFilter = asyncHandler(async (req, res) => {
         });
 
         if (result.items.length === 0) {
-            return res.status(404).json(handleResponse(false, 'No stamps found', result));
+            return res.status(200).json(handleResponse(true, 'No stamps found', result));
         }
         return res.status(200).json(handleResponse(true, 'Stamps found', result));
     } catch (error) {
@@ -157,7 +157,7 @@ exports.getCollections = asyncHandler(async (req, res) => {
             ),
         });
         if (result.items.length === 0) {
-            return res.status(404).json(handleResponse(false, 'No collections found', result));
+            return res.status(200).json(handleResponse(true, 'No collections found', result));
         }
         return res.status(200).json(handleResponse(true, 'Collections found', result));
     } catch (error) {
@@ -175,7 +175,7 @@ exports.getCreators = asyncHandler(async (req, res) => {
             name: req.query.name
         });
         if (result.items.length === 0) {
-            return res.status(404).json(handleResponse(false, 'No creators found', result));
+            return res.status(200).json(handleResponse(true, 'No creators found', result));
         }
         return res.status(200).json(handleResponse(true, 'Creators found', result));
     } catch (error) {

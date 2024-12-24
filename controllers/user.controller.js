@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { handleServiceError, handleResponse } = require("../utils/helperFunc");
 const userService = require("../services/user.service");
+const collectionService = require("../services/collection.service"); 
 const nftService = require("../services/nft.service");
 const { on } = require("../models/user.schema");
 const { get } = require("mongoose");
@@ -147,7 +148,7 @@ exports.getOwnedStamps = asyncHandler(async (req, res) => {
       ),
     });
     if (result.items.length === 0) { 
-      return res.status(404).json(handleResponse(false, "Owned stamps not found", result));
+      return res.status(200).json(handleResponse(true, "Owned stamps not found", result));
     }
     return res.status(200).json(handleResponse(true, "Get owned stamps successfully", result));
   } catch (error) {
@@ -178,7 +179,7 @@ exports.getFavouriteStamps = asyncHandler(async (req, res) => {
       ),
     });
     if (result.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Favourite stamps not found", result));
+      return res.status(200).json(handleResponse(true, "Favourite stamps not found", result));
     }
     return res.status(200).json(handleResponse(true, "Get favourite stamps successfully", result));
   } catch (error) {
@@ -253,7 +254,7 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
     );
 
     if (userCollection.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "User collections not found",userCollection));
+      return res.status(200).json(handleResponse(true, "User collections not found",userCollection));
     }
     
     res.status(200).json(handleResponse(true, "Get user collections successfully", userCollection));
@@ -324,7 +325,7 @@ exports.getItemsOnSale = asyncHandler(async (req, res) => {
       }
     );
     if (itemsOnSale.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Items on sale not found", itemsOnSale));
+      return res.status(200).json(handleResponse(true, "Items on sale not found", itemsOnSale));
     }
     return res.status(200).json(handleResponse(true, "Get items on sale successfully", itemsOnSale));
   }
@@ -378,9 +379,11 @@ exports.changeUserProfile = asyncHandler(async (req, res) => {
       req.user._id,
       req.body
     );
+
     if (!updatedUser) {
       return res.status(404).json(handleResponse(false, "Cannot change user profile", updatedUser));
     }
+    // console.log(updatedUser);
     return res.status (201). json(handleResponse(true, "Change user profile successfully", updatedUser));
   } catch (error) {
     handleServiceError(res, error);
@@ -418,6 +421,9 @@ exports.addToCart = asyncHandler(async (req, res) => {
     }
 
     const result = await userService.addToCart(req.user._id, req.body.itemId);
+    if (!result) {
+      return res.status(404).json(handleResponse(false, "Cannot add item to cart", result));
+    }
     // const result = await userService.addToCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
     
     // res.json({
@@ -464,7 +470,7 @@ exports.getCart = asyncHandler(async (req, res) => {
     const result = await userService.getCart(req.user._id);
     // const result = await userService.getCartItems("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
     if (result.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Cart items not found", result));
+      return res.status(200).json(handleResponse(true, "Cart items not found", result));
     }
     return res.status(200).json(handleResponse(true, "Get cart items successfully", result));
   } catch (error) {
@@ -482,3 +488,21 @@ exports.changeEmail = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+
+exports.getCollectionList = asyncHandler(async (req, res) => {
+  try {
+    // console.log(req.user);
+    // console.log(req.user._id);
+    const result = await collectionService.getCollectionList(
+      req.user._id);
+    if (result.length === 0) {
+      return res.status(200).json(handleResponse(true, "User doesnot have collection",result));
+    }
+
+    return res.status(404).json(handleResponse(true, "Collection found", result));
+  } catch (error) {
+    handleServiceError(res, error);
+  };
+});
+
