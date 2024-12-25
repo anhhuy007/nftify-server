@@ -5,7 +5,6 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 
 // guest routes
 router.get("/list/trending/stamps", marketplaceController.getTrendingStamps);
-// in use ????
 router.get("/list/trending/categories", marketplaceController.getTopCategories);
 router.get("/list/trending/creators", marketplaceController.getTopCreators);
 router.get("/list/trending/collections", marketplaceController.getTopCollections);
