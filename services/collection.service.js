@@ -25,7 +25,7 @@ class CollectionService {
         }
 
         // Validate required fields
-        const requiredFields = ["name", "description", "ownerId", "status"];
+        const requiredFields = ["name", "description", "status"];
         for (const field of requiredFields) {
             if (!collection[field]) {
                 throw new Error(
@@ -34,10 +34,6 @@ class CollectionService {
             }
         }
 
-        // Validate ownerId format
-        if (!mongoose.Types.ObjectId.isValid(collection.ownerId)) {
-            throw new Error("[Error][Invalid] Invalid ownerId format");
-        }
 
         // Validate status
         const validStatus = ["selling", "sold", "displaying", "favourite"];
@@ -53,7 +49,7 @@ class CollectionService {
         // Prepare collection for saving
         const preparedCollection = {
             ...collection,
-            ownerId,
+            ownerId : ownerId,
             viewCount: 0,
             favouriteCount: 0,
             createdAt: new Date(),
