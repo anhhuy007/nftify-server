@@ -19,9 +19,13 @@ collectionRouter.get("/:id/items", collectionController.getCollectionItems);
 
 // authenticated-required routes
 collectionRouter.use(authenticateToken);
+
+
 collectionRouter.get("/increment-view/:collectionId", collectionController.increaseViewCount);
 collectionRouter.get("/increment-favourite/:collectionId", collectionController.increaseFavouriteCount);
-collectionRouter.post("/", collectionController.createCollection);
+
+collectionRouter.post("/create", collectionController.createCollection);
+
 collectionRouter.patch("/:collectionId", collectionController.updateCollection);
 collectionRouter.delete("/:collectionId", collectionController.deleteCollection);
 
