@@ -438,6 +438,14 @@ class CollectionService {
         };
     }
 
+    async addStampToCollection(collectionId, stampId) {
+    
+        // Check if the collection exists
+        const collection = await collectionModel.findById(collectionId);
+        // Add stamp to the collection
+        collection.items.push(stampId);
+    }
+
     // getCollectionList
     async getCollectionList(userId) {
         // console.log(userId);    

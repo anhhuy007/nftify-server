@@ -12,7 +12,9 @@ const accountModel = require("../models/account.schema");
 const bcrypt = require("bcrypt");
 const cartModel = require("../models/cart.schema");
 const { bigint } = require("hardhat/internal/core/params/argumentTypes");
-
+const itemPricingModel = require("../models/itemPricing.schema");
+const CollectionService = require("./collection.service");
+const collectionService = require("./collection.service");
 class UserService {
     validateUserInput(user) {
         if (!user) {
@@ -227,7 +229,16 @@ class UserService {
     }
     // Prepare stamp for saving
     const preparedStamp = {
-      ...stamp,
+      creatorId: stamp.creatorId,
+      title: stamp.title,
+      issuedBy: stamp.issuedBy,
+      function: stamp.function,
+      date: stamp.date,
+      denom: stamp.denom,
+      color: stamp.color,
+      imgUrl: stamp.imgUrl,
+      tokenUrl: stamp.tokenUrl,
+      createdAt: new Date(),
     };
     
     const newStamp = await stampModel.create(preparedStamp);
@@ -236,11 +247,13 @@ class UserService {
       itemId: newStamp._id,
       createdAt: new Date(),
     });
-    const newPrice = await nftService.createItemPricing({
+    const newPrice = await itemPricingModel.create({
       itemId: newStamp._id,
-      price: preparedStamp.price,
-    }
-  );
+      price: stamp.price,
+      createdAt: new Date(),
+    });
+
+    const collection = await collectionService.addStampToCollection(stamp.collection._id, newStamp._id);
 
     return {newStamp, newOwnership, newPrice};
   }

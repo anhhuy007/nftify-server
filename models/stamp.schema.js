@@ -58,6 +58,10 @@ const StampSchema = new Schema(
       type: String,
       required: true,
     },
+    tokenID: {
+      type: Number,
+      required: true,
+    },
   },
   {
     versionKey: false,
