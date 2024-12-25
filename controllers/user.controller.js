@@ -38,17 +38,23 @@ exports.getUserByID = asyncHandler(async (req, res) => {
   try {
     const user = await userService.getUserById(req.params.userId);
 
-    const totalOwnedStamps = await userService.getTotalOwnedStamps(req.params.userId);
+    const totalOwnedStamps = await userService.getTotalOwnedStamps(
+      req.params.userId
+    );
 
-    const totalCreatedStamps = await userService.getTotalCreatedStamps(req.params.userId);
+    const totalCreatedStamps = await userService.getTotalCreatedStamps(
+      req.params.userId
+    );
     if (!user) {
-      return res.status(404).json(handleResponse(false, "User not found", user));
+      return res
+        .status(404)
+        .json(handleResponse(false, "User not found", user));
     }
     const response = {
       user: user,
       totalOwnedStamps: totalOwnedStamps,
       totalCreatedStamps: totalCreatedStamps,
-    }
+    };
     res.status(200).json(handleResponse(true, "Find user success", response));
   } catch (error) {
     handleServiceError(res, error);
@@ -74,15 +80,15 @@ exports.getUsers = asyncHandler(async (req, res) => {
 
 exports.updateUser = asyncHandler(async (req, res) => {
   try {
-    const updatedUser = await userService.updateUser(
-      req.user._id,
-      req.body
-    );
+    const updatedUser = await userService.updateUser(req.user._id, req.body);
     if (!updatedUser) {
-      return res.status(404).json(handleResponse(false, "Cannot update user", updatedUser));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot update user", updatedUser));
     }
-    return res.status(200).json(handleResponse(true, "Updated user successfully", updatedUser));
-
+    return res
+      .status(200)
+      .json(handleResponse(true, "Updated user successfully", updatedUser));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -124,9 +130,13 @@ exports.getCreatedStamps = asyncHandler(async (req, res) => {
       ),
     });
     if (result.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Created stamps not found", result));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Created stamps not found", result));
     }
-    return res.status(200).json(handleResponse(true, "Get created stamps successfully", result));
+    return res
+      .status(200)
+      .json(handleResponse(true, "Get created stamps successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -155,10 +165,14 @@ exports.getOwnedStamps = asyncHandler(async (req, res) => {
         Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
       ),
     });
-    if (result.items.length === 0) { 
-      return res.status(404).json(handleResponse(false, "Owned stamps not found", result));
+    if (result.items.length === 0) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Owned stamps not found", result));
     }
-    return res.status(200).json(handleResponse(true, "Get owned stamps successfully", result));
+    return res
+      .status(200)
+      .json(handleResponse(true, "Get owned stamps successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -187,9 +201,13 @@ exports.getFavouriteStamps = asyncHandler(async (req, res) => {
       ),
     });
     if (result.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Favourite stamps not found", result));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Favourite stamps not found", result));
     }
-    return res.status(200).json(handleResponse(true, "Get favourite stamps successfully", result));
+    return res
+      .status(200)
+      .json(handleResponse(true, "Get favourite stamps successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -236,10 +254,10 @@ exports.getMyNFTs = asyncHandler(async (req, res) => {
 });
 
 exports.getUserCollections = asyncHandler(async (req, res) => {
-  try{
+  try {
     const filters = {
       name: req.query.name,
-      
+
       ownerId: req.params.userId,
 
       status: req.query.status,
@@ -248,28 +266,35 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
       minFavouriteCount: req.query.minFavouriteCount,
       maxFavouriteCount: req.query.maxFavouriteCount,
       sortBy: req.query.sortBy,
-      sort: req.query.sort
+      sort: req.query.sort,
       // sortOrder: req.query.sortOrder
-  };
-    const userCollection = await userService.getUserCollections(
-      {
-        page: req.query.page,
-        limit: req.query.limit,
-        filters: Object.fromEntries(
-          Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
-        )
-      }
-    );
+    };
+    const userCollection = await userService.getUserCollections({
+      page: req.query.page,
+      limit: req.query.limit,
+      filters: Object.fromEntries(
+        Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
+      ),
+    });
 
     if (userCollection.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "User collections not found",userCollection));
+      return res
+        .status(404)
+        .json(
+          handleResponse(false, "User collections not found", userCollection)
+        );
     }
-    
-    res.status(200).json(handleResponse(true, "Get user collections successfully", userCollection));
 
-  }
-  catch(error)
-  {
+    res
+      .status(200)
+      .json(
+        handleResponse(
+          true,
+          "Get user collections successfully",
+          userCollection
+        )
+      );
+  } catch (error) {
     handleServiceError(res, error);
   }
 });
@@ -320,30 +345,32 @@ exports.getItemsOnSale = asyncHandler(async (req, res) => {
       sortBy: req.query.sortBy,
       sortOrder: req.query.sortOrder,
       status: req.query.status,
-      sort: req.query.sort
-  };
+      sort: req.query.sort,
+    };
     const itemsOnSale = await userService.getUserOnSaleItems(
-      userId = req.params.userId,
+      (userId = req.params.userId),
       {
         page: req.query.page,
         limit: req.query.limit,
         filters: Object.fromEntries(
           Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
-        )
+        ),
       }
     );
     if (itemsOnSale.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Items on sale not found", itemsOnSale));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Items on sale not found", itemsOnSale));
     }
-    return res.status(200).json(handleResponse(true, "Get items on sale successfully", itemsOnSale));
+    return res
+      .status(200)
+      .json(
+        handleResponse(true, "Get items on sale successfully", itemsOnSale)
+      );
+  } catch (error) {
+    handleServiceError(res, error);
   }
-catch(error)
-{
-  handleServiceError(res, error);
-}
-}
-);
-
+});
 
 exports.connectWallet = asyncHandler(async (req, res) => {
   try {
@@ -370,10 +397,18 @@ exports.connectWallet = asyncHandler(async (req, res) => {
 exports.getUserSettings = asyncHandler(async (req, res) => {
   try {
     const userSettings = await userService.getUserSettings(req.user._id);
-    if (!userSettings){
-      return res.status(404).json(handleResponse(false, "Cannot change user settings", userSettings));
+    if (!userSettings) {
+      return res
+        .status(404)
+        .json(
+          handleResponse(false, "Cannot change user settings", userSettings)
+        );
     }
-    return res.status(201).json(handleResponse(true, "Change user settings successfully", userSettings));
+    return res
+      .status(201)
+      .json(
+        handleResponse(true, "Change user settings successfully", userSettings)
+      );
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -388,9 +423,15 @@ exports.changeUserProfile = asyncHandler(async (req, res) => {
       req.body
     );
     if (!updatedUser) {
-      return res.status(404).json(handleResponse(false, "Cannot change user profile", updatedUser));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot change user profile", updatedUser));
     }
-    return res.status (201). json(handleResponse(true, "Change user profile successfully", updatedUser));
+    return res
+      .status(201)
+      .json(
+        handleResponse(true, "Change user profile successfully", updatedUser)
+      );
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -400,9 +441,13 @@ exports.checkPassword = asyncHandler(async (req, res) => {
   try {
     const result = await userService.checkPassword(req.user._id, req.body);
     if (!result) {
-      return res.status(404).json(handleResponse(false, "Cannot check password", result));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot check password", result));
     }
-    return res.status(201).json(handleResponse(true, "Check password successfully", result));
+    return res
+      .status(201)
+      .json(handleResponse(true, "Check password successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -411,10 +456,14 @@ exports.checkPassword = asyncHandler(async (req, res) => {
 exports.changePassword = asyncHandler(async (req, res) => {
   try {
     const result = await userService.changePassword(req.user._id, req.body);
-    if(!result){
-      return res.status(404).json(handleResponse(false, "Cannot change password", result));
+    if (!result) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot change password", result));
     }
-    return res.status(201).json(handleResponse(true, "Change password successfully", result));
+    return res
+      .status(201)
+      .json(handleResponse(true, "Change password successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -427,15 +476,10 @@ exports.addToCart = asyncHandler(async (req, res) => {
     }
 
     const result = await userService.addToCart(req.user._id, req.body.itemId);
-    // const result = await userService.addToCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
-    
-    // res.json({
-    //   success: true,
-    //   message: "Added item to cart successfully",
-    //   data: result,
-    // });
-    return res.status(201).json(handleResponse(true, "Added item to cart successfully", result));
 
+    return res
+      .status(201)
+      .json(handleResponse(true, "Added item to cart successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -451,14 +495,52 @@ exports.removeFromCart = asyncHandler(async (req, res) => {
       req.user._id,
       req.body.itemId
     );
-    // const result = await userService.removeFromCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
 
-    // res.json({
-    //   success: true,
-    //   message: "Removed item from cart successfully",
-    //   data: result,
-    // });
-    return res.status(201).json(handleResponse(true, "Removed item from cart successfully", result));
+    return res
+      .status(201)
+      .json(
+        handleResponse(true, "Removed item from cart successfully", result)
+      );
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.checkoutCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.checkoutCart(req.user._id);
+    if (!result) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot checkout cart", result));
+    }
+    return res
+      .status(201)
+      .json(handleResponse(true, "Checkout cart successfully", result));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.clearCart = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const result = await userService.clearCart(req.user._id);
+    if (!result) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot clear cart", result));
+    }
+    return res
+      .status(201)
+      .json(handleResponse(true, "Clear cart successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -473,9 +555,13 @@ exports.getCart = asyncHandler(async (req, res) => {
     const result = await userService.getCart(req.user._id);
     // const result = await userService.getCartItems("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
     if (result.items.length === 0) {
-      return res.status(404).json(handleResponse(false, "Cart items not found", result));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cart items not found", result));
     }
-    return res.status(200).json(handleResponse(true, "Get cart items successfully", result));
+    return res
+      .status(200)
+      .json(handleResponse(true, "Get cart items successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -484,9 +570,13 @@ exports.changeEmail = asyncHandler(async (req, res) => {
   try {
     const result = await userService.changeEmail(req.user._id, req.body);
     if (!result) {
-      return res.status(404).json(handleResponse(false, "Cannot change email", result));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot change email", result));
     }
-    return res.status(201).json(handleResponse(true, "Change email successfully", result));
+    return res
+      .status(201)
+      .json(handleResponse(true, "Change email successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }

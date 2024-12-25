@@ -5,60 +5,57 @@ const stampService = require("./stamp.service");
 const nftService = require("./nft.service");
 const ownershipModel = require("../models/ownership.schema");
 const favouriteModel = require("../models/favouriteItem.schema");
-const collectionModel = require("../models/collection.schema");
+const itemInsightModel = require("../models/itemInsight.schema");
 const marketplaceService = require("./marketplace.service");
-const { LogDescription } = require("ethers");
 const accountModel = require("../models/account.schema");
 const bcrypt = require("bcrypt");
 const cartModel = require("../models/cart.schema");
 const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 
 class UserService {
-    validateUserInput(user) {
-        if (!user) {
-            throw new Error("User data is required");
-        }
-
-        // Validate required fields
-        const requiredFields = ["name"];
-        for (const field of requiredFields) {
-            if (!user[field]) {
-                throw new Error(
-                    `[Error][Missing] Missing required field: ${field}`
-                );
-            }
-        }
-
-        // Validate status
-        const validStatus = ["pending", "verified", "rejected"];
-        if (!validStatus.includes(user.status)) {
-            throw new Error("[Error][Invalid] Invalid status value");
-        }
-
-        // Validate gender
-        const validGender = ["male", "female"];
-        if (!validGender.includes(user.gender)) {
-            throw new Error("[Error][Invalid] Invalid gender value");
-        }
-
-        // check if username already exists
-        // const existingUser = userModel.find({
-        //   name: user.name,
-        // });
-        // console.log("Existing user", existingUser);
-        // if (existingUser) throw new Error("Username already exists");
+  validateUserInput(user) {
+    if (!user) {
+      throw new Error("User data is required");
     }
 
-    async createUser(userId, user) {
-        console.log("Create new user", user);
+    // Validate required fields
+    const requiredFields = ["name"];
+    for (const field of requiredFields) {
+      if (!user[field]) {
+        throw new Error(`[Error][Missing] Missing required field: ${field}`);
+      }
+    }
 
-        // Validate input
-        this.validateUserInput(user);
-        // Prepare user for saving
-        const preparedUser = {
-            ...user,
-            _id: userId,
-        };
+    // Validate status
+    const validStatus = ["pending", "verified", "rejected"];
+    if (!validStatus.includes(user.status)) {
+      throw new Error("[Error][Invalid] Invalid status value");
+    }
+
+    // Validate gender
+    const validGender = ["male", "female"];
+    if (!validGender.includes(user.gender)) {
+      throw new Error("[Error][Invalid] Invalid gender value");
+    }
+
+    // check if username already exists
+    // const existingUser = userModel.find({
+    //   name: user.name,
+    // });
+    // console.log("Existing user", existingUser);
+    // if (existingUser) throw new Error("Username already exists");
+  }
+
+  async createUser(userId, user) {
+    console.log("Create new user", user);
+
+    // Validate input
+    this.validateUserInput(user);
+    // Prepare user for saving
+    const preparedUser = {
+      ...user,
+      _id: userId,
+    };
 
     const newUser = await userModel.create(preparedUser);
 
@@ -157,45 +154,45 @@ class UserService {
     const result = await marketplaceService.getStampsWithFilter({
       page,
       limit,
-      filters
+      filters,
     });
     return result;
   }
 
   async getOwnedStamps(userId, options = {}) {
-      // Extract pagination from options with defaults
-      const { page = 1, limit = 10, filters = {} } = options;
+    // Extract pagination from options with defaults
+    const { page = 1, limit = 10, filters = {} } = options;
 
-      filters.ownerId = userId;
+    filters.ownerId = userId;
 
-    
-      const response = await marketplaceService.getStampsWithFilter({
-        page,
-        limit,
-        filters,
-      });
-      return response;
-
+    const response = await marketplaceService.getStampsWithFilter({
+      page,
+      limit,
+      filters,
+    });
+    return response;
   }
 
   async getStampsIDsByOwner(userId) {
-     // Fetch all ownership records for the user
-     const ownerships = await ownershipModel.find({ ownerId: userId });
+    // Fetch all ownership records for the user
+    const ownerships = await ownershipModel.find({ ownerId: userId });
 
-     // If ownerships are stored with a timestamp to indicate the most recent ownership
-     const latestOwnerships = ownerships.reduce((acc, ownership) => {
-         const existingOwnership = acc[ownership.itemId];
-         if (!existingOwnership || new Date(ownership.timestamp) > new Date(existingOwnership.timestamp)) {
-             acc[ownership.itemId] = ownership; // Keep the most recent ownership
-         }
-         return acc;
-     }, {});
- 
-     // Extract only the unique and latest stamp IDs
-     const stampIds = Object.keys(latestOwnerships);
-     return stampIds;
+    // If ownerships are stored with a timestamp to indicate the most recent ownership
+    const latestOwnerships = ownerships.reduce((acc, ownership) => {
+      const existingOwnership = acc[ownership.itemId];
+      if (
+        !existingOwnership ||
+        new Date(ownership.timestamp) > new Date(existingOwnership.timestamp)
+      ) {
+        acc[ownership.itemId] = ownership; // Keep the most recent ownership
+      }
+      return acc;
+    }, {});
+
+    // Extract only the unique and latest stamp IDs
+    const stampIds = Object.keys(latestOwnerships);
+    return stampIds;
   }
-
 
   async getFavoriteStamps(userId, options = {}) {
     const favouriteStamps = await favouriteModel.findOne({
@@ -209,15 +206,18 @@ class UserService {
   async getUserCollections(options = {}) {
     // console.log("userId", userId);
     const page = options.page || 1;
-    const limit = options.limit  ||  10;
+    const limit = options.limit || 10;
     const filters = options.filters || {};
     // filters.ownerId = userId;
 
     // console.log("Filters", filters);
-    const collection = await marketplaceService.getCollectionsWithFilter({page:page, limit: limit, filters});
+    const collection = await marketplaceService.getCollectionsWithFilter({
+      page: page,
+      limit: limit,
+      filters,
+    });
 
     return collection;
-
   }
 
   async createNewStamp(userId, stamp) {
@@ -237,37 +237,37 @@ class UserService {
 
     return result;
   }
-    async getUserOnSaleItems(userId, options = {}) {
-        const page = options.page || 1;
-        const limit = options.limit || 10;
+  async getUserOnSaleItems(userId, options = {}) {
+    const page = options.page || 1;
+    const limit = options.limit || 10;
 
-        // Build filters correctly
-        const filters = {
-            ownerId: userId,
-            status: "selling",
-            ...options.filters,
-        };
-        console.log("Filters", filters);
-        const response = await marketplaceService.getStampsWithFilter({
-            page,
-            limit,
-            filters,
-        });
+    // Build filters correctly
+    const filters = {
+      ownerId: userId,
+      status: "selling",
+      ...options.filters,
+    };
+    console.log("Filters", filters);
+    const response = await marketplaceService.getStampsWithFilter({
+      page,
+      limit,
+      filters,
+    });
 
-        return response;
-    }
+    return response;
+  }
   async connectWallet(userId, walletAddress) {
-      const user = await userModel.findOne({ _id: userId });
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const updatedUser = await userModel.findOneAndUpdate(
-        { _id: userId },
-        { $set: { walletAddress } },
-        { new: true }
-      );
-      return updatedUser;
+    const user = await userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new Error("User not found");
     }
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: { walletAddress } },
+      { new: true }
+    );
+    return updatedUser;
+  }
 
   async getCartItemById(itemId) {
     const item = await stampModel.aggregate([
@@ -292,6 +292,7 @@ class UserService {
       {
         $project: {
           _id: 1,
+          tokenID: 1,
           title: 1,
           imgUrl: 1,
           price: "$StampPrice.price",
@@ -397,6 +398,55 @@ class UserService {
       totalPrice: cart.totalPrice,
       items,
     };
+  }
+
+  async checkoutCart(userId) {
+    const cart = await cartModel.findOne({ userId });
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
+    // Create ownership records and update stamp insight status
+    const ownerships = [];
+    for (const itemId of cart.items) {
+      const ownership = {
+        ownerId: userId,
+        itemId,
+      };
+      ownerships.push(ownership);
+
+      // Update stamp insight status
+      await itemInsightModel.findOneAndUpdate(
+        { itemId },
+        { verifyStatus: "displaying" }
+      );
+    }
+    await ownershipModel.insertMany(ownerships);
+
+    // Clear cart
+    await cartModel.findOneAndUpdate(
+      { userId },
+      {
+        totalItem: 0,
+        totalPrice: 0,
+        items: [],
+      }
+    );
+
+    return true;
+  }
+
+  async clearCart(userId) {
+    await cartModel.findOneAndUpdate(
+      { userId },
+      {
+        totalItem: 0,
+        totalPrice: 0,
+        items: [],
+      }
+    );
+
+    return true;
   }
 
   async getUserSettings(userId) {
@@ -551,7 +601,6 @@ class UserService {
     });
     return totalCreatedStamps;
   }
-
 }
 
 module.exports = new UserService();

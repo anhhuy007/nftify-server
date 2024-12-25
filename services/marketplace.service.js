@@ -32,6 +32,7 @@ class MarketplaceService {
                         as: "insight",
                     },
                 },
+                { $unwind: "$insight" },
                 {
                     $lookup: {
                         from: "Collection",
@@ -66,6 +67,8 @@ class MarketplaceService {
                         title: 1,
                         imgUrl: 1,
                         "insight.viewCount": 1, //check purpose
+                        "insight.favoriteCount": 1,
+                        "insight.verifyStatus": 1
                     },
                 },
             ]),
