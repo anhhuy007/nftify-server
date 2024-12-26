@@ -233,7 +233,7 @@ class UserService {
       title: stamp.title,
       issuedBy: stamp.issuedBy,
       function: stamp.function,
-      date: stamp.date,
+      date: stamp.releaseDate,
       denom: stamp.denom,
       color: stamp.color,
       imgUrl: stamp.imgUrl,
@@ -253,7 +253,13 @@ class UserService {
       createdAt: new Date(),
     });
 
-    const collection = await collectionService.addStampToCollection(stamp.collection._id, newStamp._id);
+    const newItemInsight = await itemInsightModel.create({
+      itemId: newStamp._id,
+      verifyStatus: "unverified",
+      createdAt: new Date(),
+    });
+
+    const collection = await collectionService.addStampToCollection(stamp.collection, newStamp._id);
 
     return {newStamp, newOwnership, newPrice};
   }
