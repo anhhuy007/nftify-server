@@ -831,7 +831,6 @@ async function exportBlockData() {
     for (const item of items) {
       var price = itemPrice.find((p) => String(p.itemId) === String(item._id));
       // price = parseFloat(price)
-      console.log(parseFloat(price.price));
       const user = users.find((u) => String(u._id) === String(item.creatorId));
       const verified = itemInsights.find((i) => String(i.itemId) === String(item._id));
 
@@ -862,6 +861,24 @@ async function exportBlockData() {
     throw error;
   }
 }
+
+async function setSellingStatus() {
+  const items = await itemInsightModel.find({});
+  console.log(`Found ${items.length} item insights to update`);
+  for (item of items){
+    await itemInsightModel.updateOne(
+      { _id: item._id },
+      {
+        $set: {
+          verifyStatus: "selling",
+        },
+      }
+    );
+    console.log(`Updated item ${item._id} with selling status`);
+  }
+}
+// connectDB();
+// setSellingStatus();
 // connectDB();
 // exportBlockData();
 

@@ -1,6 +1,13 @@
 const { ethers } = require("hardhat");
 const fs = require("fs");
+const { create } = require("../../models/stamp.schema");
 
+
+const itemModel = require("../../models/stamp.schema");
+const itemPricingModel = require("../../models/itemPricing.schema");
+const itemInsightModel = require("../../models/itemInsight.schema");
+const userModel = require("../../models/user.schema");
+const connect = require("../../utils/connect");
 const BATCH_SIZE = 10; // Process 10 NFTs at a time
 const DELAY_BETWEEN_BATCHES = 1000; // 5 seconds delay
 
@@ -34,6 +41,52 @@ async function processBatch(marketplace, batch, batchIndex, totalBatches) {
   }
 }
 
+async function createNFTsJson() {
+  try {
+    const items = await itemModel.find({});
+    
+    const itemPrice = await itemPricingModel.find({});
+    const itemInsights = await itemInsightModel.find({});
+    const users = await userModel.find({});
+
+    console.log(`Found ${users.length} users`);
+    const data = [];
+
+    for (const item of items) {
+      var price = itemPrice.find((p) => String(p.itemId) === String(item._id));
+      // price = parseFloat(price)
+      
+      const user = users.find((u) => String(u._id) === String(item.creatorId));
+      const verified = itemInsights.find((i) => String(i.itemId) === String(item._id));
+
+      if (!user) {
+        console.log(`Debug - creatorId: ${item.creatorId}`);
+        console.log(`Debug - available user IDs: ${users.map(u => u._id).join(', ')}`);
+        console.log(`Skipping item ${item._id} - User not found for creatorId: ${item.creatorId}`);
+        continue;
+      }
+
+      data.push({
+        cid: item.tokenUrl,
+        tokenID: item.tokenID,
+        metamask: user.wallet_address || null,
+        price: price ? parseFloat(price.price) : null,
+        status: verified ? verified.verifyStatus : null,
+      });
+    }
+
+    console.log(`Processed ${data.length} items successfully`);
+    const fs = require('fs');
+    const path = require('path');
+    const outputPath = path.join(__dirname, '..', 'data', 'nfts.json');
+    fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
+    console.log(`Blocks data exported successfully to ${outputPath}`);
+  } catch (error) {
+    console.error("An error occurred during the exportBlocksData process:", error);
+    throw error;
+  }
+}
+
 async function main() {
   const Marketplace = await hre.ethers.getContractFactory("NFTMarketplace");
   const marketplace = await Marketplace.deploy();
@@ -42,6 +95,9 @@ async function main() {
 
   const address = await marketplace.getAddress();
   console.log(`Initialize NFTs on marketplace at address: ${address}`);
+  connect.connectDB();
+  const blocks = await createNFTsJson();
+  connect.closeConnectDB();
 
   const nfts = require("../data/nfts.json");
   const formattedNFTs = nfts.map((nft) => ({
