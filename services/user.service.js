@@ -143,7 +143,12 @@ class UserService {
       throw new Error("[Error][Invalid] Invalid userId format");
     }
 
-    await userModel.deleteOne({ _id: userId });
+    const oid = new mongoose.Types.ObjectId(userId);
+
+    await userModel.deleteOne({ _id: oid });
+    await accountModel.deleteOne({ _id: oid });
+    await ownershipModel.deleteMany({ ownerId: userId });
+    await cartModel.deleteOne({ userId: userId });
   }
 
   async getCreatedStamps(userId, options = {}) {
@@ -240,7 +245,7 @@ class UserService {
       tokenUrl: stamp.tokenUrl,
       createdAt: new Date(),
     };
-    
+
     const newStamp = await stampModel.create(preparedStamp);
     const newOwnership = await ownershipModel.create({
       ownerId: stamp.creatorId,
@@ -253,9 +258,12 @@ class UserService {
       createdAt: new Date(),
     });
 
-    const collection = await collectionService.addStampToCollection(stamp.collection._id, newStamp._id);
+    const collection = await collectionService.addStampToCollection(
+      stamp.collection._id,
+      newStamp._id
+    );
 
-    return {newStamp, newOwnership, newPrice};
+    return { newStamp, newOwnership, newPrice };
   }
   async getUserOnSaleItems(userId, options = {}) {
     const page = options.page || 1;
@@ -609,17 +617,44 @@ class UserService {
       };
     }
   }
+
   async getTotalOwnedStamps(userId) {
     const totalOwnedStamps = await ownershipModel.countDocuments({
       ownerId: userId,
     });
     return totalOwnedStamps;
   }
+
   async getTotalCreatedStamps(userId) {
     const totalCreatedStamps = await stampModel.countDocuments({
       creatorId: userId,
     });
     return totalCreatedStamps;
+  }
+
+  async initWallet(userId, walletAddress) {
+    const user = await userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // check if wallet address already exists
+    const existingUser = await userModel.findOne({ wallet_address: walletAddress });
+    if (existingUser && existingUser._id.toString() !== userId.toString()) {
+      throw new Error("Wallet address already exists");
+    }
+
+    if (user.wallet_address && user.wallet_address !== walletAddress) {
+      throw new Error("Wallet address already exists");
+    }
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: { wallet_address: walletAddress } },
+      { new: true }
+    );
+
+    return updatedUser;
   }
 }
 
