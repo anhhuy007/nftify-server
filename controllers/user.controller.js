@@ -609,7 +609,7 @@ exports.createCollection = asyncHandler(async (req, res) => {
       req.body,
       req.user._id
     );
-    res.status(201).json(newCollection);
+    return res.status(201).json(handleResponse(true, "Create new collection successfully", newCollection));
   } catch (error) {
     handleServiceError(res, error);
   }
