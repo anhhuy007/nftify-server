@@ -5,5 +5,13 @@
     "@openzeppelin/contracts": "^5.1.0",
     "hardhat": "^2.22.15",
     "mongoose": "^8.8.3"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js",
+    "console": "hardhat console",
+    "init-data": "hardhat run scripts/init-data.js --network localhost",
+    "list-data": "hardhat run scripts/list-data.js --network localhost"
   }
 }

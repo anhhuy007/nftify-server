@@ -62,6 +62,8 @@ userRouter.post("/settings/change-email", userController.changeEmail);
 userRouter.get("/cart", userController.getCart);
 userRouter.post("/cart", userController.addToCart);
 userRouter.delete("/cart", userController.removeFromCart);
+userRouter.post("/cart/checkout", userController.checkoutCart);
+userRouter.delete("/cart/clear", userController.clearCart);
 
 // create nft
 

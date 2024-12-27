@@ -110,6 +110,11 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {
@@ -270,6 +275,43 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "buyer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenSold",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "address",
           "name": "from",
           "type": "address"
@@ -288,6 +330,31 @@
         }
       ],
       "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawalComplete",
       "type": "event"
     },
     {
@@ -330,6 +397,41 @@
     {
       "inputs": [
         {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "tokenURI",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "price",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isListed",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct NFTMarketplace.InitialNFTData[]",
+          "name": "nfts",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "bulkInitializeNFTs",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "string",
           "name": "tokenURI",
           "type": "string"
@@ -364,7 +466,7 @@
           "type": "uint256"
         }
       ],
-      "name": "excuteSale",
+      "name": "executeSale",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -377,6 +479,11 @@
           "internalType": "uint256[]",
           "name": "tokenIds",
           "type": "uint256[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "tokenURIs",
+          "type": "string[]"
         },
         {
           "internalType": "address[]",
@@ -814,6 +921,13 @@
         }
       ],
       "name": "updateTokenPrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdraw",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
