@@ -25,7 +25,7 @@ class CollectionService {
         }
 
         // Validate required fields
-        const requiredFields = ["name", "description", "status"];
+        const requiredFields = ["name"];
         for (const field of requiredFields) {
             if (!collection[field]) {
                 throw new Error(
@@ -35,11 +35,11 @@ class CollectionService {
         }
 
 
-        // Validate status
-        const validStatus = ["selling", "sold", "displaying", "favourite"];
-        if (!validStatus.includes(collection.status)) {
-            throw new Error("[Error][Invalid] Invalid status value");
-        }
+        // // Validate status
+        // const validStatus = ["selling", "sold", "displaying", "favourite"];
+        // if (!validStatus.includes(collection.status)) {
+        //     throw new Error("[Error][Invalid] Invalid status value");
+        // }
     }
 
     async createCollection(collection, ownerId) {
@@ -52,6 +52,7 @@ class CollectionService {
             ownerId : ownerId,
             viewCount: 0,
             favouriteCount: 0,
+            status: "selling",
             createdAt: new Date(),
             updatedAt: new Date(),
         };
