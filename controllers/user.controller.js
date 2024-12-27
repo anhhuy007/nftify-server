@@ -637,5 +637,42 @@ exports.initWallet = asyncHandler(async (req, res) => {
       .json(handleResponse(true, "Init wallet successfully", result));
   } catch (error) {
     handleServiceError(res, error);
+  };
+});
+
+exports.initWallet = asyncHandler(async (req, res) => {
+  try {
+    const result = await userService.initWallet(
+      req.user._id,
+      req.body.walletAddress
+    );
+    if (!result) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot init wallet", result));
+    }
+    return res
+      .status(201)
+      .json(handleResponse(true, "Init wallet successfully", result));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.createCollection = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    console.log("Create new collection for user: ", req.user._id);
+
+    const newCollection = await collectionService.createCollection(
+      req.body,
+      req.user._id
+    );
+    return res.status(201).json(handleResponse(true, "Create new collection successfully", newCollection));
+  } catch (error) {
+    handleServiceError(res, error);
   }
 });

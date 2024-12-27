@@ -45,5 +45,8 @@ userRouter.delete("/cart/clear", userController.clearCart);
 // create nft
 userRouter.get("/collectionList", userController.getCollectionList);
 
+// create collection
+userRouter.post("/collection/create", userController.createCollection);
+
 module.exports = userRouter;
 

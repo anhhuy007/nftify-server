@@ -346,7 +346,9 @@
         "^0.8.20"
       ],
       "artifacts": [
-        "Context"
+        "IERC1155Errors",
+        "IERC20Errors",
+        "IERC721Errors"
       ]
     },
     "D:\\Project\\NFTify\\nftify-server\\contract\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
@@ -382,9 +384,7 @@
         "^0.8.20"
       ],
       "artifacts": [
-        "IERC1155Errors",
-        "IERC20Errors",
-        "IERC721Errors"
+        "ERC165"
       ]
     },
     "D:\\Project\\NFTify\\nftify-server\\contract\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {

@@ -232,6 +232,11 @@ class UserService {
     if (!stamp) {
       throw new Error("[Error][Missing] data is required");
     }
+
+    // Get last tokenID
+    const lastStamp = await stampModel.findOne().sort({ tokenID: -1 })
+    const lastTokenID = lastStamp ? lastStamp.tokenID : 0;
+
     // Prepare stamp for saving
     const preparedStamp = {
       creatorId: stamp.creatorId,
@@ -243,6 +248,7 @@ class UserService {
       color: stamp.color,
       imgUrl: stamp.imgUrl,
       tokenUrl: stamp.tokenUrl,
+      tokenID: lastTokenID + 1,
       createdAt: new Date(),
     };
 
@@ -255,6 +261,13 @@ class UserService {
     const newPrice = await itemPricingModel.create({
       itemId: newStamp._id,
       price: stamp.price,
+      currency: "ETH", // only currency now
+      createdAt: new Date(),
+    });
+
+    const newItemInsight = await itemInsightModel.create({
+      itemId: newStamp._id,
+      verifyStatus: "unverified",
       createdAt: new Date(),
     });
 
