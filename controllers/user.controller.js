@@ -596,3 +596,21 @@ exports.getCollectionList = asyncHandler(async (req, res) => {
   };
 });
 
+
+exports.createCollection = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    console.log("Create new collection for user: ", req.user._id);
+
+    const newCollection = await collectionService.createCollection(
+      req.body,
+      req.user._id
+    );
+    res.status(201).json(newCollection);
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
