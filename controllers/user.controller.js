@@ -640,25 +640,6 @@ exports.initWallet = asyncHandler(async (req, res) => {
   };
 });
 
-exports.initWallet = asyncHandler(async (req, res) => {
-  try {
-    const result = await userService.initWallet(
-      req.user._id,
-      req.body.walletAddress
-    );
-    if (!result) {
-      return res
-        .status(404)
-        .json(handleResponse(false, "Cannot init wallet", result));
-    }
-    return res
-      .status(201)
-      .json(handleResponse(true, "Init wallet successfully", result));
-  } catch (error) {
-    handleServiceError(res, error);
-  }
-});
-
 exports.createCollection = asyncHandler(async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
