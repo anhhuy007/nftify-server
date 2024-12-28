@@ -21,6 +21,10 @@ const TransactionSchema = new Schema(
       type: String,
       required: true,
     },
+    transactionFee: {
+      type: String,
+      required: true,
+    },
     block: {
       type: Number,
       required: true,
@@ -33,19 +37,15 @@ const TransactionSchema = new Schema(
       type: String,
       required: true,
     },
-    itemId: {
-      type: [String],
+    tokenID: {
+      type: Number,
     },
     value: {
-      type: Number,
-      required: true,
-    },
-    transactionFee: {
-      type: Number,
+      type: String,
       required: true,
     },
     gasPrice: {
-      type: Number,
+      type: String,
       required: true,
     },
   },

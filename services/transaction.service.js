@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+const transactionModel = require("../models/transaction.schema");
 
 class TransactionService {
     async createTransaction(transaction) {
-        return await this.transactionModel.create(transaction);
+        return await transactionModel.create(transaction);
     }
 
-    async getTransactions() {
+    async getTransactions(options = {}) {
         const { page = 1, limit = 10 } = options;
     
         const parsedPage = Math.max(1, parseInt(page));
@@ -13,15 +14,15 @@ class TransactionService {
         const skip = (parsedPage - 1) * parsedLimit;
 
         const [total, transactions] = await Promise.all([
-            this.transactionModel.countDocuments(),
-            this.transactionModel.find().skip(skip).limit(parsedLimit).exec()
+            transactionModel.countDocuments(),
+            transactionModel.find().skip(skip).limit(parsedLimit).exec()
         ]);
 
         return {
             total,
             page: parsedPage,
             limit: parsedLimit,
-            transactions
+            items: transactions
         };
     }
 

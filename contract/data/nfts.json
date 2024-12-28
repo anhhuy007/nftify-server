@@ -25,7 +25,7 @@
     "tokenID": 3,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.1,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreienls6ynk2uonbuhimmezvoaatxn7yozzhmyk4wk4a2xxetihdtoe",
@@ -200,7 +200,7 @@
     "tokenID": 28,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 0.93,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreiaiumab5vped24trrrigzhimkuwjj3qkvvkh3dlh3s3w5xap5vo5y",
@@ -305,7 +305,7 @@
     "tokenID": 43,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 3.68,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreibxha36c4j2wntcz74fpxolq7j2p55elxydx4hxuzlzu3mome7i5m",
@@ -550,7 +550,7 @@
     "tokenID": 78,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 3.54,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreicti2poxy7ct4tkgouqpjkrcdcemodfbeczbzbc4i6e3b5656t32a",
@@ -578,7 +578,7 @@
     "tokenID": 82,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 6.87,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreid7zdrztolfhbmw2l3goqxfef7rowzrzz7rfc3unkp5el4uy4vkkm",
@@ -669,7 +669,7 @@
     "tokenID": 95,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 0.58,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreih4ungieopoxirmj7lcpkki3uxwvc2j7xnzk3gy7f6xexdjtuls2i",
@@ -746,7 +746,7 @@
     "tokenID": 106,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.77,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreiex635gt4xc4lhsgmlixcp2unest6yos2po4xu3y75pnduhuwxhxa",
@@ -788,14 +788,14 @@
     "tokenID": 112,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 6.28,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreihcd4cegiarhybfpdpqetddfvhvqrhnlp7mgpsqohlnnwiax5emby",
     "tokenID": 113,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 3.78,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreibl4z2zcgk6kj5oah5ymi63dlritv64nb3p62n5lwtb3zafnzw25y",
@@ -816,14 +816,14 @@
     "tokenID": 116,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.14,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreifrrseenudlmyvjcb2c6rakbk2l6ugxljuydg3ged73blo3opuzim",
     "tokenID": 117,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 3.42,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreihtk2nth3kv37yy5ki2dfyjvvfzrwj3ppu7czkmpmlc5cnanfs6te",
@@ -844,7 +844,7 @@
     "tokenID": 120,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 8.34,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreifa5dlsqkocksl225jdc5ydrpbspob624j43pjvwathteljhyynea",
@@ -885,63 +885,7 @@
     "cid": "https://example.com/token-url",
     "tokenID": 126,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 127,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 128,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 129,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 130,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 131,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 132,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 133,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
-    "status": "unverified"
-  },
-  {
-    "cid": "https://example.com/token-url",
-    "tokenID": 134,
-    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "price": null,
+    "price": 23,
     "status": "unverified"
   }
 ]
