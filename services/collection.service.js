@@ -25,7 +25,7 @@ class CollectionService {
         }
 
         // Validate required fields
-        const requiredFields = ["name", "description", "status"];
+        const requiredFields = ["name"];
         for (const field of requiredFields) {
             if (!collection[field]) {
                 throw new Error(
@@ -35,11 +35,11 @@ class CollectionService {
         }
 
 
-        // Validate status
-        const validStatus = ["selling", "sold", "displaying", "favourite"];
-        if (!validStatus.includes(collection.status)) {
-            throw new Error("[Error][Invalid] Invalid status value");
-        }
+        // // Validate status
+        // const validStatus = ["selling", "sold", "displaying", "favourite"];
+        // if (!validStatus.includes(collection.status)) {
+        //     throw new Error("[Error][Invalid] Invalid status value");
+        // }
     }
 
     async createCollection(collection, ownerId) {
@@ -52,6 +52,7 @@ class CollectionService {
             ownerId : ownerId,
             viewCount: 0,
             favouriteCount: 0,
+            status: "selling",
             createdAt: new Date(),
             updatedAt: new Date(),
         };
@@ -412,12 +413,7 @@ class CollectionService {
                 arr.push(stamps.items[i]);
             }
         }
-        // console.log(arr);
-        // add pagination
 
-        // const parsedPage = Math.max(1, parseInt(page));
-        // const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
-        // const skip = (parsedPage - 1) * parsedLimit;
         const total = arr.length;
         const endpage = total;
         if (limit * page <= total - 1) {
@@ -437,9 +433,20 @@ class CollectionService {
     async addStampToCollection(collectionId, stampId) {
     
         // Check if the collection exists
+        // console.log(collectionId);
         const collection = await collectionModel.findById(collectionId);
+        console.log(collection);
+        let currItems = collection.items;
+        currItems.push(stampId);
         // Add stamp to the collection
-        collection.items.push(stampId);
+        // curcollection.items.push(stampId);
+
+        // Save the updated collection
+        const updatedCollection = await collectionModel.findByIdAndUpdate(collectionId,{
+            items: currItems
+        })
+
+        return updatedCollection;
     }
 
     // getCollectionList

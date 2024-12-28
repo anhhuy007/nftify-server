@@ -1,10 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const { handleServiceError, handleResponse } = require("../utils/helperFunc");
 const userService = require("../services/user.service");
-const collectionService = require("../services/collection.service"); 
+const collectionService = require("../services/collection.service");
 const nftService = require("../services/nft.service");
-const { on } = require("../models/user.schema");
-const { get } = require("mongoose");
+const ItemInsight = require("../models/itemInsight.schema");
 
 exports.getUser = asyncHandler(async (req, res) => {
   try {
@@ -12,7 +11,11 @@ exports.getUser = asyncHandler(async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
     const user = await userService.getUserById(req.user._id);
-    res.json(user);
+    res.json({
+      success: true,
+      message: "Retrieved user successfully",
+      data: user,
+    });
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -166,8 +169,10 @@ exports.getOwnedStamps = asyncHandler(async (req, res) => {
         Object.entries(filters).filter(([, v]) => v != null) // Remove null values from filters
       ),
     });
-    if (result.items.length === 0) { 
-      return res.status(200).json(handleResponse(true, "Owned stamps not found", result));
+    if (result.items.length === 0) {
+      return res
+        .status(200)
+        .json(handleResponse(true, "Owned stamps not found", result));
     }
     return res
       .status(200)
@@ -200,7 +205,9 @@ exports.getFavouriteStamps = asyncHandler(async (req, res) => {
       ),
     });
     if (result.items.length === 0) {
-      return res.status(200).json(handleResponse(true, "Favourite stamps not found", result));
+      return res
+        .status(200)
+        .json(handleResponse(true, "Favourite stamps not found", result));
     }
     return res
       .status(200)
@@ -216,26 +223,36 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
     //   return res.status(401).json({ message: "User not authenticated" });
     // }
     // const newStamp = await userService.createNewStamp(req.user._id, req.body);
-    const {newStamp, newOwnership, newPrice} = await userService.createNewStamp(
-      req.body
-    );
-
-
-
-    if (!newStamp || !newOwnership || !newPrice) {
-      return res.status(404).json({
-        success: false,
-        message: "Cannot create new stamp",
-      });
+    const { newStamp, newOwnership, newPrice ,newItemInsight} =
+      await userService.createNewStamp(req.body);
+    // console.log("newStamp = ", newStamp);
+    // console.log("itemInsight=====", newItemInsight);
+    if (!newStamp || !newOwnership || !newPrice||!newItemInsight) {
+      return res.status(404).json(handleResponse(false, "Cannot create stamp", newStamp));
     }
-    res.status(201).json({
-      success: true,
-      message: "Save stamp into database successfully",
-      data: newStamp,  
-    });
+    return res.status(200).json(handleResponse(true, "Create new stamp successfully", newStamp));
   } catch (error) {
     handleServiceError(res, error);
   }
+});
+
+exports.editStamp = asyncHandler(async (req, res) => { 
+  try {
+    const updatedStamp = await userService.editStamp(req.body);
+    if (!updatedStamp) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot update stamp", updatedStamp));
+    }
+    return res
+      .status(200)
+      .json(handleResponse(true, "Updated stamp successfully", updatedStamp));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+
+
 });
 
 exports.getMyNFTs = asyncHandler(async (req, res) => {
@@ -282,14 +299,23 @@ exports.getUserCollections = asyncHandler(async (req, res) => {
     });
 
     if (userCollection.items.length === 0) {
-      return res.status(200).json(handleResponse(true, "User collections not found",userCollection));
+      return res
+        .status(200)
+        .json(
+          handleResponse(true, "User collections not found", userCollection)
+        );
     }
-    
-    res.status(200).json(handleResponse(true, "Get user collections successfully", userCollection));
 
-  }
-  catch(error)
-  {
+    res
+      .status(200)
+      .json(
+        handleResponse(
+          true,
+          "Get user collections successfully",
+          userCollection
+        )
+      );
+  } catch (error) {
     handleServiceError(res, error);
   }
 });
@@ -353,7 +379,9 @@ exports.getItemsOnSale = asyncHandler(async (req, res) => {
       }
     );
     if (itemsOnSale.items.length === 0) {
-      return res.status(200).json(handleResponse(true, "Items on sale not found", itemsOnSale));
+      return res
+        .status(200)
+        .json(handleResponse(true, "Items on sale not found", itemsOnSale));
     }
     return res
       .status(200)
@@ -422,7 +450,11 @@ exports.changeUserProfile = asyncHandler(async (req, res) => {
         .json(handleResponse(false, "Cannot change user profile", updatedUser));
     }
     // console.log(updatedUser);
-    return res.status (201). json(handleResponse(true, "Change user profile successfully", updatedUser));
+    return res
+      .status(201)
+      .json(
+        handleResponse(true, "Change user profile successfully", updatedUser)
+      );
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -468,17 +500,20 @@ exports.addToCart = asyncHandler(async (req, res) => {
 
     const result = await userService.addToCart(req.user._id, req.body.itemId);
     if (!result) {
-      return res.status(404).json(handleResponse(false, "Cannot add item to cart", result));
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot add item to cart", result));
     }
     // const result = await userService.addToCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
-    
+
     // res.json({
     //   success: true,
     //   message: "Added item to cart successfully",
     //   data: result,
     // });
-    return res.status(201).json(handleResponse(true, "Added item to cart successfully", result));
-
+    return res
+      .status(201)
+      .json(handleResponse(true, "Added item to cart successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -554,7 +589,9 @@ exports.getCart = asyncHandler(async (req, res) => {
     const result = await userService.getCart(req.user._id);
     // const result = await userService.getCartItems("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
     if (result.items.length === 0) {
-      return res.status(200).json(handleResponse(true, "Cart items not found", result));
+      return res
+        .status(200)
+        .json(handleResponse(true, "Cart items not found", result));
     }
     return res
       .status(200)
@@ -579,20 +616,58 @@ exports.changeEmail = asyncHandler(async (req, res) => {
   }
 });
 
-
 exports.getCollectionList = asyncHandler(async (req, res) => {
   try {
     // console.log(req.user);
     // console.log(req.user._id);
-    const result = await collectionService.getCollectionList(
-      req.user._id);
+    const result = await collectionService.getCollectionList(req.user._id);
     if (result.length === 0) {
-      return res.status(200).json(handleResponse(true, "User doesnot have collection",result));
+      return res
+        .status(200)
+        .json(handleResponse(true, "User doesn't have collection", result));
     }
 
-    return res.status(404).json(handleResponse(true, "Collection found", result));
+    return res
+      .status(404)
+      .json(handleResponse(true, "Collection found", result));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.initWallet = asyncHandler(async (req, res) => {
+  try {
+    const result = await userService.initWallet(
+      req.user._id,
+      req.body.walletAddress
+    );
+    if (!result) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot init wallet", result));
+    }
+    return res
+      .status(201)
+      .json(handleResponse(true, "Init wallet successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   };
 });
 
+exports.createCollection = asyncHandler(async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    console.log("Create new collection for user: ", req.user._id);
+
+    const newCollection = await collectionService.createCollection(
+      req.body,
+      req.user._id
+    );
+    return res.status(201).json(handleResponse(true, "Create new collection successfully", newCollection));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

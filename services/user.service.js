@@ -14,6 +14,7 @@ const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 const itemPricingModel = require("../models/itemPricing.schema");
 const CollectionService = require("./collection.service");
 const collectionService = require("./collection.service");
+const { verify } = require("jsonwebtoken");
 class UserService {
   validateUserInput(user) {
     if (!user) {
@@ -143,7 +144,12 @@ class UserService {
       throw new Error("[Error][Invalid] Invalid userId format");
     }
 
-    await userModel.deleteOne({ _id: userId });
+    const oid = new mongoose.Types.ObjectId(userId);
+
+    await userModel.deleteOne({ _id: oid });
+    await accountModel.deleteOne({ _id: oid });
+    await ownershipModel.deleteMany({ ownerId: userId });
+    await cartModel.deleteOne({ userId: userId });
   }
 
   async getCreatedStamps(userId, options = {}) {
@@ -227,13 +233,32 @@ class UserService {
     if (!stamp) {
       throw new Error("[Error][Missing] data is required");
     }
-
     // Get last tokenID
     const lastStamp = await stampModel.findOne().sort({ tokenID: -1 })
     const lastTokenID = lastStamp ? lastStamp.tokenID : 0;
 
     // Prepare stamp for saving
+
+    // const nftData = {
+    //   // creatorId: user._id,
+    //   title: nft.title,
+    //   issuedBy: nft.issuedBy,
+    //   function: nft.function,
+    //   color: nft.color,
+    //   date: nft.releasedDate,
+    //   denom: nft.denom,
+    //   imgUrl: pinataImgUrl,
+    //   tokenID: pinataCid,
+    //   price: nft.price,
+    //   tokenUrl: pinataMetadataUrl,
+    //   description: nft.description,
+    //   collection: selectedCollection,
+    //   status: isOnMarketplace ? "selling" : "displaying",
+    // };
+
+
     const preparedStamp = {
+      
       creatorId: stamp.creatorId,
       title: stamp.title,
       issuedBy: stamp.issuedBy,
@@ -243,32 +268,50 @@ class UserService {
       color: stamp.color,
       imgUrl: stamp.imgUrl,
       tokenUrl: stamp.tokenUrl,
-      tokenID: lastTokenID + 1,
+
+
       createdAt: new Date(),
+      tokenID: lastTokenID + 1,
+
     };
-    
+
     const newStamp = await stampModel.create(preparedStamp);
     const newOwnership = await ownershipModel.create({
       ownerId: stamp.creatorId,
       itemId: newStamp._id,
       createdAt: new Date(),
     });
+    // console.log("new stamp created", newStamp); `
+    // console.log("New ownership created", newOwnership); 
+
     const newPrice = await itemPricingModel.create({
       itemId: newStamp._id,
       price: stamp.price,
       currency: "ETH", // only currency now
       createdAt: new Date(),
     });
+    // console.log("New price created", newPrice);
 
     const newItemInsight = await itemInsightModel.create({
       itemId: newStamp._id,
-      verifyStatus: "unverified",
+      verifyStatus: stamp.verifyStatus,
+      isListed: stamp.isListed,
       createdAt: new Date(),
     });
+    console.log("new item insight", newItemInsight);
+    if (stamp.collection.id != ""){
+      const collection = await collectionService.addStampToCollection(
+        stamp.collection.id,
+        newStamp._id
+      );
+      // console.log("new collection", collection);
+    }
+    return { newStamp, newOwnership, newPrice , newItemInsight};
+  }
 
-    const collection = await collectionService.addStampToCollection(stamp.collection._id, newStamp._id);
+  async editStamp(stamps) {
 
-    return {newStamp, newOwnership, newPrice};
+
   }
   async getUserOnSaleItems(userId, options = {}) {
     const page = options.page || 1;
@@ -431,6 +474,32 @@ class UserService {
       totalPrice: cart.totalPrice,
       items,
     };
+  }
+
+  async buyItem(userId, itemId) {
+    // check if item is for sale
+    const item = await itemInsightModel.findOne({ itemId });
+    if (!item || !item.isListed) {
+      throw new Error("Item not for sale");
+    }
+
+    // Transfer item ownership
+    await ownershipModel.create({
+      ownerId: userId,
+      itemId
+    });
+
+    // Update item status
+    await itemInsightModel.findOneAndUpdate
+    ({ itemId }, { verifyStatus: "displaying" });
+
+    // Check if item is in cart and remove it
+    const cartItemExists = await cartModel.findOne({ userId });
+    if (cartItemExists) {
+      await this.removeFromCart(userId, itemId);
+    }
+
+    return true;
   }
 
   async checkoutCart(userId) {
@@ -622,17 +691,44 @@ class UserService {
       };
     }
   }
+
   async getTotalOwnedStamps(userId) {
     const totalOwnedStamps = await ownershipModel.countDocuments({
       ownerId: userId,
     });
     return totalOwnedStamps;
   }
+
   async getTotalCreatedStamps(userId) {
     const totalCreatedStamps = await stampModel.countDocuments({
       creatorId: userId,
     });
     return totalCreatedStamps;
+  }
+
+  async initWallet(userId, walletAddress) {
+    const user = await userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // check if wallet address already exists
+    const existingUser = await userModel.findOne({ wallet_address: walletAddress });
+    if (existingUser && existingUser._id.toString() !== userId.toString()) {
+      throw new Error("Wallet address already exists");
+    }
+
+    if (user.wallet_address && user.wallet_address !== walletAddress) {
+      throw new Error("Wallet address already exists");
+    }
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId },
+      { $set: { wallet_address: walletAddress } },
+      { new: true }
+    );
+
+    return updatedUser;
   }
 }
 

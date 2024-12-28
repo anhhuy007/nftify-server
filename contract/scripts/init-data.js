@@ -95,15 +95,18 @@ async function main() {
 
   const address = await marketplace.getAddress();
   console.log(`Initialize NFTs on marketplace at address: ${address}`);
+
+  console.log("Creating NFTs JSON...");
   connect.connectDB();
   const blocks = await createNFTsJson();
   connect.closeConnectDB();
 
+  console.log("Reading NFTs JSON...");
   const nfts = require("../data/nfts.json");
   const formattedNFTs = nfts.map((nft) => ({
     owner: nft.metamask,
     tokenURI: nft.cid,
-    price: ethers.parseEther(nft.price.toString()),
+    price: ethers.parseEther(nft?.price?.toString() ?? "0"),
     isListed: true,
   }));
 

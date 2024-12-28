@@ -2,23 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { handleServiceError, handleResponse } = require("../utils/helperFunc");
 const collectionService = require("../services/collection.service");
 
-exports.createCollection = asyncHandler(async (req, res) => {
-  try {
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: "User not authenticated" });
-    }
 
-    console.log("Create new collection for user: ", req.user._id);
-
-    const newCollection = await collectionService.createCollection(
-      req.body,
-      req.user._id
-    );
-    res.status(201).json(newCollection);
-  } catch (error) {
-    handleServiceError(res, error);
-  }
-});
 
 exports.getCollectionById = asyncHandler(async (req, res) => {
   try {
@@ -168,13 +152,8 @@ exports.getCollectionItems = asyncHandler(async (req, res) => {
     const filters = {
       title: req.query.title,
       creatorId: req.query.creatorId,
-      // issuedBy: req.query.issuedBy,
-      // startDate: req.query.startDate,
-      // endDate: req.query.endDate,
       minPrice: req.query.minPrice,
       maxPrice: req.query.maxPrice,
-      // color: req.query.color,
-      // function: req.query.function,
       collectionName: req.query.collectionName,
       ownerName: req.query.ownerName,
       status: req.query.status,
