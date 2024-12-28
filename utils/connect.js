@@ -362,6 +362,29 @@ async function updateStampSchema() {
   }
 }
 
+async function updateItemStatus() {
+  try {
+    console.log('Starting schema update for items collection');
+
+    // Get all existing items
+    const items = await itemInsightModel.find({});
+    console.log(`Found ${items.length} items to update`);
+    try {
+      // Update all documents: change verifyStatus to verified
+      const result = await itemInsightModel.updateMany({}, { $set: { verifyStatus: "verified" } });
+      console.log(`Documents updated: ${result.modifiedCount}`);
+    } catch (error) {
+      console.error("Error updating schema:", error);
+    } finally {
+      // Close the database connection
+      await mongoose.disconnect();
+      console.log("Database connection closed");
+    }
+  } catch (error) {
+    console.error('An error occurred during the updateStampSchema process:', error);
+  }
+}
+
 async function updateCollectionSchema() {
   const collections = await collectionModel.find({});
   console.log(`Found ${collections.length} collections to update`);
@@ -969,8 +992,8 @@ async function updateTokenID() {
 
 
 // connectDB();
-// deleteRecords();
-
+// updateItemStatus();
+// closeConnectDB();
 
 module.exports = {
   connectDB,

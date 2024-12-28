@@ -441,6 +441,32 @@ class UserService {
     };
   }
 
+  async buyItem(userId, itemId) {
+    // check if item is for sale
+    const item = await itemInsightModel.findOne({ itemId });
+    if (!item || !item.isListed) {
+      throw new Error("Item not for sale");
+    }
+
+    // Transfer item ownership
+    await ownershipModel.create({
+      ownerId: userId,
+      itemId
+    });
+
+    // Update item status
+    await itemInsightModel.findOneAndUpdate
+    ({ itemId }, { verifyStatus: "displaying" });
+
+    // Check if item is in cart and remove it
+    const cartItemExists = await cartModel.findOne({ userId });
+    if (cartItemExists) {
+      await this.removeFromCart(userId, itemId);
+    }
+
+    return true;
+  }
+
   async checkoutCart(userId) {
     const cart = await cartModel.findOne({ userId });
     if (!cart) {

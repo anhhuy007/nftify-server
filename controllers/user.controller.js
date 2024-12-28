@@ -610,7 +610,7 @@ exports.getCollectionList = asyncHandler(async (req, res) => {
     if (result.length === 0) {
       return res
         .status(200)
-        .json(handleResponse(true, "User doesnot have collection", result));
+        .json(handleResponse(true, "User doesn't have collection", result));
     }
 
     return res

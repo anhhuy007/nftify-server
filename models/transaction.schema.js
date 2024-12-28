@@ -17,7 +17,7 @@ const Schema = mongoose.Schema;
 
 const TransactionSchema = new Schema(
   {
-    TransactionHash: {
+    transactionHash: {
       type: String,
       required: true,
     },
@@ -25,11 +25,11 @@ const TransactionSchema = new Schema(
       type: Number,
       required: true,
     },
-    sellerId: {
+    from: {
       type: String,
       required: true,
     },
-    buyerId: {
+    to: {
       type: String,
       required: true,
     },
@@ -47,10 +47,6 @@ const TransactionSchema = new Schema(
     gasPrice: {
       type: Number,
       required: true,
-    },
-    verify_status: {
-      type: Boolean,
-      default: false,
     },
   },
   {

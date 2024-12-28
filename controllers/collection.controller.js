@@ -152,13 +152,8 @@ exports.getCollectionItems = asyncHandler(async (req, res) => {
     const filters = {
       title: req.query.title,
       creatorId: req.query.creatorId,
-      // issuedBy: req.query.issuedBy,
-      // startDate: req.query.startDate,
-      // endDate: req.query.endDate,
       minPrice: req.query.minPrice,
       maxPrice: req.query.maxPrice,
-      // color: req.query.color,
-      // function: req.query.function,
       collectionName: req.query.collectionName,
       ownerName: req.query.ownerName,
       status: req.query.status,
