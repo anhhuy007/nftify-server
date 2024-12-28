@@ -106,7 +106,7 @@ async function main() {
   const formattedNFTs = nfts.map((nft) => ({
     owner: nft.metamask,
     tokenURI: nft.cid,
-    price: ethers.parseEther(nft.price.toString() ?? "0"),
+    price: ethers.parseEther(nft?.price?.toString() ?? "0"),
     isListed: true,
   }));
 

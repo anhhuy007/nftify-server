@@ -5,6 +5,7 @@ const collectionRoutes = require("./collection.route.js");
 const marketplaceRoutes = require("./marketplace.route.js");
 const stampRoutes = require("./stamp.route.js");
 const userRoutes = require("./user.route.js");
+const transactionRoutes = require("./transaction.route.js");
 
 const routers = express.Router();
 
@@ -14,6 +15,7 @@ routers.use("/collection", collectionRoutes);
 routers.use("/marketplace", marketplaceRoutes);
 routers.use("/stamp", stampRoutes);
 routers.use("/user", userRoutes);
+routers.use("/transaction", transactionRoutes);
 
 // Protected Routes
 // routers.use("/user", userRoutes);

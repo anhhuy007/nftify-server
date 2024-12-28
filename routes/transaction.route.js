@@ -7,5 +7,6 @@ transactionRouter.use(authenticateToken);
 transactionRouter.get("/list", transactionController.getTransactions);
 transactionRouter.get("/find/:transactionHash", transactionController.getTransactionByHash);
 transactionRouter.post("/", transactionController.createTransaction);
+transactionRouter.get("/overview", transactionController.getTransactionOverview);
 
 module.exports = transactionRouter;
