@@ -5,6 +5,7 @@ const collectionRoutes = require("./collection.route.js");
 const marketplaceRoutes = require("./marketplace.route.js");
 const stampRoutes = require("./stamp.route.js");
 const userRoutes = require("./user.route.js");
+const notificationRoutes = require("./notification.route.js");
 
 const routers = express.Router();
 
@@ -14,11 +15,13 @@ routers.use("/collection", collectionRoutes);
 routers.use("/marketplace", marketplaceRoutes);
 routers.use("/stamp", stampRoutes);
 routers.use("/user", userRoutes);
+routers.use("/notification", notificationRoutes);
 
 // Protected Routes
 // routers.use("/user", userRoutes);
 // routers.use("/writer", writerRoutes);
 // routers.use("/editor", editorRoutes);
 // routers.use("/admin", adminRoutes);
+
 
 module.exports = routers;

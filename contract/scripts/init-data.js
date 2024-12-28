@@ -44,7 +44,7 @@ async function processBatch(marketplace, batch, batchIndex, totalBatches) {
 async function createNFTsJson() {
   try {
     const items = await itemModel.find({});
-    
+
     const itemPrice = await itemPricingModel.find({});
     const itemInsights = await itemInsightModel.find({});
     const users = await userModel.find({});
@@ -55,7 +55,7 @@ async function createNFTsJson() {
     for (const item of items) {
       var price = itemPrice.find((p) => String(p.itemId) === String(item._id));
       // price = parseFloat(price)
-      
+
       const user = users.find((u) => String(u._id) === String(item.creatorId));
       const verified = itemInsights.find((i) => String(i.itemId) === String(item._id));
 
