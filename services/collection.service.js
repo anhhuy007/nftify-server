@@ -435,7 +435,10 @@ class CollectionService {
         // Check if the collection exists
         // console.log(collectionId);
         const collection = await collectionModel.findById(collectionId);
-        console.log(collection);
+        // console.log(collection);
+        if (collection.items.includes(stampId)) {
+            return collection;
+        }
         let currItems = collection.items;
         currItems.push(stampId);
         // Add stamp to the collection
@@ -444,8 +447,23 @@ class CollectionService {
         // Save the updated collection
         const updatedCollection = await collectionModel.findByIdAndUpdate(collectionId,{
             items: currItems
-        })
+        },{ new: true })
 
+        return updatedCollection;
+    }
+    async removeStampFromCollection(collectionId, stampId) {
+        const collection = await collectionModel.findById(collectionId);
+        let currItems = collection.items;
+        const index = currItems.indexOf(stampId);
+        // console.log("index = ",index);
+        if (index > -1) {
+            currItems.splice(index, 1);
+        }
+        // console.log("curr = ",currItems); 
+        const updatedCollection = await collectionModel.findByIdAndUpdate(collectionId,{
+            items: currItems
+        },
+        { new: true })
         return updatedCollection;
     }
 
