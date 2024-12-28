@@ -238,15 +238,33 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
 
 exports.editStamp = asyncHandler(async (req, res) => { 
   try {
-    const updatedStamp = await userService.editStamp(req.body);
-    if (!updatedStamp) {
+    const result = await userService.editStamp(req.body);
+    if (result.status === false) {
+      console.log(result.message);
       return res
         .status(404)
-        .json(handleResponse(false, "Cannot update stamp", updatedStamp));
+        .json(handleResponse(false, result.message, result));
+
     }
     return res
       .status(200)
-      .json(handleResponse(true, "Updated stamp successfully", updatedStamp));
+      .json(handleResponse(true, result.message, result));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.deleteStamp = asyncHandler(async (req, res) => { 
+  try {
+    const deletedStamp = await userService.deleteStamp(req.body);
+    if (!deletedStamp) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot delete stamp", deletedStamp));
+    }
+    return res
+      .status(200)
+      .json(handleResponse(true, "Deleted stamp successfully", deletedStamp));
   } catch (error) {
     handleServiceError(res, error);
   }

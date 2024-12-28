@@ -25,7 +25,8 @@ userRouter.delete("/delete/", userController.deleteUser);
 
 // NFTs routes
 userRouter.post("/create/nft", userController.createNewStamp);
-userRouter.post("/edit/nft", userController.editStamp);  
+userRouter.post("/edit/nft/:_id", userController.editStamp);  
+userRouter.delete("/delete/nft", userController.deleteStamp);
 
 userRouter.get("/myNfts", userController.getMyNFTs);
 userRouter.post("/connect-wallet", userController.connectWallet);
