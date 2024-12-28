@@ -5,12 +5,12 @@ const { authenticateToken } = require("../middlewares/auth.middleware");
 
 
 notificationRouter.use(authenticateToken);
-notificationRouter.get("/notifications", notificationController.getNotifications);
-notificationRouter.post("/notification", notificationController.createNotification);
-notificationRouter.put("/notification/:id", notificationController.markAsRead);
-notificationRouter.delete("/notification/:id", notificationController.deleteNotification);
-notificationRouter.delete("/notifications", notificationController.clearAllNotifications);
-notificationRouter.put("/notifications", notificationController.markAllAsRead);
+notificationRouter.get("/", notificationController.getNotifications);
+notificationRouter.post("/createNotification", notificationController.createNotification);
+notificationRouter.put("/:id", notificationController.markAsRead);
+notificationRouter.delete("/:id", notificationController.deleteNotification);
+notificationRouter.delete("/", notificationController.clearAllNotifications);
+notificationRouter.put("/", notificationController.markAllAsRead);
 
 
 module.exports = notificationRouter;

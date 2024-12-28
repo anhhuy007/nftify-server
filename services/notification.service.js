@@ -5,7 +5,7 @@ class NotificationService {
     async createNotification(userId, message) {
         try {
             const notification = {
-                message,
+                message: message,
                 read: false,
                 time: new Date()
             };
@@ -39,7 +39,7 @@ class NotificationService {
             }
 
             const start = (page - 1) * limit;
-            const end = min(start + limit, notifications.notifications.length);
+            const end = Math.min(start + limit, notifications.notifications.length);
             const paginatedNotifications = notifications.notifications.slice(start, end);
 
             return {

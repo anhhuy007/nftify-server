@@ -4,7 +4,7 @@ const { handleServiceError, handleResponse } = require('../utils/helperFunc');
 
 exports.getNotifications = asyncHandler(async (req, res) => {
     try {
-        const result = await notificationService.getNotifications(req.user._id);
+        const result = await notificationService.getNotifications(req.user._id, req.query.page, req.query.limit);
         res.json(result);
     } catch (error) {
         handleServiceError(res, error);
@@ -17,6 +17,7 @@ exports.createNotification = asyncHandler(async (req, res) => {
         res.json(result);
     } catch (error) {
         handleServiceError(res, error);
+        console.log('Notification creation failed');
     }
 });
 

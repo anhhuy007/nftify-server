@@ -676,7 +676,7 @@ async function saveStampDataFromJson(data) {
 async function deleteRecords() {
   try {
     // đổi model cần xóa, tốt nhất là không nên dùng:)))))
-    const result = await itemInsightModel.deleteMany({});
+    const result = await notificationModel.deleteMany({});
     console.log('Delete operation successful:', result);
   } catch (error) {
     console.error('Error deleting records:', error);
@@ -998,6 +998,28 @@ async function updateTokenID() {
 // connectDB();
 // updateItemStatus();
 // closeConnectDB();
+
+const notificationModel = require("../models/notification.schema");
+
+// create notification schema
+async function createEmptyNotification() {
+  try {
+    const users = await userModel.find({});
+    for (user of users){
+      const newNotification = new notificationModel({
+        userId: user._id,
+        notifications: []
+      });
+      await newNotification.save();
+      console.log(`Created notification schema for user ${user._id}`);
+    }
+    console.log('Notification schema created successfully');
+  } catch (error) {
+    console.error('An error occurred during the createEmptyNotification process:', error);
+    throw error;
+  }
+}
+
 
 module.exports = {
   connectDB,
