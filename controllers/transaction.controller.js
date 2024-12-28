@@ -44,3 +44,12 @@ exports.getTransactionByHash = asyncHandler(async (req, res) => {
     handleServiceError(res, error);
   }
 });
+
+exports.getTransactionOverview = asyncHandler(async (req, res) => {
+  try {
+    const overview = await transactionService.getTransactionOverview();
+    res.json(handleResponse(overview.success, "Transaction overview retrieved", overview.data));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});

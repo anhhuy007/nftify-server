@@ -186,7 +186,7 @@
     "tokenID": 26,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 2.46,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreih4beefa5cyo5fleleri37mnd5lzqfk4fwtxqkmhvvhyz4nbnepgm",
@@ -333,14 +333,14 @@
     "tokenID": 47,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 6.83,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreicg2ta2fy74zlalfwdf3yjcj2aoahu7fkoaynktscf5jtwuwmw32a",
     "tokenID": 48,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 7.34,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreiezsex7ib2qhn54h7tfuhjvsfzudcayibtnkz4ens4xhjf76ndyn4",
@@ -753,7 +753,7 @@
     "tokenID": 107,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 1.39,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreiajz53imnvmrjb2hayjhv7wy4zhprotrznh6uk6oqlbt7nowdggte",
@@ -767,7 +767,7 @@
     "tokenID": 109,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 7.15,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "bafkreiaaj5daarj6as2ujku3ngz6xbvyd3bqn3kkvrdmvtpw3rzymymlvu",
@@ -872,7 +872,7 @@
     "tokenID": 124,
     "metamask": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     "price": 4.5,
-    "status": "verified"
+    "status": "displaying"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreifa5dlsqkocksl225jdc5ydrpbspob624j43pjvwathteljhyynea",

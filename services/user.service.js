@@ -234,7 +234,7 @@ class UserService {
       throw new Error("[Error][Missing] data is required");
     }
     // Get last tokenID
-    const lastStamp = await stampModel.findOne().sort({ tokenID: -1 })
+    const lastStamp = await stampModel.findOne().sort({ tokenID: -1 });
     const lastTokenID = lastStamp ? lastStamp.tokenID : 0;
 
     // Prepare stamp for saving
@@ -256,9 +256,7 @@ class UserService {
     //   status: isOnMarketplace ? "selling" : "displaying",
     // };
 
-
     const preparedStamp = {
-      
       creatorId: stamp.creatorId,
       title: stamp.title,
       issuedBy: stamp.issuedBy,
@@ -269,10 +267,8 @@ class UserService {
       imgUrl: stamp.imgUrl,
       tokenUrl: stamp.tokenUrl,
 
-
       createdAt: new Date(),
       tokenID: lastTokenID + 1,
-
     };
 
     const newStamp = await stampModel.create(preparedStamp);
@@ -282,7 +278,7 @@ class UserService {
       createdAt: new Date(),
     });
     // console.log("new stamp created", newStamp); `
-    // console.log("New ownership created", newOwnership); 
+    // console.log("New ownership created", newOwnership);
 
     const newPrice = await itemPricingModel.create({
       itemId: newStamp._id,
@@ -299,20 +295,17 @@ class UserService {
       createdAt: new Date(),
     });
     console.log("new item insight", newItemInsight);
-    if (stamp.collection.id != ""){
+    if (stamp.collection.id != "") {
       const collection = await collectionService.addStampToCollection(
         stamp.collection.id,
         newStamp._id
       );
       // console.log("new collection", collection);
     }
-    return { newStamp, newOwnership, newPrice , newItemInsight};
+    return { newStamp, newOwnership, newPrice, newItemInsight };
   }
 
-  async editStamp(stamps) {
-
-
-  }
+  async editStamp(stamps) {}
   async getUserOnSaleItems(userId, options = {}) {
     const page = options.page || 1;
     const limit = options.limit || 10;
@@ -323,7 +316,7 @@ class UserService {
       status: "selling",
       ...options.filters,
     };
-    console.log("Filters", filters);
+
     const response = await marketplaceService.getStampsWithFilter({
       page,
       limit,
@@ -486,17 +479,30 @@ class UserService {
     // Transfer item ownership
     await ownershipModel.create({
       ownerId: userId,
-      itemId
+      itemId,
     });
 
     // Update item status
-    await itemInsightModel.findOneAndUpdate
-    ({ itemId }, { verifyStatus: "displaying" });
+    await itemInsightModel.findOneAndUpdate(
+      { itemId },
+      { verifyStatus: "displaying" }
+    );
 
     // Check if item is in cart and remove it
     const cartItemExists = await cartModel.findOne({ userId });
     if (cartItemExists) {
       await this.removeFromCart(userId, itemId);
+    }
+
+    // remove item from its collection
+    const existingCollection =
+      await collectionService.findCollectionByStampId(itemId);
+
+    if (existingCollection) {
+      await collectionService.removeStampFromCollection(
+        existingCollection._id,
+        itemId
+      );
     }
 
     return true;
@@ -518,10 +524,18 @@ class UserService {
       ownerships.push(ownership);
 
       // Update stamp insight status
-      await itemInsightModel.findOneAndUpdate(
-        { itemId },
-        { verifyStatus: "displaying" }
-      );
+      await itemInsightModel.findOneAndUpdate({ itemId }, { isListed: false });
+
+      // remove item from its collection
+      const existingCollection =
+        await collectionService.findCollectionByStampId(itemId);
+
+      if (existingCollection) {
+        await collectionService.removeStampFromCollection(
+          existingCollection._id,
+          itemId
+        );
+      }
     }
     await ownershipModel.insertMany(ownerships);
 
@@ -713,7 +727,9 @@ class UserService {
     }
 
     // check if wallet address already exists
-    const existingUser = await userModel.findOne({ wallet_address: walletAddress });
+    const existingUser = await userModel.findOne({
+      wallet_address: walletAddress,
+    });
     if (existingUser && existingUser._id.toString() !== userId.toString()) {
       throw new Error("Wallet address already exists");
     }
