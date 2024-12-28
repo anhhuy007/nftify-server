@@ -1,4 +1,5 @@
 const transactionModel = require("../models/transaction.schema");
+const stampModel = require("../models/stamp.schema");
 
 class TransactionService {
   async createTransaction(transaction) {
@@ -14,7 +15,40 @@ class TransactionService {
 
     const [total, transactions] = await Promise.all([
       transactionModel.countDocuments(),
-      transactionModel.find().skip(skip).limit(parsedLimit).exec(),
+      transactionModel
+        .aggregate([
+          {
+            $lookup: {
+              from: "Stamp",
+              localField: "tokenID",
+              foreignField: "tokenID",
+              as: "stampDetails",
+            },
+          },
+          {
+            $unwind: {
+              path: "$stampDetails",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $project: {
+              transactionHash: 1,
+              transactionFee: 1,
+              block: 1,
+              from: 1,
+              to: 1,
+              tokenID: 1,
+              value: 1,
+              gasPrice: 1,
+              createdAt: 1,
+              "stampDetails.title": 1,
+              "stampDetails.imgUrl": 1,
+            },
+          },
+        ])
+        .skip(skip)
+        .limit(parsedLimit),
     ]);
 
     return {
@@ -25,8 +59,8 @@ class TransactionService {
     };
   }
 
-  async getTransactionByHash(hash) {
-    return await this.transactionModel.findOne({ transactionHash });
+  async getTransactionByHash(transactionHash) {
+    return await transactionModel.findOne({ transactionHash });
   }
 
   async getTransactionOverview() {
