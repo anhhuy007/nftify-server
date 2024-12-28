@@ -14,6 +14,7 @@ const { bigint } = require("hardhat/internal/core/params/argumentTypes");
 const itemPricingModel = require("../models/itemPricing.schema");
 const CollectionService = require("./collection.service");
 const collectionService = require("./collection.service");
+const { verify } = require("jsonwebtoken");
 class UserService {
   validateUserInput(user) {
     if (!user) {
@@ -232,13 +233,32 @@ class UserService {
     if (!stamp) {
       throw new Error("[Error][Missing] data is required");
     }
-
     // Get last tokenID
     const lastStamp = await stampModel.findOne().sort({ tokenID: -1 })
     const lastTokenID = lastStamp ? lastStamp.tokenID : 0;
 
     // Prepare stamp for saving
+
+    // const nftData = {
+    //   // creatorId: user._id,
+    //   title: nft.title,
+    //   issuedBy: nft.issuedBy,
+    //   function: nft.function,
+    //   color: nft.color,
+    //   date: nft.releasedDate,
+    //   denom: nft.denom,
+    //   imgUrl: pinataImgUrl,
+    //   tokenID: pinataCid,
+    //   price: nft.price,
+    //   tokenUrl: pinataMetadataUrl,
+    //   description: nft.description,
+    //   collection: selectedCollection,
+    //   status: isOnMarketplace ? "selling" : "displaying",
+    // };
+
+
     const preparedStamp = {
+      
       creatorId: stamp.creatorId,
       title: stamp.title,
       issuedBy: stamp.issuedBy,
@@ -248,8 +268,11 @@ class UserService {
       color: stamp.color,
       imgUrl: stamp.imgUrl,
       tokenUrl: stamp.tokenUrl,
-      tokenID: lastTokenID + 1,
+
+
       createdAt: new Date(),
+      tokenID: lastTokenID + 1,
+
     };
 
     const newStamp = await stampModel.create(preparedStamp);
@@ -258,25 +281,37 @@ class UserService {
       itemId: newStamp._id,
       createdAt: new Date(),
     });
+    // console.log("new stamp created", newStamp); `
+    // console.log("New ownership created", newOwnership); 
+
     const newPrice = await itemPricingModel.create({
       itemId: newStamp._id,
       price: stamp.price,
       currency: "ETH", // only currency now
       createdAt: new Date(),
     });
+    // console.log("New price created", newPrice);
 
     const newItemInsight = await itemInsightModel.create({
       itemId: newStamp._id,
-      verifyStatus: "unverified",
+      verifyStatus: stamp.verifyStatus,
+      isListed: stamp.isListed,
       createdAt: new Date(),
     });
+    console.log("new item insight", newItemInsight);
+    if (stamp.collection.id != ""){
+      const collection = await collectionService.addStampToCollection(
+        stamp.collection.id,
+        newStamp._id
+      );
+      // console.log("new collection", collection);
+    }
+    return { newStamp, newOwnership, newPrice , newItemInsight};
+  }
 
-    const collection = await collectionService.addStampToCollection(
-      stamp.collection._id,
-      newStamp._id
-    );
+  async editStamp(stamps) {
 
-    return { newStamp, newOwnership, newPrice };
+
   }
   async getUserOnSaleItems(userId, options = {}) {
     const page = options.page || 1;

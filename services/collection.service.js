@@ -433,9 +433,20 @@ class CollectionService {
     async addStampToCollection(collectionId, stampId) {
     
         // Check if the collection exists
+        // console.log(collectionId);
         const collection = await collectionModel.findById(collectionId);
+        console.log(collection);
+        let currItems = collection.items;
+        currItems.push(stampId);
         // Add stamp to the collection
-        collection.items.push(stampId);
+        // curcollection.items.push(stampId);
+
+        // Save the updated collection
+        const updatedCollection = await collectionModel.findByIdAndUpdate(collectionId,{
+            items: currItems
+        })
+
+        return updatedCollection;
     }
 
     // getCollectionList
