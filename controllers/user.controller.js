@@ -241,6 +241,25 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
   }
 });
 
+exports.editStamp = asyncHandler(async (req, res) => { 
+  try {
+    const updatedStamp = await userService.editStamp(req.body);
+    if (!updatedStamp) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot update stamp", updatedStamp));
+    }
+    return res
+      .status(200)
+      .json(handleResponse(true, "Updated stamp successfully", updatedStamp));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+
+
+
+});
+
 exports.getMyNFTs = asyncHandler(async (req, res) => {
   try {
     // if (!req.user || !req.user._id) {
