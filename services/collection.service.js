@@ -413,12 +413,7 @@ class CollectionService {
                 arr.push(stamps.items[i]);
             }
         }
-        // console.log(arr);
-        // add pagination
 
-        // const parsedPage = Math.max(1, parseInt(page));
-        // const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
-        // const skip = (parsedPage - 1) * parsedLimit;
         const total = arr.length;
         const endpage = total;
         if (limit * page <= total - 1) {

@@ -4,881 +4,944 @@
     "tokenID": 0,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 2.69,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreie5ri3lr6zcbbiutgvmccwznurxy3lzahmi6uui7zj7k44qfsukpi",
     "tokenID": 1,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 0.62,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreih6exareubo7ymunjc433o7hdhytn4qi5rgnvgd2qwyoxsh4zdlpy",
     "tokenID": 2,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 6.48,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidwxmliz4lazx5aildmupuldpsroyu47id2ozdt72vtm2jpa7x7su",
     "tokenID": 3,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.1,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreienls6ynk2uonbuhimmezvoaatxn7yozzhmyk4wk4a2xxetihdtoe",
     "tokenID": 4,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 9.86,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidkdhtogecju3hsmvhcjd5u2r2q6gwd73vwhcyq6ilpwukg7h5zau",
     "tokenID": 5,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 9.78,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiceafspqzeb4vdv7lk6rzmgv6mnsm44uv5xl6zrjjtkurowvoqovm",
     "tokenID": 6,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.83,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifh35jmhm2nf2w2v3b4sdg2fl7yh6wwxd67moj5hnpddyon7r7224",
     "tokenID": 7,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 3.57,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihzcslataay2qdpsuofahjbireorgoa22v733xnhwnsuusq6up63m",
     "tokenID": 8,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 7.62,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibmgsy6uvahhwzg2rigarnsha3y7oyjesafvvqle44fmtmlcdxe6m",
     "tokenID": 9,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 1.82,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaee4p2klvsdtzntwx6yzbexviqp4plie2hptdm6lb5ujpmvjs7pq",
     "tokenID": 10,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 3.73,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaydzywghwwgizf563px7ree6gqru6ub6irqtopvnkcmabx6sjnsq",
     "tokenID": 11,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 1.15,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiglkskvj4b4fnvgupl7453gjnhwe7urimmtbndivhomgdayt5syza",
     "tokenID": 12,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 5.17,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifh2jxps3m3mfrwfvlupp3zmotjm6hzsoncjru4bgik46hbsfw7qy",
     "tokenID": 13,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 8.64,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaf5ukskws52efteucoj4qiefesay2stwmkf7sui2tblt3jvipj7e",
     "tokenID": 14,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 6.33,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreier6ompclmjxhilmvhtsdljrha7te3xxebk4afbuzd7574c4m5rli",
     "tokenID": 15,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 1.53,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreigtqcwwimfwzbuvtfqbnrofetrktknavkqvzurwfyeoucqj75hryy",
     "tokenID": 16,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 4.09,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihu442ocz5qguay3dokspca3d53kfnbegglbrz3uid5wjy7hstfmi",
     "tokenID": 17,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 1.01,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreic4yzzpofjsjvcfurbt7ag3gn3g2naz3dxl52bltafv52zctae4zy",
     "tokenID": 18,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 0.29,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiajrqbtyvounqhu7jdkcjef6noxuhxpkh5ppdilrvfzejzogejlsa",
     "tokenID": 19,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.82,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiewgcczl537bfhqs2ndcilxvrneknxohbj42p355x7aupaittfvvq",
     "tokenID": 20,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 0.76,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreicqxjfzm5swgufz36jwux7gxk3okdf7yt5fpoci5ucbynymxou3ty",
     "tokenID": 21,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 6.1,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreif22u2nbvu3w5yklhek5okms3gyoeeaoxkcoqwww5bgul5zto4u4y",
     "tokenID": 22,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 2.03,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreia223j66hxtolzmrxjbhsoeeepshjqxkixcbvog4sqgwudu4bxlsq",
     "tokenID": 23,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 4.23,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreic4xurg53j7r3vrd4xoawrly6inhjnurzrc23yus5wlb2g4fatl24",
     "tokenID": 24,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 0.1,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreia55pnbgrewgukal7fsqu6prafw6w7wr6cusazojx2zdacx66fqpu",
     "tokenID": 25,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.91,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreigdvzn75ywqozxe6mfc6abojzahvhuxa23fifd4dzqi3y2urkdzxy",
     "tokenID": 26,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 2.46,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreih4beefa5cyo5fleleri37mnd5lzqfk4fwtxqkmhvvhyz4nbnepgm",
     "tokenID": 27,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 8.43,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiay25rhdxvjwvsizi3whkxwy63ermrrgn5chxq3k55orvtfgo7rry",
     "tokenID": 28,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 0.93,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaiumab5vped24trrrigzhimkuwjj3qkvvkh3dlh3s3w5xap5vo5y",
     "tokenID": 29,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 1.85,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaezbi6dcvapctru6xcil4wqpxzdi4apjl7kjlwdq6chlhnj3utqe",
     "tokenID": 30,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 9.51,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidlrgqh6juztidopdggmxfv4djw3ly52o7menwzvlm6k7qreqomgi",
     "tokenID": 31,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.05,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreieijdenkn6itcfbj2kz6czooi7lv24kzhh3agvhzqia2u3vopwy5u",
     "tokenID": 32,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 1.54,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreievltvedwj5uaeaw2s5tvbcis3zygbbg7i4xowthlbkwvnnc7o3hi",
     "tokenID": 33,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 9.48,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaozfgdvs5of6egyvkdwegztdws4nxv5y2r5cr2hrtkas4p4jqnum",
     "tokenID": 34,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 5.56,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaj6xrim6act7bkymkcfj2m6nisfzyyevsvqxsm26u3nrigot6lni",
     "tokenID": 35,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 1.93,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiei2qpzjtrfwzjwsufmmjnvjpxw72vpdieg6wchrwbf6bpqiakamm",
     "tokenID": 36,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 4.16,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreigeq7a24dtt7yzc26vlqpa3wnvtovsnc4w3s4fdjltsd4ym7evnf4",
     "tokenID": 37,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 8.83,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidg4xc7judvl3mxahzfstsxvg7wtgbrroqt5ijirr7lmiyayibfia",
     "tokenID": 38,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 2.68,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiasves6ukxr5c5k7abajmu4syyq7m7ijikf2pslrsrfhtvyzt2xri",
     "tokenID": 39,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 6.58,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifjixdv5wnzljfpdowhdtem6amml7j22bnqliq7otzwd4zithfo2e",
     "tokenID": 40,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 1.1,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreigy4gbyldx2hns2vxnsl43dgcl2pevgxneuzcviq33fdcaqb7uqdi",
     "tokenID": 41,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 6.62,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibhsdhplu5nqjuiq5y7jkwlm3illtrhkgx6axis2p4mkh7icux3eu",
     "tokenID": 42,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 2.25,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifllnebdva7q5bhuu7yq2jj5p2zqmw3b7ydqeg2hk6r5mnp5vchca",
     "tokenID": 43,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 3.68,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibxha36c4j2wntcz74fpxolq7j2p55elxydx4hxuzlzu3mome7i5m",
     "tokenID": 44,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 0.44,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreic7or3u5vi7knq4kluzk6knygwtb5u7624dphm2ortdns3ghgeege",
     "tokenID": 45,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 6.56,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifusggywfpazwos7g2dfxwcyhzxmp4fstrovzbgcxutavpnjbp6cq",
     "tokenID": 46,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 9.53,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreib7clgwujqfm6m7mwnewzinejitlro5pwj6qhhh3u7qxdtaoidclu",
     "tokenID": 47,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 6.83,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreicg2ta2fy74zlalfwdf3yjcj2aoahu7fkoaynktscf5jtwuwmw32a",
     "tokenID": 48,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 7.34,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiezsex7ib2qhn54h7tfuhjvsfzudcayibtnkz4ens4xhjf76ndyn4",
     "tokenID": 49,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 1.56,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidufntlk3sqx3hjohkpwowhml7ab7cmr66oo2rkdvbl5xzrzm24n4",
     "tokenID": 50,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 6.05,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreicvhycyoolhswwh63bft6wpwu3olmc5z2k6yhkj5l45drybyfm7eq",
     "tokenID": 51,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 8.55,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiforjaa5ah55pkwqyj6cppain4z4dzmdqmxkyvwz6sirg5dmp5bxe",
     "tokenID": 52,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 4.99,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifdfisssadba7yjxeqc7mvj7y7hzxo2noncpbvz4owovxwsc4nh5q",
     "tokenID": 53,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 7.19,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaftjaar3yuq2g3hnjw56ilkqpfcuyjvwjzju6me3oqtrzxp2ew7i",
     "tokenID": 54,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 6.55,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiea672xf6lhqetaeo7gbb4m7v5rao6lnickqeztxubk4dfgg2nm5e",
     "tokenID": 55,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 9.44,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreie36yluvd6ivjm5aervukluo7kuylgnes2p74fw7mg3uk2pwormsa",
     "tokenID": 56,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 3.97,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreicb6yauglmmsri6bsdrfl74jejhz3x6sedx2srrd4p7qjkyvgtwnq",
     "tokenID": 57,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 8.4,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihagmvhcz755clcea3r5cfn7d5vahmanlq6lqvtu463b3ngh5mz64",
     "tokenID": 58,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 3.39,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidrkbips7u22jsrhryfpabnuonxjbbqwqep2cqebylmagwjiie5im",
     "tokenID": 59,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 9.04,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihj5jqkszb43nb345glxildwttjhlaybapvnkb3ostgq6atzkjgsi",
     "tokenID": 60,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.07,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreihb4nadxwpqgontlldcwdc2qdcqinujgv7pbjuo5c5cff2fquqn6m",
     "tokenID": 61,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 7.36,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaxkwserrax22ivler3szsy5w6fqujzksphzohj2eap7cle5oyhj4",
     "tokenID": 62,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 8.31,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiectwjw7slmppgyzdnggtatjxlnllsfkabkg3cmttz3cpx6cuon4i",
     "tokenID": 63,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 8.15,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreietp75wr25umeg5ydqnzvjcafdohkvov75hgdmat5x5heogtiotfi",
     "tokenID": 64,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 4.12,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidpifllnkxw2t6c674oxuocbhkhw72mkph5bk3v4gjbchsrswb2iy",
     "tokenID": 65,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 4.96,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibbugwnld3roxiygymsqivnjnnqtwhjmiscp32n55mlhwg7rjde54",
     "tokenID": 66,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 1.01,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihumxlndz2od7rjmrvfykulil23acdmf22pmollqqq33zg2zeaswu",
     "tokenID": 67,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 2.79,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaksqx26wp7ton7ljjskxzmukvpz6orlqukxeeyzxplo2ix42qmi4",
     "tokenID": 68,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 0.48,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidhioxh7vwngxdfralsrl7wpys7g3oiuh5sbzbcngpfl3fbwzcz6y",
     "tokenID": 69,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 6.17,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreicxj7exatfo2bhk76tf2od6svt5xjpwvtwuce54oxqk3y3trclr6m",
     "tokenID": 70,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 3.48,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreickpnf2lpopfprw2ioco7cqb622sskcwo4il6dmrrztthemljjiia",
     "tokenID": 71,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 8.57,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibbhkheqpfjvfzhcs37si6wq6nm77w5xyjp5hohok3fnr3jk7rhp4",
     "tokenID": 72,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 5.28,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreigjlrvsplw5vldancxdxv6hxasjo7vfnzemwr73lninktfmxjszri",
     "tokenID": 73,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 5.4,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreid5wq443taju4n4ks3q6xim7wc4eqglwly2amr2obfzu5eqpu2em4",
     "tokenID": 74,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 4.07,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifnijlfx4zneostcbusshtqwdvht4qvkx6kzv6cwnoohul333ny4q",
     "tokenID": 75,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 5.26,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifgulypvezkfhkfb6uxytayt3ljvqvc3l6336p2yld6wggozdeiaa",
     "tokenID": 76,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 1.57,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreieggukvgyffb7ulssj6l6vx2zdlr2umrvga2uq6opqbvljgd7yvw4",
     "tokenID": 77,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 6.01,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifsomzoqki7sp3cxjrl2pabaivslivhxc6ageco46vpcnt6xrviqq",
     "tokenID": 78,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 3.54,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreicti2poxy7ct4tkgouqpjkrcdcemodfbeczbzbc4i6e3b5656t32a",
     "tokenID": 79,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.18,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihkcmvoyrtw3pwtkdpzwcy6rm7tumt2e6r43s6gsq25bejaszunme",
     "tokenID": 80,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 7.76,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihwx3wtgcyv5j4cbym4ev7zhj2q2yrfzb4ztxbjzwwdp7fnqulsee",
     "tokenID": 81,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.12,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidoy66th3q2pmyjakgadxiupq5tmsz3bmq4tfp2hhf2xsawgtpb6q",
     "tokenID": 82,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 6.87,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreid7zdrztolfhbmw2l3goqxfef7rowzrzz7rfc3unkp5el4uy4vkkm",
     "tokenID": 83,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 3.41,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihco4gyjqhuqakppuhjhjurtfgxyeku2swwkfa55fs33h3t7jdbua",
     "tokenID": 84,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.04,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreib6ofx2gmauyffba7kfle637gty37io7ngf55ybg4fzumaywdihau",
     "tokenID": 85,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 4.28,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreihaeok554bb4vrvk3zyttbcefrgzel6a6hqwg2kumpt3trremaccq",
     "tokenID": 86,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 5.65,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiedwvpb7yz6rjfrlhhemhlkbkxbp62vz3vcos4cfivomu5wb7ohf4",
     "tokenID": 87,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 5.98,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiast4nyit5tbgevemvurj7ykeh5bg5bu2rrsejgmssai6yucx47ru",
     "tokenID": 88,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 9.58,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreic66dus5q4k4cciidjpoj6hwt5cdt3i2xpewsl7cckiuigtxlta4y",
     "tokenID": 89,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 6.3,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaihq6rln7wq675n5af6ttyrl6rcsc22iadaqh4kpatbd5oezoqhq",
     "tokenID": 90,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.51,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreicy4zqvjtutrbbazbazmqaj2eaopz7ltlzdtk2tktfcqav6o64oca",
     "tokenID": 91,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 5.2,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibaoiyutah3ypmc7acbyqp3kchnbawcmfciiyzwtdwagkqiwaboym",
     "tokenID": 92,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 8.37,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaiizuirb6gigneu6udpqhzd4qacd7wzg4g7z46vyzdhukq7wntii",
     "tokenID": 93,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 7.81,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihxgzwo632vbboxdhiwpen4ousory74vr7vgi3g4xggvzamgmrjfe",
     "tokenID": 94,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 1.29,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidf7zihy4n73rhscxpp2kftllxkplzjhe4prvbp2qbsnahx5wf3cu",
     "tokenID": 95,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 0.58,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreih4ungieopoxirmj7lcpkki3uxwvc2j7xnzk3gy7f6xexdjtuls2i",
     "tokenID": 96,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 1.9,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreib2c2d2jdvbtudi2iuypxflrpp6ugx6mpsdupdogzwhlwonsd4mjq",
     "tokenID": 97,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 0.92,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreieccco4tqpeu5ekuzuzbxsmp2e3ugxp265jha34awerv5rimxlxfa",
     "tokenID": 98,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 0.76,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreif2emgcgrbn6gnniae3zv4ui4wdo6zvq6dvmepadrhpthe7kiyt6a",
     "tokenID": 99,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 8.78,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidzwzrzk6ss7rsesr7ucc3q7e5h3z5v65n7dhfi4ke5vzf2ame5ii",
     "tokenID": 100,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 7.64,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreifj6mywqtloqi6bdjhcdsmmmspsco7nd3njgdw565aqf5ttlns2aa",
     "tokenID": 101,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 9.06,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreig3irhatcmeppjmdl2eqssze56s55bzulmxwbbazmeyu627745574",
     "tokenID": 102,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 1.3,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibwwg5ih2jwztwytouuohxwreitr4nv3hyirzeeu7je4flbipfgie",
     "tokenID": 103,
     "metamask": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
     "price": 5.48,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreigyuf7jqq6iomc5nk5odrt553xtz6vrwt6dukprvx3j6jdqwbuery",
     "tokenID": 104,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 1.2,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifgfaa4iebn2evwch5tfznuj4js4haepnpnsh4aa4ncaitictzxhe",
     "tokenID": 105,
     "metamask": "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
     "price": 4.88,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreie2izmxwpu3fmf7lwxvaa7nm5okzb726te2h4ppjj7lflymywmd34",
     "tokenID": 106,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.77,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreiex635gt4xc4lhsgmlixcp2unest6yos2po4xu3y75pnduhuwxhxa",
     "tokenID": 107,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 1.39,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreiajz53imnvmrjb2hayjhv7wy4zhprotrznh6uk6oqlbt7nowdggte",
     "tokenID": 108,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 1.05,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifvi34xhvj54abiylz72n2nk7b4irdcjjoyas2zlkk6ujtkmypgxa",
     "tokenID": 109,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 7.15,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreiaaj5daarj6as2ujku3ngz6xbvyd3bqn3kkvrdmvtpw3rzymymlvu",
     "tokenID": 110,
     "metamask": "0xBcd4042DE499D14e55001CcbB24a551F3b954096",
     "price": 8.03,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreie3hwuokbpm4i7po63g4r7lrd3pyecqopqafkcbvdztqxcg5mj5gy",
     "tokenID": 111,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 7.18,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihculxlk4p2zxa6jno5xitwsg3irr4b5lgaazn5nsj3mnp33u22tq",
     "tokenID": 112,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 6.28,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreihcd4cegiarhybfpdpqetddfvhvqrhnlp7mgpsqohlnnwiax5emby",
     "tokenID": 113,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 3.78,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibl4z2zcgk6kj5oah5ymi63dlritv64nb3p62n5lwtb3zafnzw25y",
     "tokenID": 114,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 0.83,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreibmoy5bayea3faihmxxlywozq435dmfxmu72lskafqwncbgo4hmmu",
     "tokenID": 115,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.9,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreidued4nlhe5vmx2ma3do6rrml3qhy3pame53sqzjaakgmwaw5vmmy",
     "tokenID": 116,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 7.14,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreifrrseenudlmyvjcb2c6rakbk2l6ugxljuydg3ged73blo3opuzim",
     "tokenID": 117,
     "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
     "price": 3.42,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreihtk2nth3kv37yy5ki2dfyjvvfzrwj3ppu7czkmpmlc5cnanfs6te",
     "tokenID": 118,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 5.69,
-    "status": "displaying"
+    "status": "verified"
   },
   {
     "cid": "bafkreigalo4qjut324blyj5o4tsvanfsccn4k5wxgilvuddaed3r25uxxq",
     "tokenID": 119,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 5.51,
-    "status": "selling"
+    "status": "verified"
   },
   {
     "cid": "bafkreigwoxznfrx62kglsa54ux5hhfvxdjhqxl52kqpq6nxxfnh54kfaiy",
     "tokenID": 120,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 8.34,
-    "status": "unverified"
+    "status": "verified"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreifa5dlsqkocksl225jdc5ydrpbspob624j43pjvwathteljhyynea",
     "tokenID": 121,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 12,
-    "status": "unverified"
+    "status": "verified"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreifa5dlsqkocksl225jdc5ydrpbspob624j43pjvwathteljhyynea",
     "tokenID": 122,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 12,
-    "status": "unverified"
+    "status": "verified"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreiebkluer5y4i73mzkybpk5kz6jmkso6l4qjkutpkerldp4tqd2ega",
     "tokenID": 123,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 12,
-    "status": "unverified"
+    "status": "verified"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreiggftvdgx4x7trsbwe3simbx5kcby7usvaq4ccdvh5txxlxx3xazu",
     "tokenID": 124,
     "metamask": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     "price": 4.5,
-    "status": "unverified"
+    "status": "verified"
   },
   {
     "cid": "https://plum-glamorous-cephalopod-335.mypinata.cloud/ipfs/bafkreifa5dlsqkocksl225jdc5ydrpbspob624j43pjvwathteljhyynea",
     "tokenID": 125,
     "metamask": "0x71bE63f3384f5fb98995898A86B02Fb2426c5788",
     "price": 12,
+    "status": "verified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 126,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 127,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 128,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 129,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 130,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 131,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 132,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 133,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
+    "status": "unverified"
+  },
+  {
+    "cid": "https://example.com/token-url",
+    "tokenID": 134,
+    "metamask": "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
+    "price": null,
     "status": "unverified"
   }
 ]

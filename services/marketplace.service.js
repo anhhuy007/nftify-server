@@ -70,7 +70,8 @@ class MarketplaceService {
                         imgUrl: 1,
                         "insight.viewCount": 1, //check purpose
                         "insight.favoriteCount": 1,
-                        "insight.verifyStatus": 1
+                        "insight.verifyStatus": 1,
+                        "insight.isListed": 1,
                     },
                 },
             ]),
@@ -429,9 +430,6 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
-        // console.log("filter in stamp filter = ", filters);
-
-        console.log(`Page: ${page}, Limit: ${limit}, Filters: ${JSON.stringify(filters)}`);
 
         // Prepare dynamic filter
         const mongoFilter = {};
@@ -577,16 +575,16 @@ class MarketplaceService {
         }
 
         // Apply status filter
-        if (filters.status === "all") {
+        if (filters.status === "selling") {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": { $ne: "rejected" },
+                    "insight.isListed": true,
                 },
             });
-        } else if (filters.status) {
+        } else if (filters.status === "displaying") {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": filters.status,
+                    "insight.isListed": false,  
                 },
             });
         }
@@ -626,6 +624,7 @@ class MarketplaceService {
                     viewCount: { $first: "$insight.viewCount" },
                     favouriteCount: { $first: "$insight.favoriteCount" },
                     status: { $first: "$insight.verifyStatus" },
+                    isListed: { $first: "$insight.isListed" },
                     collectionName: {
                         $first: { $ifNull: ["$collection.name", "null"] },
                     },

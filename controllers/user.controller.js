@@ -3,6 +3,7 @@ const { handleServiceError, handleResponse } = require("../utils/helperFunc");
 const userService = require("../services/user.service");
 const collectionService = require("../services/collection.service");
 const nftService = require("../services/nft.service");
+const ItemInsight = require("../models/itemInsight.schema");
 
 exports.getUser = asyncHandler(async (req, res) => {
   try {
@@ -222,20 +223,14 @@ exports.createNewStamp = asyncHandler(async (req, res) => {
     //   return res.status(401).json({ message: "User not authenticated" });
     // }
     // const newStamp = await userService.createNewStamp(req.user._id, req.body);
-    const { newStamp, newOwnership, newPrice } =
+    const { newStamp, newOwnership, newPrice ,newItemInsight} =
       await userService.createNewStamp(req.body);
-
-    if (!newStamp || !newOwnership || !newPrice) {
-      return res.status(404).json({
-        success: false,
-        message: "Cannot create new stamp",
-      });
+    // console.log("newStamp = ", newStamp);
+    // console.log("itemInsight=====", newItemInsight);
+    if (!newStamp || !newOwnership || !newPrice||!newItemInsight) {
+      return res.status(404).json(handleResponse(false, "Cannot create stamp", newStamp));
     }
-    res.status(201).json({
-      success: true,
-      message: "Save stamp into database successfully",
-      data: newStamp,
-    });
+    return res.status(200).json(handleResponse(true, "Create new stamp successfully", newStamp));
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -629,7 +624,7 @@ exports.getCollectionList = asyncHandler(async (req, res) => {
     if (result.length === 0) {
       return res
         .status(200)
-        .json(handleResponse(true, "User doesnot have collection", result));
+        .json(handleResponse(true, "User doesn't have collection", result));
     }
 
     return res

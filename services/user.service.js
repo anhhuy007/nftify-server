@@ -294,11 +294,11 @@ class UserService {
 
     const newItemInsight = await itemInsightModel.create({
       itemId: newStamp._id,
-      verifyStatus: "unverified",
-      isListed: false,
+      verifyStatus: stamp.verifyStatus,
+      isListed: stamp.isListed,
       createdAt: new Date(),
     });
-    // console.log("new item insight", newItemInsight);
+    console.log("new item insight", newItemInsight);
     if (stamp.collection.id != ""){
       const collection = await collectionService.addStampToCollection(
         stamp.collection.id,
@@ -306,7 +306,7 @@ class UserService {
       );
       // console.log("new collection", collection);
     }
-    return { newStamp, newOwnership, newPrice };
+    return { newStamp, newOwnership, newPrice , newItemInsight};
   }
 
   async editStamp(stamps) {
@@ -474,6 +474,32 @@ class UserService {
       totalPrice: cart.totalPrice,
       items,
     };
+  }
+
+  async buyItem(userId, itemId) {
+    // check if item is for sale
+    const item = await itemInsightModel.findOne({ itemId });
+    if (!item || !item.isListed) {
+      throw new Error("Item not for sale");
+    }
+
+    // Transfer item ownership
+    await ownershipModel.create({
+      ownerId: userId,
+      itemId
+    });
+
+    // Update item status
+    await itemInsightModel.findOneAndUpdate
+    ({ itemId }, { verifyStatus: "displaying" });
+
+    // Check if item is in cart and remove it
+    const cartItemExists = await cartModel.findOne({ userId });
+    if (cartItemExists) {
+      await this.removeFromCart(userId, itemId);
+    }
+
+    return true;
   }
 
   async checkoutCart(userId) {
