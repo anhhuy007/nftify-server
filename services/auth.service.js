@@ -13,7 +13,7 @@ class AuthService {
         email: user.email,
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "20s" }
+      { expiresIn: "1h" }
     );
   }
 
@@ -53,7 +53,7 @@ class AuthService {
     });
     const savedAccount = await newUser.save();
 
-    // create new user
+    // create new user profile
     const defaultAvatars = [
       "https://i.pinimg.com/736x/9e/5c/c8/9e5cc8988ced2938cb52367395c238ae.jpg",
       "https://i.pinimg.com/1200x/fc/31/5a/fc315a4736b5b22cbfb96cd9ea786952.jpg",
@@ -62,11 +62,23 @@ class AuthService {
       "https://i.pinimg.com/1200x/4f/13/1d/4f131d9a7a9f9d7ad1781a799616e92c.jpg",
       "https://i.pinimg.com/1200x/fb/4f/1e/fb4f1ef3f1baf2c956a84a586498f5ef.jpg",
     ];
+
+    const defaultThumbnails = [
+      "https://img.freepik.com/free-vector/egyptian-pyramids-night-landscape-cartoon_1441-3185.jpg?t=st=1735233759~exp=1735237359~hmac=ca7de749a0655223c602f4efbf4a620073cfb1421fb0409e144a197a371e03e4&w=1380",
+      "https://img.freepik.com/free-photo/neon-hologram-tiger_23-2151558673.jpg?t=st=1735233616~exp=1735237216~hmac=6b97d964a77760968a63ef7e4ce6dd38c6243362cde2aee1f14f6a75e8fbef03&w=1380",
+      "https://img.freepik.com/free-photo/bigfoot-represented-neon-glow_23-2151322914.jpg?t=st=1735233822~exp=1735237422~hmac=afc8ab7bed437f1e3a7529734c80dbd2758739b93ddeba3c8e39411cdafb373d&w=1380",
+      "https://img.freepik.com/free-photo/fantasy-water-character_23-2151149313.jpg?t=st=1735233865~exp=1735237465~hmac=de2b83b6a9760063a36ab3a0642ace25025bacf62a936ca8f05d70dc65b3be14&w=1380",
+    ];
+
     const newUserProfile = new UserModel({
       _id: savedAccount._id,
       name: username,
       avatarUrl:
         defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)],
+      bgUrl:
+        defaultThumbnails[Math.floor(Math.random() * defaultThumbnails.length)],
+      description:
+        "Passionate stamp collector with an eye for rare and unique finds. Dedicated to preserving the history and artistry of philately, constantly expanding and curating a diverse collection from around the world.",
     });
     await newUserProfile.save();
 
@@ -76,10 +88,15 @@ class AuthService {
   async login(userData) {
     const { username, password } = userData;
 
-    const account = await AccountModel.findOne({ username: username });
+    let account = await AccountModel.findOne({ username: username });
 
     if (!account) {
-      throw new Error("[Error][NoneExist] Account not found");
+      // find by email
+      account = await AccountModel.findOne ({ email: username });
+
+      if (!account) {
+        throw new Error("[Error][NoneExist] Account not found");
+      }
     }
 
     const isPasswordValid = await bcrypt.compare(password, account.password);
@@ -97,6 +114,8 @@ class AuthService {
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     await newToken.save();
+
+    const user = await UserModel.findById(account._id);
 
     return {
       account,

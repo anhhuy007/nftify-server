@@ -8,6 +8,8 @@ const StampService = require("./stamp.service");
 const nftService = require("./nft.service");
 const stampService = require("./stamp.service");
 const userModel = require("../models/user.schema");
+const { updateItemPrices } = require("../utils/helperFunc");
+// const { hexlify } = require("ethers");
 class MarketplaceService {
     async getTrendingStamps(options = {}) {
         const { page = 1, limit = 10 } = options;
@@ -32,6 +34,7 @@ class MarketplaceService {
                         as: "insight",
                     },
                 },
+                { $unwind: "$insight" },
                 {
                     $lookup: {
                         from: "Collection",
@@ -66,6 +69,9 @@ class MarketplaceService {
                         title: 1,
                         imgUrl: 1,
                         "insight.viewCount": 1, //check purpose
+                        "insight.favoriteCount": 1,
+                        "insight.verifyStatus": 1,
+                        "insight.isListed": 1,
                     },
                 },
             ]),
@@ -224,8 +230,9 @@ class MarketplaceService {
                 },
             },
         ]);
-
-        return stamp[0];
+        let temp = stamp[0];
+        temp = updateItemPrices(temp);
+        return temp;
     }
 
     async getStampPriceHistory(id) {
@@ -423,9 +430,6 @@ class MarketplaceService {
 
     async getStampsWithFilter(options = {}) {
         const { page = 1, limit = 10, filters = {} } = options;
-        // console.log("filter in stamp filter = ", filters);
-
-        console.log(`Page: ${page}, Limit: ${limit}, Filters: ${JSON.stringify(filters)}`);
 
         // Prepare dynamic filter
         const mongoFilter = {};
@@ -571,16 +575,16 @@ class MarketplaceService {
         }
 
         // Apply status filter
-        if (filters.status === "all") {
+        if (filters.status === "selling") {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": { $ne: "rejected" },
+                    "insight.isListed": true,
                 },
             });
-        } else if (filters.status) {
+        } else if (filters.status === "displaying") {
             pipeline.push({
                 $match: {
-                    "insight.verifyStatus": filters.status,
+                    "insight.isListed": false,  
                 },
             });
         }
@@ -620,6 +624,7 @@ class MarketplaceService {
                     viewCount: { $first: "$insight.viewCount" },
                     favouriteCount: { $first: "$insight.favoriteCount" },
                     status: { $first: "$insight.verifyStatus" },
+                    isListed: { $first: "$insight.isListed" },
                     collectionName: {
                         $first: { $ifNull: ["$collection.name", "null"] },
                     },

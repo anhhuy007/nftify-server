@@ -342,27 +342,50 @@ async function saveGeneratedItemPrice() {
 async function updateStampSchema() {
   try {
     console.log('Starting schema update for items collection');
-    
+
     // Get all existing items
     const items = await itemModel.find({});
     console.log(`Found ${items.length} items to update`);
-      try {
-        // Update all documents to remove the `thumbUrl` field
+    try {
+      // Update all documents to remove the `thumbUrl` field
       const result = await itemModel.updateMany({}, { $unset: { thumbUrl: "" } });
       console.log(`Documents updated: ${result.modifiedCount}`);
-  }   catch (error) {
+    } catch (error) {
       console.error("Error updating schema:", error);
-  }   finally {
+    } finally {
       // Close the database connection
       await mongoose.disconnect();
       console.log("Database connection closed");
-  }
+    }
   } catch (error) {
     console.error('An error occurred during the updateStampSchema process:', error);
   }
 }
 
-async function updateCollectionSchema(){
+async function updateItemStatus() {
+  try {
+    console.log('Starting schema update for items collection');
+
+    // Get all existing items
+    const items = await itemInsightModel.find({});
+    console.log(`Found ${items.length} items to update`);
+    try {
+      // Update all documents: change verifyStatus to verified
+      const result = await itemInsightModel.updateMany({}, { $set: { verifyStatus: "verified" } });
+      console.log(`Documents updated: ${result.modifiedCount}`);
+    } catch (error) {
+      console.error("Error updating schema:", error);
+    } finally {
+      // Close the database connection
+      await mongoose.disconnect();
+      console.log("Database connection closed");
+    }
+  } catch (error) {
+    console.error('An error occurred during the updateStampSchema process:', error);
+  }
+}
+
+async function updateCollectionSchema() {
   const collections = await collectionModel.find({});
   console.log(`Found ${collections.length} collections to update`);
 
@@ -445,10 +468,10 @@ async function updateURLCollection() {
     });
 
     const results = await Promise.all(updatePromises);
-    
+
     // Filter out any failed updates
     const successfulUpdates = results.filter(result => result !== null);
-    
+
     console.log(`Successfully updated ${successfulUpdates.length} out of ${collections.length} collections`);
   } catch (error) {
     console.error('An error occurred during the updateURLCollection process:', error);
@@ -473,15 +496,15 @@ async function getCIDbyIdUsingLog(id) {
     // Read log file
     const data = fs.readFileSync("../logs/metadata.log", "utf8");
     const lines = data.trim().split("\n");
-    
+
     for (const line of lines) {
       const [stampId, cid] = line.split(": ");
-      
+
       if (stampId.toString().trim() === stringId.toString().trim()) {
         return cid.trim();
       }
     }
-    
+
     // cannot find CID
     console.log(`No CID found for stamp ID: ${stringId}`);
     return null;
@@ -511,7 +534,7 @@ async function updateStampTokenUrl() {
             },
           }
         );
-        
+
         console.log(`Updated item ${item._id} with token URL: ${existingCID}`);
         return item._id;
       } catch (err) {
@@ -521,9 +544,9 @@ async function updateStampTokenUrl() {
     });
 
     const results = await Promise.all(updatePromises);
-    
+
     const successfulUpdates = results.filter(result => result !== null);
-    
+
     console.log(`Successfully updated ${successfulUpdates.length} out of ${items.length} items`);
   } catch (error) {
     console.error('An error occurred during the updateStampTokenUrl process:', error);
@@ -541,7 +564,7 @@ async function reGenerateCreatorId() {
     const updatePromises = items.map(async (item) => {
       try {
         const newCreatorId = creatorIds[Math.floor(Math.random() * creatorIds.length)];
-        
+
         // Update creatorId
         await itemModel.updateOne(
           { _id: item._id },
@@ -551,7 +574,7 @@ async function reGenerateCreatorId() {
             },
           }
         );
-        
+
         console.log(`Updated item ${item._id} with creatorId: ${newCreatorId}`);
         return item._id;
       } catch (err) {
@@ -561,9 +584,9 @@ async function reGenerateCreatorId() {
     });
 
     const results = await Promise.all(updatePromises);
-    
+
     const successfulUpdates = results.filter(result => result !== null);
-    
+
     console.log(`Successfully updated ${successfulUpdates.length} out of ${items.length} items`);
   } catch (error) {
     console.error('An error occurred during the reGenerateCreatorId process:', error);
@@ -571,7 +594,7 @@ async function reGenerateCreatorId() {
   }
 }
 
-async function deleteItemNotMatch(){
+async function deleteItemNotMatch() {
   try {
     const items = await itemModel.find({});
     const stampList = JSON.parse(fs.readFileSync("../datajson/Stamps.json", "utf8"));
@@ -592,9 +615,9 @@ async function deleteItemNotMatch(){
     });
 
     const results = await Promise.all(updatePromises);
-    
+
     const successfulUpdates = results.filter(result => result !== null);
-    
+
     console.log(`Successfully deleted ${successfulUpdates.length} out of ${items.length} items`);
   } catch (error) {
     console.error('An error occurred during the deleteItemNotMatch process:', error);
@@ -653,7 +676,7 @@ async function saveStampDataFromJson(data) {
 async function deleteRecords() {
   try {
     // đổi model cần xóa, tốt nhất là không nên dùng:)))))
-    const result = await itemInsightModel.deleteMany({ });
+    const result = await notificationModel.deleteMany({});
     console.log('Delete operation successful:', result);
   } catch (error) {
     console.error('Error deleting records:', error);
@@ -663,6 +686,7 @@ async function deleteRecords() {
 
 
 const marketplaceService = require("../services/marketplace.service");
+const { connect } = require("http2");
 
 
 async function createTransactionJson() {
@@ -691,7 +715,7 @@ async function createTransactionJson() {
 
     fs.writeFileSync("../datajson/Transactions.json", JSON.stringify(transactions, null, 2));
     console.log('Transactions data exported successfully');
-    
+
   } catch (error) {
     console.error('An error occurred during the createTransactionJson process:', error);
     throw error;
@@ -699,7 +723,7 @@ async function createTransactionJson() {
 }
 
 
-async function saveGeneratedCollections(){
+async function saveGeneratedCollections() {
   try {
     const collections = await collectionModel.find({});
     console.log(`Found ${collections.length} collections to update`);
@@ -760,7 +784,7 @@ async function getOwnedStamps(userID) {
     console.error('An error occurred during the getOwnedStamps process:', error);
     throw error;
   }
-  
+
 }
 
 async function setOwnerSameAsCreator() {
@@ -816,6 +840,143 @@ async function generateFavorite(params, min = 5, max = 35) {
   }
 }
 
+async function exportBlockData() {
+  try {
+    const items = await itemModel.find({});
+    
+    const itemPrice = await itemPricingModel.find({});
+    const itemInsights = await itemInsightModel.find({});
+    const users = await userModel.find({});
+
+    console.log(`Found ${users.length} users`);
+    const data = [];
+
+    for (const item of items) {
+      var price = itemPrice.find((p) => String(p.itemId) === String(item._id));
+      // price = parseFloat(price)
+      const user = users.find((u) => String(u._id) === String(item.creatorId));
+      const verified = itemInsights.find((i) => String(i.itemId) === String(item._id));
+
+      if (!user) {
+        console.log(`Debug - creatorId: ${item.creatorId}`);
+        console.log(`Debug - available user IDs: ${users.map(u => u._id).join(', ')}`);
+        console.log(`Skipping item ${item._id} - User not found for creatorId: ${item.creatorId}`);
+        continue;
+      }
+
+      data.push({
+        cid: item.tokenUrl,
+        tokenID: item.tokenID,
+        metamask: user.wallet_address || null,
+        price: price ? parseFloat(price.price) : null,
+        status: verified ? verified.verifyStatus : null,
+      });
+    }
+
+    console.log(`Processed ${data.length} items successfully`);
+    const fs = require('fs');
+    const path = require('path');
+    const outputPath = path.join(__dirname, '..', 'datajson', 'Blocks.json');
+    fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
+    console.log(`Blocks data exported successfully to ${outputPath}`);
+  } catch (error) {
+    console.error("An error occurred during the exportBlocksData process:", error);
+    throw error;
+  }
+}
+
+async function setSellingStatus() {
+  const items = await itemInsightModel.find({});
+  console.log(`Found ${items.length} item insights to update`);
+  for (item of items){
+    await itemInsightModel.updateOne(
+      { _id: item._id },
+      {
+        $set: {
+          verifyStatus: "selling",
+        },
+      }
+    );
+    console.log(`Updated item ${item._id} with selling status`);
+  }
+}
+// connectDB();
+// setSellingStatus();
+// connectDB();
+// exportBlockData();
+
+// async function updateTokenID() {
+//   try {
+//     const items = await itemModel.find({});
+
+//     let cnt = 0;
+//     for (const item of items) {
+//       try {
+
+//         await itemModel.updateOne(
+//           { _id: item._id },
+//           {
+//             $set: {
+//               tokenID:
+//                 cnt
+//             }
+//           });
+//         cnt += 1;
+
+//         console.log(`Updated item ${item._id} with token URL: ${tokenID}`);
+
+//       }
+//       catch (error) {
+//         console.error(`Failed to update item ${item._id}:`, error);
+//       }
+
+
+//     }
+//   }
+//   catch (error) {
+//     console.error('An error occurred during the updateTokenID process:', error);
+//     throw error;
+//   }
+// }
+async function updateTokenID() {
+  try {
+    const items = await itemModel.find({});
+    console.log(`Found ${items.length} items to update`);
+
+    let cnt = 0;
+    for (const item of items) {
+      try {
+        await itemModel.updateOne(
+          { _id: item._id },
+          {
+            $set: {
+              tokenID: cnt
+            }
+          }
+        );
+        console.log(`Updated item ${item._id} with tokenID: ${cnt}`);
+        cnt += 1;
+      } catch (error) {
+        console.error(`Failed to update item ${item._id}:`, error);
+      }
+    }
+
+    console.log(`Successfully updated tokenIDs for ${cnt} items`);
+  } catch (error) {
+    console.error('An error occurred during the updateTokenID process:', error);
+    throw error;
+  }
+}
+
+
+// create 
+
+
+
+// connectDB();
+// updateTokenID();
+// connectDB();
+// createTransactionJson();
 // connectDB();
 // generateFavorite();
 // connectDB();
@@ -835,7 +996,29 @@ async function generateFavorite(params, min = 5, max = 35) {
 
 
 // connectDB();
-// deleteRecords();
+// updateItemStatus();
+// closeConnectDB();
+
+const notificationModel = require("../models/notification.schema");
+
+// create notification schema
+async function createEmptyNotification() {
+  try {
+    const users = await userModel.find({});
+    for (user of users){
+      const newNotification = new notificationModel({
+        userId: user._id,
+        notifications: []
+      });
+      await newNotification.save();
+      console.log(`Created notification schema for user ${user._id}`);
+    }
+    console.log('Notification schema created successfully');
+  } catch (error) {
+    console.error('An error occurred during the createEmptyNotification process:', error);
+    throw error;
+  }
+}
 
 
 module.exports = {

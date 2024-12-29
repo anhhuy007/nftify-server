@@ -272,12 +272,6 @@ class StampService {
             sortOrder = 1; // Ascending
         }
 
-        console.log(
-            `Sorting by ${sortField} in ${
-                sortOrder === 1 ? "ascending" : "descending"
-            } order`
-        );
-
         // Pagination
         const parsedPage = Math.max(1, parseInt(page));
         const parsedLimit = Math.min(Math.max(1, parseInt(limit)), 100);
@@ -467,7 +461,7 @@ class StampService {
     }
     async getStampPrice(itemId) {
         const priceDoc = await itemPricingModel
-            .find()
+            .find({itemId})
             .sort({ createdAt: -1 })
             .limit(1);
         const price = priceDoc[0].price;
@@ -514,6 +508,7 @@ class StampService {
                         as: "insight"
                     }
                 },
+                { $unwind: "$insight" },
                 {
                     $lookup: {
                         from: "Collection",
@@ -547,7 +542,8 @@ class StampService {
                         _id: 1,
                         title: 1,
                         imgUrl: 1,
-                        "insight.viewCount": 1
+                        "insight.viewCount": 1,
+                        "insight.verifyStatus": 1,
                     }
                 }
             ])
@@ -557,7 +553,7 @@ class StampService {
             items.map(async (item) => {
                 const price = await this.getStampPrice(item.itemIdString);
                 const ownerId = await this.getOwnerId(item.itemIdString);
-                const ownerDetails = await userModel.findOne({ _id: ownerId }).select('name avatarUrl');
+                const ownerDetails = await userModel.findOne({ _id: ownerId }).select('name avatarUrl wallet_address');
                 return {
                     ...item,
                     price,
