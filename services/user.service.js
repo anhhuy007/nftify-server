@@ -339,7 +339,24 @@ class UserService {
         };
     }
 
-    async deleteStamp(stampId) {}
+    async deleteStamp(stampId) {
+        try {
+            await stampModel.deleteOne({ _id: stampId });
+            await ownershipModel.deleteMany({ itemId: stampId });
+            await itemPricingModel.deleteMany({ itemId: stampId });
+            await itemInsightModel.deleteOne({ itemId: stampId });
+            return {
+                status: "success",
+                message: "Stamp deleted successfully",
+            };
+        } catch (error) {
+            return {
+                status: "fail",
+                message: error.message,
+            };
+        }
+    }
+
     async getUserOnSaleItems(userId, options = {}) {
         const page = options.page || 1;
         const limit = options.limit || 10;

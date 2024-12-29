@@ -256,8 +256,8 @@ exports.editStamp = asyncHandler(async (req, res) => {
 
 exports.deleteStamp = asyncHandler(async (req, res) => { 
   try {
-    const deletedStamp = await userService.deleteStamp(req.body);
-    if (!deletedStamp) {
+    const deletedStamp = await userService.deleteStamp(req._id);
+    if (deletedStamp.success === false) {
       return res
         .status(404)
         .json(handleResponse(false, "Cannot delete stamp", deletedStamp));
@@ -268,8 +268,6 @@ exports.deleteStamp = asyncHandler(async (req, res) => {
   } catch (error) {
     handleServiceError(res, error);
   }
-
-
 
 });
 
@@ -685,6 +683,22 @@ exports.createCollection = asyncHandler(async (req, res) => {
       req.user._id
     );
     return res.status(201).json(handleResponse(true, "Create new collection successfully", newCollection));
+  } catch (error) {
+    handleServiceError(res, error);
+  }
+});
+
+exports.deleteCollection = asyncHandler(async (req, res) => {
+  try {
+    const result = await collectionService.deleteCollection(req.body.collectionId);
+    if (!result) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot delete collection", result));
+    }
+    return res
+      .status(201)
+      .json(handleResponse(true, "Delete collection successfully", result));
   } catch (error) {
     handleServiceError(res, error);
   }
