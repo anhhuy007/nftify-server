@@ -136,6 +136,8 @@ class MarketplaceService {
                 },
             },
             { $unwind: "$price" },
+            { $sort: { "price.createdAt": -1 } },
+            { $limit: 1 },
             { $addFields: { creatorObjId: { $toObjectId: "$creatorId" } } },
             {
                 $lookup: {
@@ -227,6 +229,7 @@ class MarketplaceService {
                     "collection.items": 0,
                     "collection.createdAt": 0,
                     "collection.updatedAt": 0,
+                    // "collection._id": 1,
                 },
             },
         ]);
