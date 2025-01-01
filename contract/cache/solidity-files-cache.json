@@ -76,8 +76,8 @@
       ]
     },
     "D:\\Project\\NFTify\\nftify-server\\contract\\contracts\\NFTMarketplace.sol": {
-      "lastModificationDate": 1735148431132,
-      "contentHash": "0cfd56842b90f8bb089dc86eca12e44c",
+      "lastModificationDate": 1735723762295,
+      "contentHash": "9574afcdbaf4f5880e1b4b52cec99c8b",
       "sourceName": "contracts/NFTMarketplace.sol",
       "solcConfig": {
         "version": "0.8.20",

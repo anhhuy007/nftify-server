@@ -219,24 +219,24 @@ exports.getFavouriteStamps = asyncHandler(async (req, res) => {
 
 exports.createNewStamp = asyncHandler(async (req, res) => {
   try {
-    // if (!req.user || !req.user._id) {
-    //   return res.status(401).json({ message: "User not authenticated" });
-    // }
-    // const newStamp = await userService.createNewStamp(req.user._id, req.body);
-    const { newStamp, newOwnership, newPrice ,newItemInsight} =
+    const { newStamp, newOwnership, newPrice, newItemInsight } =
       await userService.createNewStamp(req.body);
-    // console.log("newStamp = ", newStamp);
-    // console.log("itemInsight=====", newItemInsight);
-    if (!newStamp || !newOwnership || !newPrice||!newItemInsight) {
-      return res.status(404).json(handleResponse(false, "Cannot create stamp", newStamp));
+
+    if (!newStamp || !newOwnership || !newPrice || !newItemInsight) {
+      return res
+        .status(404)
+        .json(handleResponse(false, "Cannot create stamp", newStamp));
     }
-    return res.status(200).json(handleResponse(true, "Create new stamp successfully", newStamp));
+
+    return res
+      .status(200)
+      .json(handleResponse(true, "Create new stamp successfully", newStamp));
   } catch (error) {
     handleServiceError(res, error);
   }
 });
 
-exports.editStamp = asyncHandler(async (req, res) => { 
+exports.editStamp = asyncHandler(async (req, res) => {
   try {
     const result = await userService.editStamp(req.body);
     if (result.status === false) {
@@ -244,19 +244,17 @@ exports.editStamp = asyncHandler(async (req, res) => {
       return res
         .status(404)
         .json(handleResponse(false, result.message, result));
-
     }
-    return res
-      .status(200)
-      .json(handleResponse(true, result.message, result));
+    return res.status(200).json(handleResponse(true, result.message, result));
   } catch (error) {
     handleServiceError(res, error);
   }
 });
 
-exports.deleteStamp = asyncHandler(async (req, res) => { 
+exports.deleteStamp = asyncHandler(async (req, res) => {
   try {
-    const deletedStamp = await userService.deleteStamp(req._id);
+    console.log("Delete stamp: ", req.params._id);
+    const deletedStamp = await userService.deleteStamp(req.user._id, req.params._id);
     if (deletedStamp.success === false) {
       return res
         .status(404)
@@ -268,7 +266,6 @@ exports.deleteStamp = asyncHandler(async (req, res) => {
   } catch (error) {
     handleServiceError(res, error);
   }
-
 });
 
 exports.getMyNFTs = asyncHandler(async (req, res) => {
@@ -370,13 +367,8 @@ exports.getItemsOnSale = asyncHandler(async (req, res) => {
     const filters = {
       title: req.query.title,
       creatorId: req.query.creatorId,
-      // issuedBy: req.query.issuedBy,
-      // startDate: req.query.startDate,
-      // endDate: req.query.endDate,
       minPrice: req.query.minPrice,
       maxPrice: req.query.maxPrice,
-      // color: req.query.color,
-      // function: req.query.function,
       collectionName: req.query.collectionName,
       ownerName: req.query.ownerName,
       sortBy: req.query.sortBy,
@@ -452,8 +444,6 @@ exports.getUserSettings = asyncHandler(async (req, res) => {
 });
 
 exports.changeUserProfile = asyncHandler(async (req, res) => {
-  // console.log(req.user._id);
-  // console.log(req.body);
   try {
     const updatedUser = await userService.changeUserProfile(
       req.user._id,
@@ -520,13 +510,6 @@ exports.addToCart = asyncHandler(async (req, res) => {
         .status(404)
         .json(handleResponse(false, "Cannot add item to cart", result));
     }
-    // const result = await userService.addToCart("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", req.body.itemId);
-
-    // res.json({
-    //   success: true,
-    //   message: "Added item to cart successfully",
-    //   data: result,
-    // });
     return res
       .status(201)
       .json(handleResponse(true, "Added item to cart successfully", result));
@@ -667,7 +650,7 @@ exports.initWallet = asyncHandler(async (req, res) => {
       .json(handleResponse(true, "Init wallet successfully", result));
   } catch (error) {
     handleServiceError(res, error);
-  };
+  }
 });
 
 exports.createCollection = asyncHandler(async (req, res) => {
@@ -682,7 +665,15 @@ exports.createCollection = asyncHandler(async (req, res) => {
       req.body,
       req.user._id
     );
-    return res.status(201).json(handleResponse(true, "Create new collection successfully", newCollection));
+    return res
+      .status(201)
+      .json(
+        handleResponse(
+          true,
+          "Create new collection successfully",
+          newCollection
+        )
+      );
   } catch (error) {
     handleServiceError(res, error);
   }
@@ -690,7 +681,9 @@ exports.createCollection = asyncHandler(async (req, res) => {
 
 exports.deleteCollection = asyncHandler(async (req, res) => {
   try {
-    const result = await collectionService.deleteCollection(req.body.collectionId);
+    const result = await collectionService.deleteCollection(
+      req.body.collectionId
+    );
     if (!result) {
       return res
         .status(404)
