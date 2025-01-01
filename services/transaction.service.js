@@ -32,6 +32,9 @@ class TransactionService {
             },
           },
           {
+            $sort: { createdAt: -1 },
+          },
+          {
             $project: {
               transactionHash: 1,
               transactionFee: 1,

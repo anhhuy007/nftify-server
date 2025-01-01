@@ -508,8 +508,6 @@ class CollectionService {
     );
 
     return updatedCollection;
-
-    return null;
   }
 }
 

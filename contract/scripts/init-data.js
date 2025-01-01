@@ -1,8 +1,4 @@
 const { ethers } = require("hardhat");
-const fs = require("fs");
-const { create } = require("../../models/stamp.schema");
-
-
 const itemModel = require("../../models/stamp.schema");
 const itemPricingModel = require("../../models/itemPricing.schema");
 const itemInsightModel = require("../../models/itemInsight.schema");
@@ -108,6 +104,7 @@ async function main() {
     tokenURI: nft.cid,
     price: ethers.parseEther(nft?.price?.toString() ?? "0"),
     isListed: true,
+    tokenID: nft.tokenID,
   }));
 
   const batches = chunkArray(formattedNFTs, BATCH_SIZE);

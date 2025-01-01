@@ -32,6 +32,7 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         string tokenURI;
         uint256 price;
         bool isListed;
+        uint256 tokenID;
     }
 
     event TokenListedSuccess(
@@ -46,6 +47,13 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         uint256 indexed tokenId,
         uint256 oldPrice,
         uint256 newPrice,
+        address updatedBy,
+        uint256 timestamp
+    );
+
+    event TokenListingUpdated(
+        uint256 indexed tokenId,
+        bool newListingStatus,
         address updatedBy,
         uint256 timestamp
     );
@@ -72,12 +80,13 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
     }
 
     function bulkInitializeNFTs(InitialNFTData[] calldata nfts) public {
+        uint256 latestTokenID = _tokenIds;
         for (uint i = 0; i < nfts.length; i++) {
             require(nfts[i].owner != address(0), "Invalid owner address");
             require(bytes(nfts[i].tokenURI).length > 0, "Empty tokenURI");
 
             // Increment token ID
-            uint256 newTokenId = _tokenIds;
+            uint256 newTokenId = nfts[i].tokenID;
 
             // Mint NFT
             _safeMint(nfts[i].owner, newTokenId);
@@ -85,7 +94,7 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
 
             // Create listing
             ListedToken storage newToken = idToListedToken[newTokenId];
-            newToken.tokenId = newTokenId;
+            newToken.tokenId = nfts[i].tokenID;
             newToken.creator = payable(nfts[i].owner);
             newToken.owner = payable(nfts[i].owner);
             newToken.price = nfts[i].price;
@@ -107,8 +116,10 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
                 nfts[i].isListed
             );
 
-            _tokenIds++;
+            latestTokenID = newTokenId;
         }
+
+        _tokenIds = latestTokenID + 1;
     }
 
     function getListPrice() public view returns (uint256) {
@@ -197,7 +208,7 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         bool currentlyListed
     ) private {
         require(msg.value == listPrice, "Hopefully sending the correct price");
-        require(price > 0, "Price must be greater than 0");
+        require(price >= 0, "Price must be greater or equal to 0");
 
         ListedToken storage token = idToListedToken[tokenId];
         token.tokenId = tokenId;
@@ -333,48 +344,36 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         require(msg.value == price, "Incorrect price");
         require(msg.sender != seller, "Cannot buy your own token");
 
-        // console log
-        console.log("Owner balance before sale: %s", address(seller).balance);
-        console.log(
-            "Buyer balance before sale: %s",
-            address(msg.sender).balance
-        );
-        console.log(
-            "Marketplace balance before sale: %s",
-            address(this).balance
-        );
-
         // Update token state after purchase
         token.currentlyListed = false;
         token.owner = payable(msg.sender);
 
-        uint256 marketplaceCut = listPrice;
-        uint256 sellerProceeds = msg.value - listPrice;
+        // Handle marketplace fee and seller proceeds
+        if (price > 0) {
+            uint256 marketplaceCut = listPrice;
+            // Check if price is greater than marketplace cut to avoid underflow
+            uint256 sellerProceeds = (price > marketplaceCut)
+                ? price - marketplaceCut
+                : 0;
 
-        marketplaceOwner.transfer(marketplaceCut);
-        seller.transfer(sellerProceeds);
+            if (marketplaceCut > 0) {
+                marketplaceOwner.transfer(marketplaceCut);
+            }
+
+            if (sellerProceeds > 0) {
+                seller.transfer(sellerProceeds);
+            }
+        }
 
         _transfer(seller, msg.sender, tokenId);
 
+        // Record price history
         token.priceHistory[token.priceHistoryLength] = PriceHistory({
             price: price,
             timestamp: block.timestamp,
             setter: msg.sender
         });
         token.priceHistoryLength++;
-
-        // pendingWithdrawals[seller] += sellerProceeds;
-
-        // console log
-        console.log("Owner balance after sale: %s", address(seller).balance);
-        console.log(
-            "Buyer balance after sale: %s",
-            address(msg.sender).balance
-        );
-        console.log(
-            "Marketplace balance after sale: %s",
-            address(this).balance
-        );
 
         emit TokenSold(tokenId, seller, msg.sender, price, block.timestamp);
     }
@@ -394,7 +393,7 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
             idToListedToken[tokenId].owner == msg.sender,
             "Only the seller can update the price"
         );
-        require(newPrice > 0, "Price must be greater than 0");
+        require(newPrice >= 0, "Price must be greater or equal to 0");
 
         ListedToken storage token = idToListedToken[tokenId];
         uint256 oldPrice = token.price;
@@ -413,6 +412,23 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
             tokenId,
             oldPrice,
             newPrice,
+            msg.sender,
+            block.timestamp
+        );
+    }
+
+    function updateTokenListing(uint256 tokenId, bool newListingStatus) public {
+        require(
+            idToListedToken[tokenId].owner == msg.sender,
+            "Only the seller can update the listing status"
+        );
+
+        ListedToken storage token = idToListedToken[tokenId];
+        token.currentlyListed = newListingStatus;
+
+        emit TokenListingUpdated(
+            tokenId,
+            newListingStatus,
             msg.sender,
             block.timestamp
         );
