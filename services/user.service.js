@@ -338,57 +338,36 @@ class UserService {
     };
   }
 
-  async deleteStamp(ownedId, stampId) {
-    try {
-      // check if stamp is owned by user (latest ownership)
-      const ownership = await ownershipModel.aggregate([
-        {
-          $match: {
-            ownerId: ownedId,
-            itemId: stampId,
-          },
-        },
-        {
-          $sort: {
-            createdAt: -1,
-          },
-        },
-        {
-          $limit: 1,
-        }
-      ]);
+  async deleteStamp(userId, stampId) {
+    // check if stamp is owned by user (latest ownership)
+    const ownedIds = await ownershipModel
+      .find({
+        itemId: stampId,
+      })
+      .sort({ createdAt: -1 });
+    const currentOwnership = ownedIds[0] || {};
 
-      console.log("Ownership", ownership);
+    console.log("User ID", userId);
 
-      if (!ownership) {
-        throw new Error("Cannot delete stamp not owned by user");
-      }
+    if (currentOwnership && currentOwnership.ownerId.toString() !== userId) {
+      console.log("Cannot delete stamp owned by another user");
+      throw new Error("Cannot delete stamp owned by another user");
+    }
 
-      await stampModel.deleteOne({ _id: stampId });
-      await ownershipModel.deleteMany({ itemId: stampId });
-      await itemPricingModel.deleteMany({ itemId: stampId });
-      await itemInsightModel.deleteOne({ itemId: stampId });
+    await stampModel.deleteOne({ _id: stampId });
+    await ownershipModel.deleteMany({ itemId: stampId });
+    await itemPricingModel.deleteMany({ itemId: stampId });
+    await itemInsightModel.deleteOne({ itemId: stampId });
 
-      const collection = await collectionService.findCollectionByStampId(
+    const collection = await collectionService.findCollectionByStampId(stampId);
+    if (collection) {
+      await collectionService.removeStampFromCollection(
+        collection._id,
         stampId
       );
-      if (collection) {
-        await collectionService.removeStampFromCollection(
-          collection._id,
-          stampId
-        );
-      }
-
-      return {
-        success: true,
-        message: "Stamp deleted successfully",
-      };
-    } catch (error) {
-      return {
-        status: "fail",
-        message: error.message,
-      };
     }
+
+    return true;
   }
 
   async getUserOnSaleItems(userId, options = {}) {

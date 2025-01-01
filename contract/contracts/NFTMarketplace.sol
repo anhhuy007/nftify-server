@@ -344,48 +344,36 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         require(msg.value == price, "Incorrect price");
         require(msg.sender != seller, "Cannot buy your own token");
 
-        // console log
-        console.log("Owner balance before sale: %s", address(seller).balance);
-        console.log(
-            "Buyer balance before sale: %s",
-            address(msg.sender).balance
-        );
-        console.log(
-            "Marketplace balance before sale: %s",
-            address(this).balance
-        );
-
         // Update token state after purchase
         token.currentlyListed = false;
         token.owner = payable(msg.sender);
 
-        uint256 marketplaceCut = listPrice;
-        uint256 sellerProceeds = msg.value - listPrice;
+        // Handle marketplace fee and seller proceeds
+        if (price > 0) {
+            uint256 marketplaceCut = listPrice;
+            // Check if price is greater than marketplace cut to avoid underflow
+            uint256 sellerProceeds = (price > marketplaceCut)
+                ? price - marketplaceCut
+                : 0;
 
-        marketplaceOwner.transfer(marketplaceCut);
-        seller.transfer(sellerProceeds);
+            if (marketplaceCut > 0) {
+                marketplaceOwner.transfer(marketplaceCut);
+            }
+
+            if (sellerProceeds > 0) {
+                seller.transfer(sellerProceeds);
+            }
+        }
 
         _transfer(seller, msg.sender, tokenId);
 
+        // Record price history
         token.priceHistory[token.priceHistoryLength] = PriceHistory({
             price: price,
             timestamp: block.timestamp,
             setter: msg.sender
         });
         token.priceHistoryLength++;
-
-        // pendingWithdrawals[seller] += sellerProceeds;
-
-        // console log
-        console.log("Owner balance after sale: %s", address(seller).balance);
-        console.log(
-            "Buyer balance after sale: %s",
-            address(msg.sender).balance
-        );
-        console.log(
-            "Marketplace balance after sale: %s",
-            address(this).balance
-        );
 
         emit TokenSold(tokenId, seller, msg.sender, price, block.timestamp);
     }

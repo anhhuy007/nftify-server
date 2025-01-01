@@ -253,7 +253,6 @@ exports.editStamp = asyncHandler(async (req, res) => {
 
 exports.deleteStamp = asyncHandler(async (req, res) => {
   try {
-    console.log("Delete stamp: ", req.params._id);
     const deletedStamp = await userService.deleteStamp(req.user._id, req.params._id);
     if (deletedStamp.success === false) {
       return res
