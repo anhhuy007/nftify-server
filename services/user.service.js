@@ -423,12 +423,16 @@ class UserService {
         },
       },
       {
+        $sort: { "StampPrice.createdAt": -1 },
+      },
+      {
         $project: {
           _id: 1,
           tokenID: 1,
           title: 1,
           imgUrl: 1,
           price: "$StampPrice.price",
+          createdAt: "$StampPrice.createdAt",
         },
       },
     ]);
