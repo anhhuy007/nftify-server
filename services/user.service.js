@@ -579,7 +579,7 @@ class UserService {
       // Update stamp insight status
       await itemInsightModel.findOneAndUpdate(
         { itemId },
-        { verifyStatus: "displaying" }
+        { isListed: false }
       );
     }
     await ownershipModel.insertMany(ownerships);
