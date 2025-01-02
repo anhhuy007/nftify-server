@@ -7,6 +7,7 @@ const accountModel = require("../models/account.schema");
 const itemInsightModel = require("../models/itemInsight.schema");
 const ownershipModel = require("../models/ownership.schema");
 const itemPricingModel = require("../models/itemPricing.schema");
+const notificationModel = require("../models/notification.schema");
 const fs = require("fs");
 const helperFunc = require("./helperFunc");
 const ipfsService = require("../services/ipfs.service");
@@ -210,18 +211,6 @@ async function saveDataCollection(data) {
   const len = stampIds.length / data.length;
   for (const collection of data) {
     try {
-      // Check if document with this id already exists
-      // const existingCollection = await collectionModel.findOne({
-      //   id: collection.id,
-      // });
-
-      // if (existingCollection) {
-      //   console.log(
-      //     `Skipping collection with id: ${collection.id} - already exists`
-      //   );
-      //   continue; // Skip to next item
-      // }
-
       const modifiedCollection = {
         ...collection,
         ownerId: userIds[count % userIds.length],
@@ -371,7 +360,7 @@ async function updateItemStatus() {
     console.log(`Found ${items.length} items to update`);
     try {
       // Update all documents: change verifyStatus to verified
-      const result = await itemInsightModel.updateMany({}, { $set: { verifyStatus: "verified" } });
+      const result = await itemInsightModel.updateMany({}, { $set: { isListed: true } });
       console.log(`Documents updated: ${result.modifiedCount}`);
     } catch (error) {
       console.error("Error updating schema:", error);
@@ -998,8 +987,6 @@ async function updateTokenID() {
 // connectDB();
 // updateItemStatus();
 // closeConnectDB();
-
-const notificationModel = require("../models/notification.schema");
 
 // create notification schema
 async function createEmptyNotification() {

@@ -423,12 +423,16 @@ class UserService {
         },
       },
       {
+        $sort: { "StampPrice.createdAt": -1 },
+      },
+      {
         $project: {
           _id: 1,
           tokenID: 1,
           title: 1,
           imgUrl: 1,
           price: "$StampPrice.price",
+          createdAt: "$StampPrice.createdAt",
         },
       },
     ]);
@@ -579,7 +583,7 @@ class UserService {
       // Update stamp insight status
       await itemInsightModel.findOneAndUpdate(
         { itemId },
-        { verifyStatus: "displaying" }
+        { isListed: false }
       );
     }
     await ownershipModel.insertMany(ownerships);

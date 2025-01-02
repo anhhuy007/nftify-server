@@ -67,7 +67,7 @@ async function createNFTsJson() {
         tokenID: item.tokenID,
         metamask: user.wallet_address || null,
         price: price ? parseFloat(price.price) : null,
-        status: verified ? verified.verifyStatus : null,
+        status: verified ? verified.isListed : false
       });
     }
 
@@ -103,7 +103,7 @@ async function main() {
     owner: nft.metamask,
     tokenURI: nft.cid,
     price: ethers.parseEther(nft?.price?.toString() ?? "0"),
-    isListed: true,
+    isListed: nft.status,
     tokenID: nft.tokenID,
   }));
 
